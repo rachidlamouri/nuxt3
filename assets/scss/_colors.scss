@@ -1,0 +1,247 @@
+@use 'variables' as *;
+:root {
+  // ******** COLORS *********
+  @each $color, $shades in $colors {
+    @each $shade, $hex in $shades {
+      --color-#{$color}-#{$shade}: #{$hex};
+    }
+  }
+}
+
+@each $hue, $shades in $colors {
+  @each $shade, $hex in $shades {
+    .text-#{$hue}-#{$shade} {
+      color: #{$hex};
+    }
+
+    .hover\:text-#{$hue}-#{$shade} {
+      &:hover {
+        color: #{$hex};
+      }
+    }
+
+    .bg-#{$hue}-#{$shade} {
+      background-color: #{$hex} !important;
+    }
+
+    .hover\:bg-#{$hue}-#{$shade} {
+      &:hover {
+        background-color: #{$hex} !important;
+      }
+    }
+
+    .fill-#{$hue}-#{$shade} {
+      fill: #{$hex} !important;
+    }
+  }
+}
+
+.bg-white {
+  background-color: white;
+}
+
+// $site-colors: (
+//   primary: (
+//     primary,
+//     40,
+//   ),
+//   on-primary: (
+//     primary,
+//     99,
+//   ),
+//   primary-container: (
+//     primary,
+//     90,
+//   ),
+//   on-primary-container: (
+//     primary,
+//     10,
+//   ),
+//   secondary: (
+//     secondary,
+//     40,
+//   ),
+//   on-secondary: (
+//     secondary,
+//     99,
+//   ),
+//   secondary-container: (
+//     secondary,
+//     90,
+//   ),
+//   on-secondary-container: (
+//     secondary,
+//     10,
+//   ),
+//   tertiary: (
+//     tertiary,
+//     40,
+//   ),
+//   on-tertiary: (
+//     tertiary,
+//     99,
+//   ),
+//   tertiary-container: (
+//     tertiary,
+//     90,
+//   ),
+//   on-tertiary-container: (
+//     tertiary,
+//     10,
+//   ),
+//   background: (
+//     neutral,
+//     99,
+//   ),
+//   on-background: (
+//     neutral,
+//     10,
+//   ),
+//   surface: (
+//     neutral,
+//     99,
+//   ),
+//   on-surface: (
+//     neutral,
+//     10,
+//   ),
+// );
+
+// @function fetch-color($h, $index) {
+//   @each $hue, $shades in $colors {
+//     @each $shade, $color in $shades {
+//       @if ($index == $shade and $h== $hue) {
+//         @return $color;
+//       }
+//     }
+//   }
+//   @return null;
+// }
+
+:root {
+  // @each $color, $shades in $site-colors {
+  //   // @each $shade in $shades {
+  //   // @debug nth($shades, 2);
+  //   @if (fetch-color(primary, 40)) {
+  //     --color-#{$color}: #{fetch-color(nth($shades, 1), nth($shades, 2))}; // #355ca8;
+  //   }
+  //   //
+
+  //   // .bg-#{$hue}-#{$shade} {
+  //   //   background-color: #{$color};
+  //   // }
+
+  //   // .fill-#{$hue}-#{$shade} {
+  //   //   fill: #{$color};
+  //   // }
+  //   // }
+  // }
+
+  // @each $color, $shades in $colors {
+  //   @each $shade, $hex in $shades {
+  //     @debug --color-#{$color}-#{$shade};
+  //     --color-#{$color}-#{$shade}: #{$hex};
+  //     // @debug nth($shades, 2);
+  //     // @if (fetch-color(primary, 40)) {
+  //     //   --color-#{$color}: #{fetch-color(nth($shades, 1), nth($shades, 2))}; // #355ca8;
+  //   }
+  //   //
+
+  //   // .bg-#{$hue}-#{$shade} {
+  //   //   background-color: #{$color};
+  //   // }
+
+  //   // .fill-#{$hue}-#{$shade} {
+  //   //   fill: #{$color};
+  //   // }
+  //   // }
+  // }
+
+  // // @debug fetch-color(800);
+  // @if (fetch-color(primary, 40)) {
+  //   --color-primary: #{fetch-color(primary,40)}; // #355ca8;
+  // }
+  // @if (fetch-color(primary,90)) {
+  //   --color-primary-light: #{fetch-color(primary,90)}; // #355ca8;
+  // }
+  // @if (fetch-color(secondary,40)) {
+  //   --color-secondary: #{fetch-color(secondary,40)}; // #355ca8;
+  // }
+  // @if (fetch-color(primary,90)) {
+  //   --color-secondary-light: #{fetch-color(primary,90)}; // #355ca8;
+  // }
+  // @if (fetch-color(neutral,99)) {
+  //   --color-neutral-light: #{fetch-color(neutral,99)}; // #355ca8;
+  // }
+  // @if (fetch-color(neutral,40)) {
+  //   --color-neutral:: #{fetch-color(neutral,40)}; // #355ca8;
+  // }
+
+  // @if (fetch-color(neutral,10)) {
+  //   --color-neutral-dark: #{fetch-color(neutral,10)}; // #355ca8;
+  // }
+}
+
+// .bg-inherit {
+//   color: inherit;
+// }
+
+// .text-current {
+//   color: currentColor;
+// }
+
+// .text-transparent {
+//   color: transparent;
+// }
+
+// .text-black {
+//   color: rgb(0 0 0);
+// }
+
+// .text-white {
+//   color: rgb(255 255 255);
+// }
+
+// .bg-inherit {
+//   background-color: inherit;
+// }
+
+// .bg-current {
+//   background-color: currentColor;
+// }
+
+// .bg-transparent {
+//   background-color: transparent;
+// }
+
+// .bg-black {
+//   background-color: rgb(0 0 0);
+// }
+
+// .bg-white {
+//   background-color: rgb(255 255 255);
+// }
+
+// .fill-none {
+//   fill: none;
+// }
+
+// .fill-inherit {
+//   fill: inherit;
+// }
+
+// .fill-current {
+//   fill: currentColor;
+// }
+
+// .fill-transparent {
+//   fill: transparent;
+// }
+
+// .fill-black {
+//   fill: rgb(0 0 0);
+// }
+
+// .fill-white {
+//   fill: rgb(255 255 255);
+// }

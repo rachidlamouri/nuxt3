@@ -1,0 +1,225 @@
+@use 'sass:math';
+@use 'sass:map';
+@use 'variables' as *;
+
+// @each $step in $font-sizes {
+// 	@debug $step;
+// 	.text-#{$step} {
+// 		font-size: clamp(
+// 			#{$font-min-size * math.pow($type-scale-sm, $step) * math.div(1, 16) * $font-base-size},
+// 			calc(
+// 				#{get-slope($step, math.pow($type-scale-sm, $step), math.pow($type-scale-lg, $step))} +
+// 					#{get-intercept($step, math.pow($type-scale-sm, $step), math.pow($type-scale-lg, $step))}
+// 			),
+// 			#{$font-max-size * math.pow($type-scale-lg, $step) * math.div(1, 16) * $font-base-size}
+// 		);
+// 	}
+// }
+
+// @each $weight, $value in $font-weights {
+// 	.font-#{$weight} {
+// 		font-weight: #{$value};
+// 	}
+// }
+
+// .grid {
+//   display: grid;
+//   grid-template-columns: 1fr;
+//   gap: var(--gutter, var(--space-s-l));
+
+//   &[data-layout='3'] {
+//     grid-template-columns: repeat(3, 1fr);
+//   }
+// }
+
+// .place-items-center {
+//   place-items: center;
+// }
+
+// .h-6 {
+// 	height: 1.5em;
+// }
+
+// .w-6 {
+// 	width: 1.5em;
+// }
+
+// .h-4 {
+// 	height: 1em;
+// }
+
+// .w-4 {
+// 	width: 1em;
+// }
+
+// .hidden {
+// 	visibility: hidden;
+// 	opacity: 0;
+// 	// display: none;
+// }
+
+// .wr-6 {
+//   width: 1.5rem;
+// }
+
+// .hr-6 {
+//   height: 1.5rem;
+// }
+
+// .container {
+//   max-width: 70rem;
+//   // padding: 0 1.33rem;
+//   margin-inline: auto;
+//   // margin-right: auto;
+//   // position: relative;
+// }
+
+// .full-bleed {
+//   width: 100vw;
+//   margin-left: calc(50% - 50vw);
+
+//   & > * {
+//     max-width: var(--fluid-max-width);
+//     margin-inline: auto;
+//   }
+
+//   p {
+//     max-width: 70ch;
+//   }
+// }
+
+// .btn {
+//   border: 1px solid white;
+//   background: transparent;
+//   color: currentColor;
+//   display: inline-flex;
+//   align-items: center;
+//   font-size: var(--font-size--1);
+//   padding: var(--space-2xs) var(--space-s);
+//   border-radius: var(--border-radius);
+//   gap: var(--space-3xs);
+//   text-transform: uppercase;
+//   letter-spacing: 0.1rem;
+//   text-decoration: none;
+//   cursor: pointer;
+//   border: 1px solid var(--color-primary);
+
+//   // &.primary {
+//   //   &:hover {
+//   //   }
+//   // }
+
+//   &-secondary {
+//     border: 1px solid var(--color-accent-60);
+//   }
+
+//   &-header {
+//     border: 1px solid var(--color-primary-90);
+
+//     svg {
+//       fill: currentColor;
+//     }
+
+//     &:hover {
+//       background-color: var(--color-primary-90);
+//       color: var(--color-primary-10);
+//       // color: transparent;
+//     }
+//   }
+
+//   svg {
+//     // height: 1em;
+//     // width: 1em;
+//     // border: 1px solid green;
+//   }
+// }
+
+// .grid {
+// 	/* first breakpoint*/
+// 	--w1: 600px;
+// 	--n: 3;
+// 	/* second breakpoint*/
+// 	--w2: 400px;
+// 	--m: 2;
+// 	/* third breakpoint*/
+// 	--w3: 200px;
+// 	--p: 1;
+
+// 	display: grid;
+// 	grid-template-columns: repeat(
+// 		auto-fill,
+// 		minmax(
+// 			clamp(
+// 				clamp(
+// 					clamp(100%/ (var(--n) + 1) + 0.1%, (var(--w1) - 100%) * 1000, 100%/ (var(--m) + 1) + 0.1%),
+// 					(var(--w2) - 100%) * 1000,
+// 					100%/ (var(--p) + 1) + 0.1%
+// 				),
+// 				(var(--w3) - 100%) * 1000,
+// 				100%
+// 			),
+// 			1fr
+// 		)
+// 	);
+// 	gap: var(--space-l);
+// }
+
+// .pb-l {
+// 	padding-block: var(--space-l);
+// }
+
+// .pb-l {
+// 	padding-block: var(--space-l);
+// }
+
+// .pb-xl {
+// 	padding-block: var(--space-xl);
+// }
+
+// .shadow-1 {
+// 	box-shadow: 0 0 8px 0 rgba(23 23 26 /5%), 0 2px 8px 0 rgba(23 23 26 /8%);
+// }
+
+// clamp(100%/(N + 1) + 0.1%, (400px - 100vw)*1000, 100%)
+
+// .grid-3 {
+// 	display: grid;
+// 	grid-template-columns: repeat(auto-fit, minmax(clamp(100%/ (3 + 1), (400px - 100vw) * 10000, 100%), 1fr)); /*this */
+// 	gap: 10px;
+// }
+
+// .grid-4 {
+// 	display: grid;
+// 	grid-template-columns: repeat(
+// 		auto-fit,
+// 		minmax(
+// 			clamp(
+// 				clamp(clamp(100%/ (4 + 1), (800px - 100vw) * 10000, 100%/ (3 + 1)), (600px - 100vw) * 10000, 100%/ (2 + 1)),
+// 				(400px - 100vw) * 10000,
+// 				100%/ (0 + 1)
+// 			),
+// 			1fr
+// 		)
+// 	); /*this */
+// 	gap: 10px;
+// }
+
+// .grid-6 {
+// 	display: grid;
+// 	grid-template-columns: repeat(
+// 		auto-fit,
+// 		minmax(
+// 			clamp(
+// 				clamp(
+// 					clamp(clamp(100%/ (6 + 1), (800px - 100vw) * 10000, 100%/ (4 + 1)), (600px - 100vw) * 10000, 100%/ (3 + 1)),
+// 					(400px - 100vw) * 10000,
+// 					100%/ (2 + 1)
+// 				),
+// 				(300px - 100vw) * 10000,
+// 				100%/ (0 + 1)
+// 			),
+// 			1fr
+// 		)
+// 	); /*this */
+// 	gap: 10px;
+// }

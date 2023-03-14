@@ -1,70 +1,74 @@
+<script setup lang="ts">
+useHead({
+  title: useRoute().meta.title ? `ACS | ${useRoute().meta.title}` : '',
+  meta: [
+    {
+      name: 'description',
+      content: useRoute().meta.description ? `${useRoute().meta.description}` : '',
+    },
+    {
+      name: 'robots',
+      content: useRoute().meta.robots ? `${useRoute().meta.robots}` : '',
+    },
+    { 'http-equiv': 'X-UA-Compatible', content: 'ie=edge' },
+  ],
+  bodyAttrs: {
+    class: 'test',
+  },
+})
+const headerRef = ref()
+const mainRef = ref()
+const scrolled = ref()
+const headerWidth = ref()
+const resized = ref()
+
+onMounted(() => {
+  const resizeObserver = new ResizeObserver((entries) => {
+    entries.forEach(async (entry) => {
+      headerWidth.value = +entry.contentRect.width
+      if (headerRef.value) {
+        if (+entry.contentRect.width < +window.getComputedStyle(document.body).getPropertyValue('--nav-breakpoint')) {
+          headerRef.value.classList.add('resized')
+          resized.value = true
+        } else {
+          headerRef.value.classList.remove('resized')
+          resized.value = false
+        }
+      }
+    })
+  })
+  if (headerRef.value) resizeObserver.observe(headerRef.value)
+
+  const options = { root: null, threshold: 0, rootMargin: '10px 0px 0px 0px' }
+  const mainObserver = new IntersectionObserver((entries, mainObserver) => {
+    entries.forEach(async (entry) => {
+      if (headerRef.value) {
+        if (!entry.isIntersecting) {
+          headerRef.value.classList.add('scrolled')
+          scrolled.value = true
+        } else {
+          headerRef.value.classList.remove('scrolled')
+          scrolled.value = false
+        }
+      }
+    })
+  }, options)
+  if (mainRef.value) mainObserver.observe(mainRef.value)
+})
+</script>
+
 <template>
-  <div class="justify-center w-full md:flex">
-    <!-- <SideNav v-if="toggleOpen" :tabs="tabs" :currentRoute="currentRoute" @toggleOpen="toggleOpen = $event" />
-    <div v-else class="p-8">
-      <img @click="toggleOpen = true" src="/menu-open.png" class="h-7" />
-    </div> -->
-    <div class="w-full max-w-5xl max-h-screen px-12 overflow-y-auto pb-9">
+  <div class="" id="main-container">
+    <header class="main-header" :class="{ scrolled }" ref="headerRef">
+      <Header :scrolled="scrolled" :headerWidth="headerWidth" :resized="resized" />
+    </header>
+    <main class="" id="main" tabindex="-1">
+      <div class="observer" ref="mainRef"></div>
+
       <slot />
-    </div>
+    </main>
+    <!-- <Footer /> -->
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      toggleOpen: true,
-      tabs: [
-        {
-          title: 'Server Routes',
-          path: '/server-routes',
-        },
-
-        {
-          title: 'Teleports',
-          path: '/teleports',
-        },
-        {
-          title: 'Middleware',
-          path: '/middleware',
-        },
-        {
-          title: 'Nuxt on the Edge',
-          path: '/edge-functions',
-        },
-        {
-          title: 'Nuxt Loading Indicator',
-          path: '/nuxt-loading-indicator',
-        },
-        // {
-        // 	title: 'Image Optimization',
-        // 	path: '/image'
-        // },
-        {
-          title: 'Nuxt Link',
-          path: '/nuxt-link-component',
-        },
-        {
-          title: 'Nuxt Content',
-          path: '/nuxt-content',
-        },
-        {
-          title: 'Data Fetching',
-          path: '/data-fetching',
-        },
-      ],
-    }
-  },
-  computed: {
-    currentRoute() {
-      return this.$route.path
-    },
-    currentTab() {
-      return this.tabs.find((tab) => {
-        return tab.path === this.currentRoute
-      })
-    },
-  },
-}
-</script>
+<style lang="scss" scoped></style>

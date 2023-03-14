@@ -1,0 +1,100 @@
+@use 'sass:math';
+
+@mixin grid-21($w) {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(clamp(#{calc(math.div(100, 2 + 1) * 1% + 0.1%)}, #{calc(($w * 1px - 100vw) * 10000)}, 100%), 1fr)
+  );
+}
+
+@mixin grid-3($w) {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(clamp(#{calc(math.div(100, 3 + 1) * 1% + 0.1%)}, #{calc(($w * 1px - 100vw) * 10000)}, 100%), 1fr)
+  );
+}
+
+@mixin grid-4($w1, $w2) {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(
+      clamp(
+        clamp(
+          #{calc(math.div(100, 4 + 1) * 1% + 0.1%)},
+          #{calc(($w1 * 1px - 100vw) * 10000)},
+          #{calc(math.div(100, 2 + 1) * 1% + 0.1%)}
+        ),
+        #{calc(($w2 * 1px - 100vw) * 10000)},
+        100%
+      ),
+      1fr
+    )
+  );
+}
+
+@mixin grid-6($w1, $w2, $w3, $w4) {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(
+      clamp(
+        clamp(
+          clamp(
+            clamp(
+              #{calc(math.div(100, 6 + 1) * 1% + 0.1%)},
+              #{calc(($w1 * 1px - 100vw) * 10000)},
+              #{calc(math.div(100, 4 + 1) * 1% + 0.1%)}
+            ),
+            #{calc(($w2 * 1px - 100vw) * 10000)},
+            #{calc(math.div(100, 3 + 1) * 1% + 0.1%)}
+          ),
+          #{calc(($w3 * 1px - 100vw) * 10000)},
+          #{calc(math.div(100, 2 + 1) * 1% + 0.1%)}
+        ),
+        #{calc(($w4 * 1px - 100vw) * 10000)},
+        100%
+      ),
+      1fr
+    )
+  );
+}
+
+@mixin grid-6321($w1, $w2, $w3) {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(
+      clamp(
+        clamp(
+          clamp(
+            #{calc(math.div(100, 6 + 1) * 1% + 0.1%)},
+            #{calc(($w1 * 1px - 100vw) * 10000)},
+            #{calc(math.div(100, 3 + 1) * 1% + 0.1%)}
+          ),
+          #{calc(($w2 * 1px - 100vw) * 10000)},
+          #{calc(math.div(100, 2 + 1) * 1% + 0.1%)}
+        ),
+        #{calc(($w3 * 1px - 100vw) * 10000)},
+        100%
+      ),
+      1fr
+    )
+  );
+}
+
+.place-center {
+  display: grid;
+  place-content: center;
+  // margin-inline: 0 auto;
+  // text-align: center;
+}
+
+.place-end {
+  display: grid;
+  place-content: end;
+  // margin-inline: 0 auto;
+  // text-align: center;
+}

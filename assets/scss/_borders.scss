@@ -1,0 +1,78 @@
+@use 'variables' as *;
+
+:root {
+  --border-radius-s: var(--space-4xs);
+  --border-radius-m: var(--space-3xs);
+}
+
+.b-red {
+  border: 2px solid red !important;
+}
+
+.b-pink {
+  border: 2px solid pink !important;
+}
+
+.b-green {
+  border: 2px solid green !important;
+}
+
+.b-blue {
+  border: 2px solid blue !important;
+}
+
+.br-full {
+  border-radius: 100%;
+}
+
+.border {
+  border: 1px solid transparent;
+
+  &.border-2 {
+    border-width: 2px;
+  }
+
+  &.border-4 {
+    border-width: 4px;
+  }
+
+  &.border-8 {
+    border-width: 8px;
+  }
+}
+
+.border-y {
+  border-block: 1px solid transparent !important;
+}
+
+.border-t {
+  border-block-start: 1px solid transparent !important;
+}
+
+@each $hue, $shades in $colors {
+  @each $shade, $hex in $shades {
+    .border-#{$hue}-#{$shade} {
+      border-color: #{$hex} !important;
+    }
+
+    .border-l-#{$hue}-#{$shade} {
+      border-inline-start-color: #{$hex} !important;
+      border-inline-end: none !important;
+      border-block: none !important;
+    }
+
+    .hover\:border-#{$hue}-#{$shade} {
+      &:hover {
+        border-color: #{$hex};
+      }
+    }
+  }
+}
+
+.br-s {
+  border-radius: var(--border-radius-s);
+}
+
+.br-m {
+  border-radius: var(--border-radius-m);
+}

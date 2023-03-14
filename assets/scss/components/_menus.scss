@@ -1,0 +1,105 @@
+@use 'sass:color';
+nav {
+  &.menuxx {
+    > ul {
+      display: grid;
+      > li {
+        &.dropdown {
+          position: relative;
+          .dropdown__menu {
+            position: absolute;
+            transform-origin: top center;
+            transform: rotateX(-90deg);
+            opacity: 0.3;
+            visibility: hidden;
+            transition: all 300ms ease-out;
+          }
+
+          .dropdown__trigger {
+            cursor: pointer;
+
+            &:after {
+              content: '';
+            }
+          }
+
+          &:hover,
+          &:focus-within {
+            .dropdown__menu {
+              background-color: currentColor;
+              // position: relative;
+              opacity: 1;
+              visibility: visible;
+              transform: rotateX(0);
+            }
+          }
+        }
+      }
+    }
+
+    &.top-nav {
+      padding-inline-end: var(--space-3xl);
+      ul {
+        grid-auto-flow: column;
+        gap: var(--space-2xs);
+      }
+    }
+
+    &.main-nav {
+      ul {
+        grid-auto-flow: column;
+        li {
+          display: grid;
+          place-items: center;
+          a {
+            text-decoration: none;
+            border-block-end: transparent;
+            transition: all 200ms ease;
+
+            &:hover {
+              border-block-end: 1px solid var(--color-primary-80);
+              color: var(--color-primary-80);
+            }
+          }
+        }
+      }
+      &-transition-enter-active,
+      &-transition-leave-active {
+        transition: all 500ms ease-in-out;
+      }
+
+      &-transition-enter-from,
+      &-transition-leave-to {
+        opacity: 0;
+        transform: translateX(-50rem);
+      }
+
+      &-transition-enter-to,
+      &-transition-leave-from {
+        opacity: 1;
+        transform: translateX(0);
+      }
+
+      &.expanded {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 75%;
+        background-color: var(--color-primary-10);
+        ul {
+          grid-auto-flow: row;
+          place-items: flex-start;
+          li {
+            width: 100%;
+            border-block-end: 1px solid var(--color-primary-90);
+            padding-inline-start: var(--space-l);
+            padding-block: var(--space-2xs);
+            a {
+              border-block-end: transparent;
+            }
+          }
+        }
+      }
+    }
+  }
+}

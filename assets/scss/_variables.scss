@@ -1,0 +1,382 @@
+// @use 'sass:math';
+
+// ******** TYPE *********
+$type-scales: (
+  minor-second: 1.067,
+  major-second: 1.125,
+  minor-third: 1.2,
+  major-third: 1.25,
+  perfect-fourth: 1.333,
+  augmented-fourth: 1.414,
+  perfect-fifth: 1.5,
+  golden-ratio: 1.618,
+  major-sixth: 1.667,
+  minor-seventh: 1.778,
+  major-seventh: 1.875,
+  octave: 2,
+);
+
+$font-base-size: 1rem;
+$font-min-size: 14;
+$font-max-size: 20;
+
+$type-scale-sm: map-get(
+  $map: $type-scales,
+  $key: minor-third,
+);
+$type-scale-lg: map-get(
+  $map: $type-scales,
+  $key: augmented-fourth,
+);
+$font-sizes: (-3, -2, -1, 0, 1, 2, 3, 4, 5);
+$font-weights: (
+  thin: 300,
+  normal: 400,
+  semibold: 500,
+  bold: 600,
+  extrabold: 700,
+);
+
+$tracking: (
+  '-3': -0.025ch,
+  '-2': -0.05ch,
+  '-1': -0.075ch,
+  '0': 0,
+  '1': 0.05ch,
+  '2': 0.075ch,
+  '3': 0.1ch,
+  '4': 0.15ch,
+  '5': 0.2ch,
+  '6': 0.25ch,
+  '7': 0.3ch,
+  '8': 0.4ch,
+  '9': 0.5ch,
+);
+
+// ******** SPACING *********
+$spacing-base-steps: (
+  4xs: (
+    min: 0.125,
+    max: 0.125,
+  ),
+  3xs: (
+    min: 0.25,
+    max: 0.25,
+  ),
+  2xs: (
+    min: 0.5,
+    max: 0.5,
+  ),
+  xs: (
+    min: 0.75,
+    max: 0.75,
+  ),
+  s: (
+    min: 1,
+    max: 1,
+  ),
+  m: (
+    min: 1.5,
+    max: 1.5,
+  ),
+  l: (
+    min: 2,
+    max: 2,
+  ),
+  xl: (
+    min: 3,
+    max: 3,
+  ),
+  2xl: (
+    min: 4,
+    max: 4,
+  ),
+  3xl: (
+    min: 6,
+    max: 6,
+  ),
+  4xl: (
+    min: 8,
+    max: 8,
+  ),
+  5xl: (
+    min: 12,
+    max: 12,
+  ),
+);
+$spacing-extra-steps: (
+  'xs-s': (
+    min: 0.75,
+    max: 1,
+  ),
+  's-m': (
+    min: 1,
+    max: 1.5,
+  ),
+  's-l': (
+    min: 1,
+    max: 2,
+  ),
+  's-xl': (
+    min: 1,
+    max: 3,
+  ),
+  'l-2xl': (
+    min: 2,
+    max: 4,
+  ),
+  'm-l': (
+    min: 1.5,
+    max: 2,
+  ),
+  '3xs-3xl': (
+    min: 0.25,
+    max: 6,
+  ),
+);
+
+// ******** SIZING *********
+$size-steps: (
+  '1rem',
+  '1.25rem',
+  '1.5rem',
+  '1.75rem',
+  '2rem',
+  '2.25rem',
+  '2.5rem',
+  '2.75rem',
+  '4rem',
+  '6rem',
+  '8rem',
+  '12rem',
+  '16rem',
+  '18rem',
+  '24rem',
+  '36rem',
+  '48rem',
+  '56rem',
+  '64rem',
+  '72rem',
+  '80rem',
+  '84rem',
+  '96rem'
+);
+
+// ******** SPACING *********
+// $spacing-ste (
+// 	0: 0,
+// 	1: 0.125,
+// 	2: 0.25,
+// 	3: 0.5,
+// 	4: 0.625,
+// 	5: 0.75,
+// 	6: 0.875,
+// 	7: 1,
+// 	8: 1.125,
+// 	9: 1.25,
+// 	10: 1.5,
+// 	11: 1.625,
+// 	12: 1.75,
+// 	13: 1.875,
+// 	14: 2,
+// 	15: 2.125,
+// 	16: 2.25,
+// 	17: 2.5,
+// 	18: 2.625,
+// 	19: 2.75,
+// 	20: 2.875,
+// 	21: 3,
+// 	22: 0,
+// 	23: 3.125,
+// 	24: 3.25,
+// 	25: 3.5,
+// 	26: 3.625,
+// 	27: 3.75,
+// 	28: 3.875,
+// 	29: 4,
+// );
+
+// ******** VIEWPORT *********
+$fluid-min-width: 320;
+$fluid-max-width: 1200;
+
+// ******** COLORS *********
+$colors: (
+  primary: (
+    10: #001a47,
+    20: #002f70,
+    30: #184691,
+    40: #375da9,
+    50: #5075c3,
+    60: #6d91df,
+    70: #88abfc,
+    80: #b3c8ff,
+    90: #dbe4ff,
+    95: #ebeeff,
+    99: #fefaff,
+  ),
+  secondary: (
+    10: #141b2c,
+    20: #293042,
+    30: #404759,
+    40: #575e71,
+    50: #70778b,
+    60: #8990a5,
+    70: #a4abc0,
+    80: #bfc6dc,
+    90: #dbe2f9,
+    95: #edf0ff,
+    99: #fefbff,
+  ),
+  accent: (
+    10: #2a1700,
+    20: #472a00,
+    30: #653e00,
+    40: #855300,
+    50: #a76900,
+    60: #c7821c,
+    70: #e59c37,
+    80: #ffb960,
+    90: #ffddb8,
+    95: #ffeede,
+    99: #fffbff,
+  ),
+  tertiary: (
+    10: #2a132c,
+    20: #412743,
+    30: #593e5a,
+    40: #725573,
+    50: #8c6d8c,
+    60: #a786a7,
+    70: #c3a0c2,
+    80: #dfbbde,
+    90: #fcd7fb,
+    95: #ffebfb,
+    99: #fffbff,
+  ),
+  neutral: (
+    10: #1b1b1f,
+    20: #303034,
+    30: #46464a,
+    40: #5e5e62,
+    50: #77777a,
+    60: #919094,
+    70: #acabaf,
+    80: #c7c6ca,
+    90: #e3e2e6,
+    95: #f2f0f4,
+    99: #fefbff,
+  ),
+  error: (
+    10: #410002,
+    20: #690005,
+    30: #93000a,
+    40: #ba1a1a,
+    50: #de3730,
+    60: #ff5449,
+    70: #ff897d,
+    80: #ffb4ab,
+    90: #ffdad6,
+    95: #ffedea,
+    99: #fffbff,
+  ),
+  success: (
+    10: #002106,
+    20: #00390f,
+    30: #00531a,
+    40: #006e25,
+    50: #008a31,
+    60: #27a644,
+    70: #49c25c,
+    80: #66df75,
+    90: #83fc8e,
+    95: #c7ffc4,
+    99: #f6fff0,
+  ),
+);
+
+// @function get-slope($step, $multiplier-sm, $multiplier-lg) {
+//   $slope: 100 *
+//     math.div(
+//       $font-max-size * $multiplier-lg - $font-min-size * $multiplier-sm,
+//       $fluid-max-width - $fluid-min-width
+//     ) * 1vw;
+//   @return $slope;
+// }
+
+// @function get-intercept($step, $multiplier-sm, $multiplier-lg) {
+//   $intercept: (
+//       math.div(
+//         $font-min-size * $fluid-max-width * $multiplier-sm - $font-max-size *
+//           $fluid-min-width * $multiplier-lg,
+//         $fluid-max-width - $fluid-min-width
+//       )
+//     ) * math.div(1, 16) * $font-base-size;
+//   @return $intercept;
+// }
+
+/* @debug math.pow(10, 2); */
+
+// :root {
+// @each $step in $font-sizes {
+//   --step-#{$step}: clamp(
+//     #{$font-min-size *
+//       math.pow($type-scale-sm, $step) *
+//       math.div(1, 16) *
+//       $font-base-size},
+//     calc(
+//       #{get-slope(
+//           $step,
+//           math.pow($type-scale-sm, $step),
+//           math.pow($type-scale-lg, $step)
+//         )} +
+//         #{get-intercept(
+//           $step,
+//           math.pow($type-scale-sm, $step),
+//           math.pow($type-scale-lg, $step)
+//         )}
+//     ),
+//     #{$font-max-size *
+//       math.pow($type-scale-lg, $step) *
+//       math.div(1, 16) *
+//       $font-base-size}
+//   );
+// }
+
+// @each $step, $range in $space-steps {
+//   --space-#{$step}: clamp(
+//     #{map-get($map: $range, $key: min) *
+//       $font-min-size *
+//       math.div(1, 16) *
+//       $font-base-size},
+//     calc(
+//       #{100 *
+//         (
+//           math.div(
+//             $font-max-size *
+//               map-get($map: $range, $key: max) -
+//               $font-min-size *
+//               map-get($map: $range, $key: min),
+//             $fluid-max-width - $fluid-min-width
+//           )
+//         ) *
+//         1vw} +
+//         #{math.div(
+//           $font-min-size *
+//             $fluid-max-width *
+//             map-get($map: $range, $key: min) -
+//             $font-max-size *
+//             $fluid-min-width *
+//             map-get($map: $range, $key: max),
+//           $fluid-max-width - $fluid-min-width
+//         ) *
+//         math.div(1, 16) *
+//         $font-base-size},
+//       #{map-get($map: $range, $key: max) *
+//         $font-max-size *
+//         math.div(1, 16) *
+//         $font-base-size}
+//     )
+//   );
+// }
+// }

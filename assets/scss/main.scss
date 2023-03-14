@@ -1,0 +1,150 @@
+@use 'borders' as *;
+@use 'colors' as *;
+@use 'effects' as *;
+@use 'flex' as *;
+@use 'grid' as *;
+@use 'layout' as *;
+@use 'spacing' as *;
+@use 'sizing' as *;
+@use 'typography' as *;
+@use 'reset' as *;
+@use 'global' as *;
+@use 'components/components' as *;
+@use 'components/buttons' as *;
+@use 'components/menus' as *;
+@use 'components/main-header' as *;
+@use 'components/forms' as *;
+@use 'interactivity' as *;
+
+/************* MAIN CONTAINER **************/
+
+#main-container {
+  // border: 5px solid red;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    // border: 10px solid green;
+
+    .content-wrapper {
+      // border: 10px solid pink;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      .hero {
+        color: var(--color-primary-99);
+        padding-block-start: var(--space-3xl);
+        padding-block-end: var(--space-4xl);
+      }
+
+      .container-wrapper {
+        flex: 1;
+        // border: 20px solid blue;
+        background: var(--color-primary-99);
+        .container {
+          margin-top: -6rem;
+          background: var(--color-primary-99);
+          padding: var(--space-l);
+          // border: 1px solid red;
+          // display: grid;
+          // place-content: center;
+
+          // bg-white py-xl flex place-cente
+        }
+      }
+    }
+    // border: 5px solid green;
+  }
+}
+
+/************* HEADER **************/
+
+/************* HOME PAGE **************/
+
+.capabilities {
+  .container {
+    margin-top: calc(var(--space-3xl, 8rem) * -1);
+    ul {
+      @include grid-3(var(--nav-breakpoint));
+    }
+  }
+}
+
+.team {
+  background-image: linear-gradient(to bottom, var(--color-primary-10) 0 43%, var(--text-color-primary-30) 43% 100%);
+  color: var(--color-primary-99);
+
+  ul {
+    @include grid-3(var(--nav-breakpoint));
+
+    li {
+      img {
+        width: 6rem;
+      }
+
+      &:nth-of-type(even) {
+        img {
+          width: 7rem;
+        }
+      }
+
+      &:nth-of-type(odd) {
+        margin-block-start: 1rem;
+      }
+    }
+  }
+}
+
+.sales-force {
+  .container {
+    ul {
+      @include grid-6321(1100, 600, 400);
+    }
+  }
+}
+
+/************* PRODUCTS PAGE **************/
+.productsss {
+  button {
+    border: 1px sild red;
+  }
+  .container {
+    margin-top: -6rem;
+  }
+}
+
+// .products-list {
+//   button {
+//     border: 1px sild red;
+//   }
+//   ul {
+//     @include grid-6(1050, 800, 600, 400);
+//     li {
+//       overflow: hidden;
+//       .image {
+//         order: -1;
+//         transform: scale(1.05);
+//       }
+//     }
+//   }
+// }
+
+.product-details {
+  .container {
+    margin-top: calc(var(--space-3xl, 8rem) * -1);
+  }
+}
+
+.secure {
+  .container {
+    @include grid-21(800);
+    gap: var(--space-s);
+  }
+}
+
+/************* CART **************/

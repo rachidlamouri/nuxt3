@@ -1,0 +1,103 @@
+@use 'sass:math';
+@use 'variables' as *;
+
+// Font size curve slope
+@function get-slope($step, $multiplier-sm, $multiplier-lg) {
+  $slope: 100 *
+    math.div($font-max-size * $multiplier-lg - $font-min-size * $multiplier-sm, $fluid-max-width - $fluid-min-width) *
+    1vw;
+  @return $slope;
+}
+
+// Font size curve inrecept
+@function get-intercept($step, $multiplier-sm, $multiplier-lg) {
+  $intercept: (
+      math.div(
+        $font-min-size * $fluid-max-width * $multiplier-sm - $font-max-size * $fluid-min-width * $multiplier-lg,
+        $fluid-max-width - $fluid-min-width
+      )
+    ) * math.div(1, 16) * $font-base-size;
+  @return $intercept;
+}
+
+:root {
+  // ******** TYPOGRAPHY *********
+
+  --font-base: 'proxima-nova', sans-serif;
+  --font-serif: 'proxima-sera', serif;
+
+  @each $step in $font-sizes {
+    --font-size-#{$step}: clamp(
+      #{$font-min-size * math.pow($type-scale-sm, $step) * math.div(1, 16) * $font-base-size},
+      calc(
+        #{get-slope($step, math.pow($type-scale-sm, $step), math.pow($type-scale-lg, $step))} +
+          #{get-intercept($step, math.pow($type-scale-sm, $step), math.pow($type-scale-lg, $step))}
+      ),
+      #{$font-max-size * math.pow($type-scale-lg, $step) * math.div(1, 16) * $font-base-size}
+    );
+  }
+
+  @each $weight, $value in $font-weights {
+    --font-#{$weight}: #{$value};
+  }
+
+  @each $key, $value in $tracking {
+    --tracking-#{$key}: #{$value};
+  }
+}
+
+@each $step in $font-sizes {
+  // @debug #{var(--font-size-#{$step})};
+  .text-#{$step} {
+    font-size: #{var(--font-size-#{$step})} !important;
+  }
+}
+
+@each $weight, $value in $font-weights {
+  //   @debug #{var(--font-#{$weight})};
+  .font-#{$weight} {
+    font-weight: #{var(--font-#{$weight})};
+  }
+}
+
+@each $key, $value in $tracking {
+  // @debug #{$key};
+  // @debug #{var(--tracking-#{$key})};
+  .tracking-#{$key} {
+    letter-spacing: #{var(--tracking-#{$key})};
+  }
+}
+
+.uppercase {
+  text-transform: uppercase !important;
+}
+
+.no-underline {
+  text-decoration: none !important;
+}
+
+.text-left {
+  text-align: left !important;
+}
+.text-center {
+  text-align: center !important;
+}
+.text-right {
+  text-align: right !important;
+}
+.text-justify {
+  text-align: justify !important;
+}
+.text-start {
+  text-align: start !important;
+}
+.text-end {
+  text-align: end !important;
+}
+
+.italic {
+  font-style: italic !important;
+}
+.not-italic {
+  font-style: normal !important;
+}

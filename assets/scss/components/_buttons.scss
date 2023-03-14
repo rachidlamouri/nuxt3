@@ -1,0 +1,190 @@
+@use 'sass:color';
+
+button {
+  &.btn {
+    border: 1px solid transparent;
+    background-color: transparent;
+    color: currentColor;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+    font-size: var(--font-size--1, 1rem);
+    letter-spacing: var(--tracking-1, 0);
+    text-transform: uppercase;
+    padding: 0;
+    border-radius: var(--border-radius-s);
+    gap: var(--space-3xs);
+    border: 2px solid transparent;
+    text-decoration: none;
+    cursor: pointer;
+
+    &.cart {
+      width: 100%;
+    }
+
+    // border: 1px solid var(--color-primary);
+
+    &-primary {
+      background-color: var(--color-primary-10);
+      color: var(--color-primary-99);
+      border: 2px solid var(--color-primary-10);
+      border-radius: var(--border-radius-m);
+      padding: var(--space-2xs) var(--space-m);
+
+      &:hover {
+        background-color: var(--color-primary-99);
+        color: var(--color-primary-10);
+        border: 2px solid var(--color-primary-10);
+      }
+    }
+
+    &-accent {
+      background-color: var(--color-accent-70);
+      color: var(--color-primary-10);
+      border: 2px solid var(--color-primary-10);
+      border-radius: var(--border-radius-m);
+      padding: var(--space-2xs) var(--space-m);
+
+      &:hover {
+        // background-color: var(--color-primary-10);
+        color: var(--color-accent-70);
+        // border: 2px solid var(--color-accent-70);
+      }
+
+      &-text {
+        background-color: transparent;
+        border: none;
+        color: var(--color-accent-60);
+        padding: 0;
+        text-transform: initial;
+      }
+    }
+
+    // &-header {
+    //   border: 1px solid var(--color-primary-90);
+    //   font-weight: normal;
+    //   padding: var(--space-3xs) var(--space-s);
+
+    //   svg {
+    //     fill: currentColor;
+    //   }
+
+    //   &:hover {
+    //     background-color: var(--color-primary-90);
+    //     color: var(--color-primary-10);
+    //     background-color: var(--color-primary-90);
+    //     // color: transparent;
+    //   }
+    // }
+
+    &-product {
+      // border: 1px solid red;
+      font-size: var(--font-size--2);
+      gap: var(--space-4xs);
+
+      letter-spacing: var(--tracking-0, 0);
+      text-transform: capitalize;
+      .material-symbols-outlined {
+        // border: 1px solid red;
+        // transform: scale(0.5);
+        font-size: 0.9rem;
+        // height: 2em;
+        // width: 2em;
+      }
+    }
+
+    svg {
+      // height: 1em;
+      // width: 1em;
+      // border: 1px solid green;
+    }
+  }
+
+  // &.burgerg {
+  //   --burger-bar-position: 7px;
+
+  //   display: grid;
+  //   place-items: center;
+  //   height: 2.2rem;
+  //   width: 2.2rem;
+  //   position: relative;
+  //   // top: var(--space-s, 1rem);
+  //   // right: var(--space-m, 2rem);
+  //   cursor: pointer;
+
+  //   .burger-bar {
+  //     display: block;
+  //     width: 24px;
+  //     height: 3px;
+  //     background-color: red;
+  //     transition: transform 250ms ease-in-out;
+
+  //     &::before,
+  //     &::after {
+  //       content: '';
+  //       position: absolute;
+  //       display: block;
+  //       width: 24px;
+  //       height: 3px;
+  //       background-color: red;
+  //       transition: transform 250ms ease-in-out;
+  //     }
+
+  //     &::before {
+  //       top: var(--burger-bar-position);
+  //     }
+
+  //     &::after {
+  //       bottom: var(--burger-bar-position);
+  //     }
+  //   }
+
+  //   // &[aria-enabled='true'] {
+  //   //   & + nav {
+  //   //     visibility: hidden;
+  //   //     opacity: 0;
+  //   //   }
+  //   // }
+
+  //   // &[aria-enabled='true'] {
+  //   &[aria-expanded='true'] {
+  //     .burger-bar {
+  //       background-color: transparent;
+  //       // border-color: transparent !important;
+  //       transform: rotate(180deg);
+  //       &::before {
+  //         // background-color: red;
+  //         transform: translateY(calc(-1 * var(--burger-bar-position) * 1)) rotate(135deg);
+  //       }
+
+  //       &::after {
+  //         // background-color: red;
+  //         transform: translateY(var(--burger-bar-position)) rotate(45deg);
+  //       }
+  //     }
+
+  //     // & + nav {
+  //     //   visibility: visible;
+  //     //   opacity: 1;
+  //     // }
+  //   }
+
+  //   .burger-enter-active,
+  //   .burger-leave-active {
+  //     transition: all 250ms ease-in-out;
+  //   }
+
+  //   .burger-enter-from,
+  //   .burger-leave-to {
+  //     opacity: 0;
+  //     transform: translateX(100rem);
+  //   }
+
+  //   .burger-enter-to,
+  //   .burger-leave-from {
+  //     opacity: 1;
+  //     transform: translateX(0);
+  //   }
+  // }
+}

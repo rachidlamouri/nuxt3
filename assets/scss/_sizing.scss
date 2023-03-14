@@ -1,0 +1,72 @@
+@use 'variables' as *;
+
+:root {
+  @each $value in $size-steps {
+    // @debug #{index($size-steps, $value)};
+    // @debug #{$value};
+    --sizing-#{index($size-steps, $value)}: #{$value} !important;
+  }
+}
+@each $value in $size-steps {
+  // @debug #{index($size-steps, $value)};
+  // @debug #{$value};
+  .h-#{index($size-steps, $value)} {
+    height: #{$value} !important;
+  }
+
+  .w-#{index($size-steps, $value)} {
+    width: #{$value} !important;
+  }
+
+  .max-w-#{index($size-steps, $value)} {
+    max-width: #{$value} !important;
+  }
+
+  .min-w-#{index($size-steps, $value)} {
+    min-width: #{$value} !important;
+  }
+
+  .max-h-#{index($size-steps, $value)} {
+    max-height: #{$value} !important;
+  }
+
+  .min-h-#{index($size-steps, $value)} {
+    min-height: #{$value} !important;
+  }
+}
+
+.w-0 {
+  width: 0 !important;
+}
+
+.h-0 {
+  height: 0 !important;
+}
+
+.w-auto {
+  width: auto !important;
+}
+
+.w-full {
+  width: 100% !important;
+}
+
+.h-full {
+  height: 100% !important;
+}
+
+.w-fulscreenl {
+  width: 100vw !important;
+}
+
+.min-h-screen {
+  min-height: 100vh !important;
+}
+
+// .w-10 {
+//   width: 10rem;
+// }
+
+// .h-10 {
+//   width: 10rem;
+// }

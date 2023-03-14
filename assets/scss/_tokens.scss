@@ -1,0 +1,88 @@
+@use 'sass:math';
+@use 'sass:map';
+@use 'variables' as *;
+
+:root {
+	// // ******** TYPOGRAPHY *********
+	// @each $step in $font-sizes {
+	// 	--font-size-#{$step}: clamp(
+	// 		#{$font-min-size * math.pow($type-scale-sm, $step) * math.div(1, 16) * $font-base-size},
+	// 		calc(
+	// 			#{get-slope($step, math.pow($type-scale-sm, $step), math.pow($type-scale-lg, $step))} +
+	// 				#{get-intercept($step, math.pow($type-scale-sm, $step), math.pow($type-scale-lg, $step))}
+	// 		),
+	// 		#{$font-max-size * math.pow($type-scale-lg, $step) * math.div(1, 16) * $font-base-size}
+	// 	);
+	// }
+
+	// @each $weight, $value in $font-weights {
+	// 	--font-#{$weight}: #{$value};
+	// }
+
+	// --font-base: 'proxima-nova', sans-serif;
+	// --font-serif: 'proxima-sera', serif;
+
+	// --tracking--3: -0.025ch;
+	// --tracking--2: -0.05ch;
+	// --tracking--1: -0.075ch;
+	// --tracking-0: 0;
+	// --tracking-1: 0.05ch;
+	// --tracking-2: 0.075ch;
+	// --tracking-3: 0.1ch;
+	// --tracking-4: 0.15ch;
+	// --tracking-5: 0.2ch;
+	// --tracking-6: 0.25ch;
+	// --tracking-7: 0.3ch;
+	// --tracking-8: 0.4ch;
+	// --tracking-9: 0.5ch;
+
+	// // ******** COLORS *********
+	// @each $color, $shades in $colors {
+	// 	@each $shade, $hex in $shades {
+	// 		--color-#{$color}-#{$shade}: #{$hex};
+	// 	}
+	// }
+
+	// ******** SPACING *********
+	// @each $step, $range in map.merge($spacing-base-steps, $spacing-extra-steps) {
+	// 	--space-#{$step}: clamp(
+	// 		#{map-get($map: $range, $key: min) * $font-min-size * math.div(1, 16) * $font-base-size},
+	// 		calc(
+	// 			#{100 *
+	// 				(
+	// 					math.div(
+	// 						$font-max-size * map-get($map: $range, $key: max) - $font-min-size * map-get($map: $range, $key: min),
+	// 						$fluid-max-width - $fluid-min-width
+	// 					)
+	// 				) *
+	// 				1vw} +
+	// 				#{math.div(
+	// 					$font-min-size *
+	// 						$fluid-max-width *
+	// 						map-get($map: $range, $key: min) -
+	// 						$font-max-size *
+	// 						$fluid-min-width *
+	// 						map-get($map: $range, $key: max),
+	// 					$fluid-max-width - $fluid-min-width
+	// 				) *
+	// 				math.div(1, 16) *
+	// 				$font-base-size}
+	// 		),
+	// 		#{map-get($map: $range, $key: max) * $font-max-size * math.div(1, 16) * $font-base-size}
+	// 	);
+	// }
+	// --fluid-max-width: #{$fluid-max-width * math.div(1, 16) * 1rem};
+	// --gutter: var(--space-s-m);
+
+	// --nav-breakpoint: 800; // px
+	// --hero-top-padding: 6rem;
+
+	// ******** OTHER *********
+	// --border-radius-s: var(--space-4xs);
+	// --transition-base: 250ms ease;
+	// --transition-movement: 200ms linear;
+	// --transition-fade: 200ms ease;
+	// --transition-bounce: 500ms cubic-dezier(0.5, 0.05, 0.2, 1.5);
+
+	// ******** ANIMATION *********
+}
