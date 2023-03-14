@@ -1,6 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  modules: ['@nuxt/content', '@nuxtjs/tailwindcss'],
+  // modules: ['@nuxt/content', '@nuxtjs/tailwindcss'],
+  modules: ['@nuxt/content', ['./modules/mongodb', {}]],
   vue: {
     compilerOptions: {
       isCustomElement: (tag) => ['UseFetchDemo'].includes(tag),
@@ -17,4 +18,31 @@ export default defineNuxtConfig({
       theme: 'monokai',
     },
   },
-});
+  runtimeConfig: {
+    dbUrl: '',
+    jwtSecret: '',
+    jwtMaxAge: '',
+    jwtSignupTokenMaxAge: '',
+    pwResetTokenExpiresIn: '',
+    sendgridApiKey: '',
+    sendgridSignupTemplateId: '',
+    sendgridPasswordResetTemplateId: '',
+    bbUrl: '',
+
+    // sendgridOrderReceivedTemplateId: '',
+    // algoliaAdminApiKey: '',
+    stripeSk: '',
+    stripeWsk: '',
+
+    public: {
+      apiUrl: '',
+      // siteUrl: '',
+      doSpaceEndpoint: '',
+      // maxFileUploads: '',
+      fromEmail: '',
+      fromName: '',
+      // algoliaApplicationId: '',
+      stripePk: '',
+    },
+  },
+})
