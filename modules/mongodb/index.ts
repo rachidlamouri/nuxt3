@@ -1,5 +1,5 @@
 import { mongoClient } from '../../utils/mongoClient'
-import colors from 'colors'
+// import colors from 'colors'
 import userSchema from '../../server/modelSchemas/user'
 import orderSchema from '../../server/modelSchemas/order'
 import productSchema from '../../server/modelSchemas/product'
@@ -11,7 +11,7 @@ export default async (inlineOptions: any, nuxt: any) => {
     try {
       // Connect to database
       await mongoClient.connect()
-      console.log(colors.magenta.bold(`Database connection succesfull`))
+      console.log(`Database connection succesfull`)
 
       // Fetch all collections
       const collections = await mongoClient.db().listCollections().toArray()
@@ -20,20 +20,20 @@ export default async (inlineOptions: any, nuxt: any) => {
       if (!collections.find((c) => c.name === 'products')) {
         await mongoClient.db().createCollection('products', productSchema)
         await mongoClient.db().collection('products').createIndex({ name: 1 }, { unique: true })
-        console.log(colors.magenta.bold(`Product database creation succesfull`))
+        console.log(`Product database creation succesfull`)
       }
 
       // Create users collection if it does not exist
       if (!collections.find((c) => c.name === 'orders')) {
         await mongoClient.db().createCollection('orders', orderSchema)
-        console.log(colors.magenta.bold(`Orders database creation succesfull`))
+        console.log(`Orders database creation succesfull`)
       }
 
       // Create users collection if it does not exist
       if (!collections.find((c) => c.name === 'users')) {
         await mongoClient.db().createCollection('users', userSchema)
         await mongoClient.db().collection('users').createIndex({ email: 1 }, { unique: true })
-        console.log(colors.magenta.bold(`Users database creation succesfull`))
+        console.log(`Users database creation succesfull`)
       }
 
       // create states collection
@@ -44,7 +44,7 @@ export default async (inlineOptions: any, nuxt: any) => {
         //   .db()
         //   .collection('provences')
         //   .createIndex({ name: 'text', abbreviation: 'text' }, { weights: { name: 2, abbreviation: 1 } })
-        console.log(colors.green.bold(`Provences database creation succesfull`))
+        console.log(`Provences database creation succesfull`)
       }
 
       // create countries collection
@@ -58,10 +58,10 @@ export default async (inlineOptions: any, nuxt: any) => {
         //     { countryName: 'text', threeLetterCountryCode: 'text' },
         //     { weights: { countryName: 2, threeLetterCountryCode: 1 } }
         //   )
-        console.log(colors.magenta.bold(`Countries database creation succesfull`))
+        console.log(`Countries database creation succesfull`)
       }
     } catch (err) {
-      console.log(colors.red.bold(`Mongo DB connection or databases creation Error ${err}`))
+      console.log(`Mongo DB connection or databases creation Error ${err}`)
     }
   })
 }

@@ -1,6 +1,6 @@
 import { H3Event } from 'h3'
 // import { sendError, createError,  } from 'h3'
-import colors from 'colors'
+// import colors from 'colors'
 import { ZodError } from 'zod'
 
 // interface IAppErrorErrors {
@@ -18,7 +18,7 @@ import { ZodError } from 'zod'
 // }
 
 const errorHandler = (event: H3Event, err: any) => {
-  console.log(colors.red.bold(`ERR ${err.name}`), err)
+  console.log(`ERR ${err.name}`, err)
   // console.log(colors.red.bold(`ERR ${err}`), err.name)
   // console.log(colors.red.bold(`ERRCODE ${err}.code`), err.code)
   // console.log('INFO', err.errorInfo

@@ -93,6 +93,9 @@ export default defineNuxtConfig({
     stripeSk: '',
     stripeWsk: '',
 
+    smtpUser: '',
+    smtpPass: '',
+
     public: {
       apiUrl: '',
       // siteUrl: '',
