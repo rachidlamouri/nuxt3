@@ -68,7 +68,20 @@ export default defineNuxtConfig({
     ['./modules/mailer/module', {}],
   ],
   auth: {},
-  mailer: { addModulePlugin: true },
+  mailer: {
+    addModulePlugin: true,
+    smtpHost: 'vps51973.inmotionhosting.com',
+    smtpSecure: true,
+    smtpPort: 465,
+    smtpUser: 'care@abbaslamouri.com',
+    smtpPass: 'R9_^Z~Oiesi1',
+    fromEmail: 'support@yrlus.com',
+    fromName: 'YRL Consulting, LLC',
+    emailRecipients: ['abbaslamouri@yrlus.com'],
+    contactFormEmailSubject: 'New message from yrl-consulting.com site',
+    registrationEmailSubject: 'Please confirm your email address',
+    emailSentMessage: 'Your message was sent successfully',
+  },
   vue: {
     compilerOptions: {
       isCustomElement: (tag) => ['UseFetchDemo'].includes(tag),

@@ -21,10 +21,24 @@ export default defineNuxtModule({
       nuxt: '^3.3.1',
     },
   },
-  defaults: { addModulePlugin: false, mailTransporter: 'sendgrid' },
+  defaults: {
+    addModulePlugin: false,
+    mailTransporter: 'sendgrid',
+    smtpHost: '',
+    smtpSecure: false,
+    smtpPort: 465,
+    smtpUser: '',
+    smtpPass: '',
+    fromEmail: '',
+    fromName: '',
+    emailRecipients: [''],
+    contactFormEmailSubject: '',
+    registrationEmailSubject: '',
+    emailSentMessage: '',
+  },
   hooks: {},
   setup(options, nuxt) {
-    console.log('MMMMMMM', options, options.addModulePlugin === true)
+    // console.log('MMMMMMM', options, options.addModulePlugin === true)
     const { resolve } = createResolver(import.meta.url)
 
     // From the runtime directory
@@ -37,7 +51,7 @@ export default defineNuxtModule({
     // Add an API route
     addServerHandler({
       route: '/api/mailer/sendmail',
-      handler: resolve('./runtime/server/services/sendmail'),
+      handler: resolve('./runtime/server/services/sendContactFormMail'),
     })
 
     // nuxt.hook('autoImports:dirs', (dirs) => {
@@ -48,6 +62,21 @@ export default defineNuxtModule({
 
     nuxt.options.runtimeConfig.mailer = defu(nuxt.options.runtimeConfig.mailer, {
       mailTransporter: options.mailTransporter,
+      smtpHost: options.smtpHost,
+      smtpSecure: options.smtpSecure,
+      smtpPort: options.smtpPort,
+      smtpUser: options.smtpUser,
+      smtpPass: options.smtpPass,
+      fromName: options.fromName,
+      fromEmail: options.fromEmail,
+      emailRecipients: options.emailRecipients,
+      contactFormEmailSubject: options.contactFormEmailSubject,
+      registrationEmailSubject: options.registrationEmailSubject,
+      emailSentMessage: options.emailSentMessage,
+    })
+
+    nuxt.options.runtimeConfig.public.mailer = defu(nuxt.options.runtimeConfig.public.mailer, {
+      emailSentMessage: options.emailSentMessage,
     })
 
     // 5. Create virtual imports for server-side

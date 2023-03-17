@@ -1,6 +1,18 @@
-import contactFormTemplate from './contact-form'
+import contactFormTemplate from './contact'
+import registrationTemplate from './registration'
+import passwordReseTemplate from './password-reset'
+import passwordResetSuccessTemplate from './password-reset-success'
 
-export default (name: string, email: string, phoneNumber: string, subject: string, message: string) => {
+export default (
+  name: string,
+  email: string | null,
+  phoneNumber: string | null,
+  subject: string,
+  message: string | null,
+  emailTemplate: string,
+  url: string | null,
+  token: string | null
+) => {
   return `<!DOCTYPE html>
 <html>
   <head>
@@ -353,7 +365,17 @@ export default (name: string, email: string, phoneNumber: string, subject: strin
                     <tr>
                     <td>
                     <img src="https://acs-space.nyc3.cdn.digitaloceanspaces.com/assets/yrl-logo.png" alt="YRL Consulting Logo"/>
-                    ${contactFormTemplate(name, email, phoneNumber, subject, message)}
+                    ${
+                      emailTemplate === 'contact'
+                        ? contactFormTemplate(name, email, phoneNumber, subject, message)
+                        : emailTemplate === 'regsitration'
+                        ? registrationTemplate(name, subject, url, token)
+                        : emailTemplate === 'password-reset'
+                        ? passwordReseTemplate(name, email, phoneNumber, subject, message)
+                        : emailTemplate === 'password-reset-success'
+                        ? passwordResetSuccessTemplate(name, email, phoneNumber, subject, message)
+                        : ''
+                    }
                     </td>
                     </tr>
                   </table>

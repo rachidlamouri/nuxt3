@@ -2,6 +2,7 @@
 import { useToast } from 'vue-toastification'
 
 const { appErrorMsg, resetForm, parseZodError } = useErrorStore()
+const config = useRuntimeConfig()
 
 const formInputs = reactive({
   name: 'abbas Lamouri',
@@ -14,6 +15,7 @@ const formInputs = reactive({
 const loading = ref<boolean>(false)
 
 const sendMessage = async () => {
+  console.log(config)
   const form = document.querySelector('form')
 
   // Initialize error message, reset form errors & loading
@@ -37,11 +39,7 @@ const sendMessage = async () => {
     console.log(error.value.data)
     return (appErrorMsg.value = error.value.statusMessage || '')
   }
-  if (data.value && Array.isArray(data.value) && data.value.length) {
-    if (data.value[0].statusCode === 202) {
-      useToast().success('Your nesage was sent successfully')
-    }
-  }
+  if (data.value && data.value.statusCode === 202) useToast().success(config.public.mailer.emailSentMessage)
 }
 </script>
 

@@ -1,6 +1,7 @@
 export default (name: string, email: string, phoneNumber: string, subject: string, message: string) => {
   return `
 		<p>New message from yrl-consulting.com site</p>
+		Pasword Reset Success ===========
 		<p>Name: ${name}</p>
 		<p>Email: ${email}</p>
 		<p>Phone: ${phoneNumber}</p>
