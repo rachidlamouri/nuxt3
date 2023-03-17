@@ -4,6 +4,8 @@ import errorHandler from '~/utils/errorHandler'
 import { signupUserSchema } from '~/utils/schema'
 import nodemailer from 'nodemailer'
 
+const config = useRuntimeConfig()
+
 export default defineEventHandler(async (event) => {
   try {
     const body = await readBody(event)
@@ -14,19 +16,21 @@ export default defineEventHandler(async (event) => {
       port: 465,
       secure: true, // use TLS
       auth: {
-        user: 'care@abbaslamouri.com',
-        pass: 'R9_^Z~Oiesi1',
+        user: config.smtpUser,
+        pass: config.smtpPass,
       },
     })
 
     const info = await transporter.sendMail({
       from: 'Care <care@abbaslamouri.com>',
-      to: 'abbaslamouri@yrlus.com',
+      to: ['abbaslamouri@yrlus.com', 'lamouri@genvac.com', 'xyz@genvac.com'],
       subject: 'test',
       html: ' <h1>Hello</h1>',
     })
 
     console.log('message sent, info', info)
+    if (info.rejected)
+      throw new AppError(`The following emails have been rejected ${info.rejected.join(', ')}`, 'emails_rejected', 400)
     // transporter.verify(function (error, success) {
     //   if (error) {
     //     console.log(error)
