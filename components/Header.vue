@@ -2,8 +2,8 @@
 // import { storeToRefs } from 'pinia'
 // import { useCartStore } from '~~/stores/useCartStorexxexx'
 import { useToast } from 'vue-toastification'
-
 import { IAuthenticatedData } from '~/utils/schema'
+const { status, data, signIn, signOut } = useSession()
 
 // import IAuthUser from '~/ToDeelete/types/IAuthUser'
 
@@ -65,22 +65,24 @@ const profile = async () => {
 }
 
 const signout = async () => {
-  const { data, pending, error } = await useFetch('auth/signout', {
-    method: 'POST',
-    baseURL: config.apiUrl,
-    body: {
-      // authToken: useCookie('authToken').value || '',
-    },
-    // params: { action: 'signout' },
-  })
-  if (error.value) throw createError(error.value)
-  console.log(data.value)
-  if (data.value) {
-    const authToken = useCookie('authToken', { maxAge: 1 })
-    authToken.value = ''
-    authUser.value.name = ''
-    authUser.value.authToken = ''
-  }
+  // const { data, pending, error } = await useFetch('auth/signout', {
+  //   method: 'POST',
+  //   baseURL: config.apiUrl,
+  //   body: {
+  //     // authToken: useCookie('authToken').value || '',
+  //   },
+  //   // params: { action: 'signout' },
+  // })
+  // if (error.value) throw createError(error.value)
+  // console.log(data.value)
+  // if (data.value) {
+  //   const authToken = useCookie('authToken', { maxAge: 1 })
+  //   authToken.value = ''
+  //   authUser.value.name = ''
+  //   authUser.value.authToken = ''
+  // }
+
+  await signOut({ redirect: false })
 
   useToast().success('You are logged out')
 
@@ -147,6 +149,17 @@ watch(
   },
   { deep: true }
 )
+
+watch(
+  status,
+  async (newVal, oldVal) => {
+    console.log(oldVal)
+    console.log(newVal)
+    // if (props.duration != 0) {
+    // if (props.show) {
+  },
+  { deep: true }
+)
 </script>
 
 <template>
@@ -162,7 +175,7 @@ watch(
           </Nuxt-link>
         </div>
         <nav class="top-nav" aria-label="Top Navigation">
-          <!-- {{ authUser }}----{{ isAuthenticated }} -->
+          <!-- {{ authUser }}----{{ status !=='authenticated' }} -->
           <ul class="" role="list">
             <li>
               <button class="btn" @click="$emit('showSearchModal')">
@@ -180,19 +193,23 @@ watch(
                 ref="dropdownTriggerRef"
               >
                 <Icon class="" name="mdi:account-outline" />
-                <span class="btn-text" v-if="!isAuthenticated">Sign in / Create account</span>
-                <span class="btn-text" v-if="isAuthenticated">Welcome {{ (authUser as IAuthenticatedData).name }}</span>
+                <span class="btn-text" v-if="status === 'authenticated' && data && data.user"
+                  >Welcome {{ data.user.name }}</span
+                >
+                <span class="btn-text" v-else>Sign in / Create account</span>
               </button>
               <ul class="dropdown__menu" id="auth-dropdown" role="list" ref="dropdownMenuRef">
                 <li class="">
-                  <button class="btn" ref="signinBtnRef" @click.prevent="signin" v-if="!isAuthenticated">Signin</button>
-                  <button class="btn" ref="signinBtnRef" @click="profile" v-else>profile</button>
+                  <button class="btn" ref="signinBtnRef" @click="profile" v-if="status === 'authenticated'">
+                    profile
+                  </button>
+                  <button class="btn" ref="signinBtnRef" @click.prevent="signin" v-else>Signin</button>
                 </li>
                 <li class="">
-                  <button class="btn" ref="signupBtnRef" @click.prevent="signup" v-if="!isAuthenticated">
-                    Create account
+                  <button class="btn" ref="signoutBtnRef" @click="signout" v-if="status === 'authenticated'">
+                    Signout
                   </button>
-                  <button class="btn" ref="signoutBtnRef" @click="signout" v-else>Signout</button>
+                  <button class="btn" ref="signupBtnRef" @click.prevent="signup" v-else>Create account</button>
                 </li>
               </ul>
             </li>

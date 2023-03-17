@@ -60,7 +60,7 @@ export default defineNuxtConfig({
     },
   },
   css: ['@/assets/scss/main.scss'],
-  modules: ['@nuxt/content', ['./modules/mongodb', {}], 'nuxt-icon'],
+  modules: ['@nuxt/content', 'nuxt-icon', '@sidebase/nuxt-auth', ['./modules/mongodb', {}], ['./modules/mailer', {}]],
   vue: {
     compilerOptions: {
       isCustomElement: (tag) => ['UseFetchDemo'].includes(tag),

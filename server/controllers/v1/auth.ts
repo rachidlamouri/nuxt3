@@ -142,9 +142,15 @@ const refreshSignupToken = async (event: H3Event) => {
     const payload = await readBody(event)
     console.log(payload)
     const user = await findByEmail(payload.email)
-    if (!user) throw new AppError('We are not able to find a user with this email.  Please try a different email', 400)
-    const token = await getSinedJwtToken(user._id, Number(config.jwtSignupTokenMaxAge) * 60 * 60 * 24)
-    sendRegistrationVerifyEmail(event.node.req.headers.origin!, payload.name, payload.email, token)
+    if (!user)
+      throw new AppError(
+        'We are not able to find a user with this email.  Please try a different email',
+        'user_by_email_not-Found',
+        400
+      )
+    // const token = await getSinedJwtToken(user._id, Number(config.jwtSignupTokenMaxAge) * 60 * 60 * 24)
+    sendRegistrationVerifyEmail(event.node.req.headers.origin!, payload.name, payload.email, user._id)
+
     return true
     // {
     //   userId: user._id,

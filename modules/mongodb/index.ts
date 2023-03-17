@@ -1,10 +1,10 @@
-import { mongoClient } from '../utils/mongoClient'
+import { mongoClient } from '../../utils/mongoClient'
 import colors from 'colors'
-import userSchema from '../server/modelSchemas/user'
-import orderSchema from '../server/modelSchemas/order'
-import productSchema from '../server/modelSchemas/product'
-import provenceSchema from '../server/modelSchemas/provence'
-import countrySchema from '../server/modelSchemas/country'
+import userSchema from '../../server/modelSchemas/user'
+import orderSchema from '../../server/modelSchemas/order'
+import productSchema from '../../server/modelSchemas/product'
+import provenceSchema from '../../server/modelSchemas/provence'
+import countrySchema from '../../server/modelSchemas/country'
 
 export default async (inlineOptions: any, nuxt: any) => {
   nuxt.hook('listen', async (nuxt: any) => {
@@ -65,5 +65,3 @@ export default async (inlineOptions: any, nuxt: any) => {
     }
   })
 }
-
-

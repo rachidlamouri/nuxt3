@@ -60,6 +60,7 @@ const salesDirectors = ref([
 
 <template>
   <div class="content-wrapper">
+    <!-- IIIIII{{ useHello }} -->
     <Hero class="hero" bgImage="/images/home-page-hero.jpg">
       <template #panorama>
         <p class="panorama">Aviation Component Solutions</p>

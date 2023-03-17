@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { type PropType } from 'vue'
 // import { useCartStore } from '~~/stores/useCartStorexxexx'
-import { Iuser } from '~/utils/types'
+// import { Iuser } from '~/utils/types'
 const props = defineProps({
   user: {
     type: Object as PropType<Iuser>,

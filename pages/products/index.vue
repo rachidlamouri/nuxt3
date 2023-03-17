@@ -3,8 +3,12 @@
 definePageMeta({
   title: 'Products',
   description: 'ACS Products',
+  // auth: true,
   // layout: 'home',
+  // middleware: 'auth',
 })
+
+// definePageMeta({ auth: false })
 
 // const { fetchAll } = useHttp()
 const config = useRuntimeConfig()
@@ -42,10 +46,12 @@ const productParams = computed(() => {
 })
 
 const fetchProducts = async () => {
+  const headers = useRequestHeaders(['cookie']) as HeadersInit
   const { data, error } = await useFetch(`products/list`, {
     method: 'GET',
     baseURL: config.apiUrl,
     params: productParams,
+    headers: { ...headers, authorization: 'jwtsession' },
   })
   if (error.value) throw createError(error.value)
   // console.log(data.value)
