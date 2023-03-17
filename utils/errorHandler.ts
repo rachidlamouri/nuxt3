@@ -17,7 +17,7 @@ import { ZodError } from 'zod'
 //   err: Error
 // }
 
-const errorHandler = (event: H3Event, err: any) => {
+export default (event: H3Event, err: any) => {
   console.log(`ERR ${err.name}`, err)
   // console.log(colors.red.bold(`ERR ${err}`), err.name)
   // console.log(colors.red.bold(`ERRCODE ${err}.code`), err.code)
@@ -154,4 +154,4 @@ const errorHandler = (event: H3Event, err: any) => {
   )
 }
 
-export default errorHandler
+// export default errorHandler

@@ -60,7 +60,15 @@ export default defineNuxtConfig({
     },
   },
   css: ['@/assets/scss/main.scss'],
-  modules: ['@nuxt/content', 'nuxt-icon', '@sidebase/nuxt-auth', ['./modules/mongodb', {}], ['./modules/mailer', {}]],
+  modules: [
+    '@nuxt/content',
+    'nuxt-icon',
+    '@sidebase/nuxt-auth',
+    ['./modules/mongodb', {}],
+    ['./modules/mailer/module', {}],
+  ],
+  auth: {},
+  mailer: { addModulePlugin: true },
   vue: {
     compilerOptions: {
       isCustomElement: (tag) => ['UseFetchDemo'].includes(tag),
@@ -95,6 +103,9 @@ export default defineNuxtConfig({
 
     smtpUser: '',
     smtpPass: '',
+    smtpHost: '',
+    smtpPort: '',
+    smtpSecure: '',
 
     public: {
       apiUrl: '',

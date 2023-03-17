@@ -139,6 +139,7 @@ const navItems = ref([
   { routeName: 'products', title: 'Our parts' },
   { routeName: 'index', title: 'Capabilities' },
   { routeName: 'index', title: 'News' },
+  { routeName: 'contact', title: 'Contact Us' },
   { routeName: 'about', title: 'About Us' },
 ])
 

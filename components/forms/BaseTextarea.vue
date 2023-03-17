@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 const props = defineProps({
   modelValue: {
     type: [String, Number],
@@ -8,28 +8,31 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  hint: {
+    type: String,
+    default: '',
+  },
 })
 defineEmits(['update:modelValue'])
+</script>
 
-// const fieldType = ref(props.type)
+<script lang="ts">
+export default {
+  inheritAttrs: false,
+}
 </script>
 
 <template>
-  <label class="">
-    <span class="label"> {{ label }}</span>
-    <div class="inner">
-      <textarea
-        class="input"
-        :type="$attrs.type"
-        :readonly="$attrs.readonly"
-        :disabled="$attrs.disabled"
-        placeholder=""
-        :value="modelValue"
-        @input="$emit('update:modelValue', $event.target.value)"
-        >{{ modelValue }}</textarea
-      >
-    </div>
-  </label>
+  <div class="input textarea">
+    <label :v-for="$attrs.id" v-if="label">{{ label }}</label>
+    <textarea
+      v-bind="$attrs"
+      :value="modelValue"
+      @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
+    />
+
+    <p class="hint">{{ hint }}</p>
+  </div>
 </template>
 
 <style scoped></style>

@@ -9,6 +9,7 @@ const config = useRuntimeConfig()
 export default defineEventHandler(async (event) => {
   try {
     const body = await readBody(event)
+
     const { insertedId } = await createUser(body)
 
     const transporter = nodemailer.createTransport({

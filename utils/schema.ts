@@ -200,3 +200,25 @@ export const cartSchema = z.object({
   passwordChangeDate: z.date(),
 })
 export type ICart = z.infer<typeof userSchema>
+
+// Registration user schema
+export const contactFormSchema = z.object({
+  name: z
+    .string({
+      invalid_type_error: 'Name must be a string',
+    })
+    .nonempty({ message: 'Name is required' })
+    .max(40, { message: 'Name must be 4 or fewer characters' }),
+  email: z
+    .string({
+      invalid_type_error: 'Name must be a string',
+    })
+    .email({ message: 'Please enter a valid email' }),
+  phone: z.string().optional(),
+  message: z
+    .string({
+      invalid_type_error: 'Name must be a string',
+    })
+    .nonempty({ message: 'Name is required' })
+    .max(40, { message: 'Name must be 4 or fewer characters' }),
+})

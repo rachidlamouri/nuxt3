@@ -1,8 +1,7 @@
 import errorHandler from '~~/utils/errorHandler'
 import { findByEmail, checkPassword, getSinedJwtToken, setAuthCookie } from '~/server/controllers/v1/auth'
 
-import { getServerSession } from '#auth'
-import { getToken } from '#auth'
+import { getServerSession, getToken } from '#auth'
 
 const config = useRuntimeConfig()
 

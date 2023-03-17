@@ -86,8 +86,11 @@ form {
     }
   }
 
-  textarea {
-    &.input {
+  .textarea {
+    textarea {
+      // display: block;
+      width: 100%;
+      rows: 10;
       resize: vertical;
     }
   }
