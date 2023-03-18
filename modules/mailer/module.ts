@@ -22,10 +22,10 @@ export default defineNuxtModule({
     },
   },
   defaults: {
-    addModulePlugin: false,
+    addModulePlugin: true,
     mailTransporter: 'sendgrid',
     smtpHost: '',
-    smtpSecure: false,
+    smtpSecure: true,
     smtpPort: 465,
     smtpUser: '',
     smtpPass: '',
@@ -40,6 +40,7 @@ export default defineNuxtModule({
   hooks: {},
   setup(options, nuxt) {
     // console.log('MMMMMMM', options, options.addModulePlugin === true)
+    console.log('MMMMMMM', options, options.addModulePlugin === true)
     const { resolve } = createResolver(import.meta.url)
 
     // From the runtime directory

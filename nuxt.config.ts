@@ -69,20 +69,10 @@ export default defineNuxtConfig({
   ],
   auth: {},
   mailer: {
-    addModulePlugin: true,
-    smtpHost: 'vps51973.inmotionhosting.com',
-    smtpSecure: true,
-    smtpPort: 465,
-    smtpUser: 'care@abbaslamouri.com',
-    smtpPass: 'R9_^Z~Oiesi1',
-    fromEmail: 'support@yrlus.com',
-    fromName: 'YRL Consulting, LLC',
-    contactFormEmailRecipients: ['abbaslamouri@yrlus.com'],
+    emailSentMessage: 'Your message was sent successfully',
     contactFormEmailSubject: 'New message from yrl-consulting.com site',
     registrationEmailSubject: 'Please confirm your email address',
     forgotPasswordEmailSubject: 'Your password reset token (valid for 1 hour)',
-
-    emailSentMessage: 'Your message was sent successfully',
   },
   vue: {
     compilerOptions: {
@@ -116,19 +106,21 @@ export default defineNuxtConfig({
     stripeSk: '',
     stripeWsk: '',
 
-    smtpUser: '',
-    smtpPass: '',
     smtpHost: '',
     smtpPort: '',
-    smtpSecure: '',
+    smtpUser: '',
+    smtpPass: '',
+    // smtpSecure: '',
+    fromEmail: '',
+    fromName: '',
+    contactFormEmailRecipients: '',
 
     public: {
       apiUrl: '',
       // siteUrl: '',
       doSpaceEndpoint: '',
       // maxFileUploads: '',
-      fromEmail: '',
-      fromName: '',
+
       // algoliaApplicationId: '',
       stripePk: '',
     },
