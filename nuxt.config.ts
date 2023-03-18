@@ -101,6 +101,8 @@ export default defineNuxtConfig({
     sendgridPasswordResetTemplateId: '',
     bbUrl: '',
 
+    authSecret: '',
+
     // sendgridOrderReceivedTemplateId: '',
     // algoliaAdminApiKey: '',
     stripeSk: '',

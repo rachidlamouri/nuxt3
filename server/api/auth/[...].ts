@@ -7,9 +7,11 @@ import AppError from '~/utils/AppError'
 import errorHandler from '~/utils/errorHandler'
 import { authenticatedDataSchema } from '~/utils/schema'
 
+const config = useRuntimeConfig()
+
 export default NuxtAuthHandler({
   // A secret string you define, to ensure correct encryption
-  secret: 'your-secret-here',
+  secret: config.authSecret,
   pages: {
     // Change the default behavior to use `/login` as the path for the sign-in page
     signIn: '/auth/signin',
