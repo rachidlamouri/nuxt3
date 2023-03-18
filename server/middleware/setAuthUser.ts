@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
       event.node.req.headers.authorization &&
       event.node.req.headers.authorization === 'jwtsession'
     ) {
-      console.log('SESSION', session)
+      // console.log('SESSION', session)
       console.log('Token', token)
       const authToken = token && token.email ? token.email : ''
       const user = await findByEmail(authToken)

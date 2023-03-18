@@ -2,6 +2,7 @@
 // that means you do not need to add `@nuxt/kit` to your project's dependencies
 import defu from 'defu'
 import { resolve, join } from 'pathe'
+import { RuntimeConfig } from '@nuxt/schema'
 
 import {
   createResolver,
@@ -24,20 +25,20 @@ export default defineNuxtModule({
   defaults: {
     addModulePlugin: true,
     mailTransporter: 'sendgrid',
-    smtpHost: '',
-    smtpSecure: true,
-    smtpPort: 465,
-    smtpUser: '',
-    smtpPass: '',
-    fromEmail: '',
-    fromName: '',
-    contactFormEmailRecipients: [''],
+    // smtpHost: '',
+    // smtpSecure: true,
+    // smtpPort: 465,
+    // smtpUser: '',
+    // smtpPass: '',
+    // fromEmail: '',
+    // fromName: '',
+    // contactFormEmailRecipients: [''],
     contactFormEmailSubject: '',
     registrationEmailSubject: '',
     forgotPasswordEmailSubject: '',
     emailSentMessage: '',
   },
-  hooks: {},
+
   setup(options, nuxt) {
     // console.log('MMMMMMM', options, options.addModulePlugin === true)
     console.log('MMMMMMM', options, options.addModulePlugin === true)
@@ -62,21 +63,25 @@ export default defineNuxtModule({
     // })
     addImportsDir(resolve('runtime/composables'))
 
-    nuxt.options.runtimeConfig.mailer = defu(nuxt.options.runtimeConfig.mailer, {
-      mailTransporter: options.mailTransporter,
-      smtpHost: options.smtpHost,
-      smtpSecure: options.smtpSecure,
-      smtpPort: options.smtpPort,
-      smtpUser: options.smtpUser,
-      smtpPass: options.smtpPass,
-      fromName: options.fromName,
-      fromEmail: options.fromEmail,
-      contactFormEmailRecipients: options.contactFormEmailRecipients,
-      contactFormEmailSubject: options.contactFormEmailSubject,
-      registrationEmailSubject: options.registrationEmailSubject,
-      forgotPasswordEmailSubject: options.forgotPasswordEmailSubject,
-      emailSentMessage: options.emailSentMessage,
-    })
+    nuxt.options.runtimeConfig.mailer = defu(
+      nuxt.options.runtimeConfig.mailer,
+      options
+      //   {
+      //   mailTransporter: options.mailTransporter,
+      //   // smtpHost: options.smtpHost,
+      //   // smtpSecure: options.smtpSecure,
+      //   // smtpPort: options.smtpPort,
+      //   // smtpUser: options.smtpUser,
+      //   // smtpPass: options.smtpPass,
+      //   // fromName: options.fromName,
+      //   // fromEmail: options.fromEmail,
+      //   // contactFormEmailRecipients: options.contactFormEmailRecipients,
+      //   contactFormEmailSubject: options.contactFormEmailSubject,
+      //   registrationEmailSubject: options.registrationEmailSubject,
+      //   forgotPasswordEmailSubject: options.forgotPasswordEmailSubject,
+      //   // emailSentMessage: options.emailSentMessage,
+      // }
+    )
 
     nuxt.options.runtimeConfig.public.mailer = defu(nuxt.options.runtimeConfig.public.mailer, {
       emailSentMessage: options.emailSentMessage,

@@ -1,7 +1,7 @@
 import { aggregateFetch } from '~/server/controllers/v1/factory'
 
 export default defineEventHandler(async (event) => {
-  console.log('YYYYYYY', event.context.auth)
+  // console.log('YYYYYYY', event.context.auth)
   const lookup = [
     {
       $lookup: {

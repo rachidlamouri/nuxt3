@@ -66,6 +66,7 @@ export default defineNuxtConfig({
     '@sidebase/nuxt-auth',
     ['./modules/mongodb', {}],
     ['./modules/mailer/module', {}],
+    ['./modules/session/module', {}],
   ],
   auth: {},
   mailer: {
@@ -74,6 +75,7 @@ export default defineNuxtConfig({
     registrationEmailSubject: 'Please confirm your email address',
     forgotPasswordEmailSubject: 'Your password reset token (valid for 1 hour)',
   },
+  session: {},
   vue: {
     compilerOptions: {
       isCustomElement: (tag) => ['UseFetchDemo'].includes(tag),
