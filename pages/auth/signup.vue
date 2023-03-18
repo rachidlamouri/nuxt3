@@ -53,7 +53,6 @@ const signup = async () => {
       })
     else return (newUser.value = true)
   } else {
-    console.log('here')
     // Validte form input
     const result = signupUserSchema.safeParse(formInputs)
     if (!result.success) {

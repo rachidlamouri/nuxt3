@@ -18,7 +18,10 @@ import { ZodError } from 'zod'
 // }
 
 export default (event: H3Event, err: any) => {
-  console.log(`ERR ${err.name}`, err)
+  console.log(`ERR --${err.name}--`)
+  console.log(err.message)
+  console.log(Array.isArray(err.response.body.errors))
+  console.log(err.name == 'Bad Request')
   // console.log(colors.red.bold(`ERR ${err}`), err.name)
   // console.log(colors.red.bold(`ERRCODE ${err}.code`), err.code)
   // console.log('INFO', err.errorInfo
@@ -77,6 +80,17 @@ export default (event: H3Event, err: any) => {
     message = 'Invalid token.'
     statusCode = err.statusCode
     errorCode = 'invalidToken'
+  }
+
+  // Sendgrid email error
+  if (err.message == 'Bad Request' && Array.isArray(err.response.body.errors)) {
+    console.log('PPPP', err.name)
+    statusCode = err.code
+    errorCode = 'emailDeliveryFailed'
+    message = ' '
+    for (const item of err.response.body.errors) {
+      message += `${item.message} `
+    }
   }
 
   if (err.name === 'MongoServerError' || err.name === 'MongoBulkWriteError') {

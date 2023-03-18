@@ -77,9 +77,11 @@ export default defineNuxtConfig({
     smtpPass: 'R9_^Z~Oiesi1',
     fromEmail: 'support@yrlus.com',
     fromName: 'YRL Consulting, LLC',
-    emailRecipients: ['abbaslamouri@yrlus.com'],
+    contactFormEmailRecipients: ['abbaslamouri@yrlus.com'],
     contactFormEmailSubject: 'New message from yrl-consulting.com site',
     registrationEmailSubject: 'Please confirm your email address',
+    forgotPasswordEmailSubject: 'Your password reset token (valid for 1 hour)',
+
     emailSentMessage: 'Your message was sent successfully',
   },
   vue: {

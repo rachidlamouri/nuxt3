@@ -31,9 +31,10 @@ export default defineNuxtModule({
     smtpPass: '',
     fromEmail: '',
     fromName: '',
-    emailRecipients: [''],
+    contactFormEmailRecipients: [''],
     contactFormEmailSubject: '',
     registrationEmailSubject: '',
+    forgotPasswordEmailSubject: '',
     emailSentMessage: '',
   },
   hooks: {},
@@ -69,9 +70,10 @@ export default defineNuxtModule({
       smtpPass: options.smtpPass,
       fromName: options.fromName,
       fromEmail: options.fromEmail,
-      emailRecipients: options.emailRecipients,
+      contactFormEmailRecipients: options.contactFormEmailRecipients,
       contactFormEmailSubject: options.contactFormEmailSubject,
       registrationEmailSubject: options.registrationEmailSubject,
+      forgotPasswordEmailSubject: options.forgotPasswordEmailSubject,
       emailSentMessage: options.emailSentMessage,
     })
 

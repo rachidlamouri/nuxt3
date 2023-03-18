@@ -4,8 +4,7 @@ import AppError from '~/utils/AppError'
 
 const config = useRuntimeConfig()
 
-export const sendMail = async (html: string) => {
-  const emailRecipients = config.mailer.emailRecipients.filter((r) => r)
+export const sendMail = async (emailRecipients: string[], html: string) => {
   let info
   if (config.mailer.mailTransporter === 'nodemailer') {
     const transporter = nodemailer.createTransport({
@@ -19,7 +18,7 @@ export const sendMail = async (html: string) => {
     })
 
     info = await transporter.sendMail({
-      from: 'Care <care@abbaslamouri.com>',
+      from: config.mailer.fromEmail,
       to: emailRecipients,
       subject: config.mailer.contactFormEmailSubject,
       html,
