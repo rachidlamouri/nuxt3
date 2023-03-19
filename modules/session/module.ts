@@ -69,17 +69,17 @@ export default defineNuxtModule({
     logger.info('Setting up sessions...')
 
     // 2. Set public and private runtime configuration
-    // const options = defu(, defaults)
-    // const publicConfig = { session: }
-    // if (moduleOptions.api.methods && moduleOptions.api.methods.length > 0) {
-    //   options.api.methods = moduleOptions.api.methods
-    // } else {
-    //   options.api.methods = ['patch', 'delete', 'get', 'post']
-    // }
     nuxt.options.runtimeConfig.session = defu(nuxt.options.runtimeConfig.session, moduleOptions)
     nuxt.options.runtimeConfig.public.session = defu(nuxt.options.runtimeConfig.public.session, {
       api: moduleOptions.api,
     })
+
+    // setup unstorage
+    // nuxt.options.nitro.virtual = defu(nuxt.options.nitro.virtual, {
+    //   '#session-driver': `export { default } from '${
+    //     builtinDrivers[options.session.storageOptions.driver]
+    //   }'`
+    // })
 
     // 3. Locate runtime directory and transpile module
     const { resolve } = createResolver(import.meta.url)
@@ -91,18 +91,6 @@ export default defineNuxtModule({
       handler,
     }
     nuxt.options.serverHandlers.unshift(serverHandler)
-
-    // // Setup unstorage
-    // nuxt.options.nitro.virtual = defu(nuxt.options.nitro.virtual, {
-    //   '#session-driver': `export { default } from '${builtinDrivers[options.session.storageOptions.driver]}'`,
-    // })
-
-    // From the runtime directory
-    // addComponent({
-    //   name: 'ContactFormxxxxx', // name of the component to be used in vue templates
-    //   // export: 'Products', // (optional) if the component is a named (rather than default) export
-    //   filePath: resolve('runtime/components/ContactForm.vue'),
-    // })
 
     // 5. Register desired session API endpoints
     if (moduleOptions.api.isEnabled) {
@@ -122,58 +110,6 @@ export default defineNuxtModule({
 
     logger.success('Session setup complete')
 
-    // addServerHandler({
-    //   route: '/api/mailer/sendmail',
-    //   handler: resolve('./runtime/server/services/sendContactFormMail'),
-    // })
-
-    // nuxt.hook('autoImports:dirs', (dirs) => {
-    //   console.log(dirs)
-    //   dirs.push(resolve(__dirname, './runtime/composables'))
-    // })
-    // addImportsDir(resolve('runtime/composables'))
-
-    // // 5. Create virtual imports for server-side
-    // nuxt.hook('nitro:config', (nitroConfig) => {
-    //   nitroConfig.alias = nitroConfig.alias || {}
-
-    //   // Inline module runtime in Nitro bundle
-    //   nitroConfig.externals = defu(typeof nitroConfig.externals === 'object' ? nitroConfig.externals : {}, {
-    //     inline: [resolve('./runtime')],
-    //   })
-    //   nitroConfig.alias['#mailer'] = resolve('./runtime/server/services')
-    // })
-
-    // addTemplate({
-    //   filename: 'types/mailer.d.ts',
-    //   getContents: () =>
-    //     [
-    //       "declare module  '#mailer' {",
-    //       `  const sendMail: typeof import('${resolve('./runtime/server/services')}').sendMail`,
-    //       // `  const getToken: typeof import('${resolve('./runtime/server/services')}').getToken`,
-    //       // `  const NuxtAuthHandler: typeof import('${resolve('./runtime/server/services')}').NuxtAuthHandler`,
-    //       '}',
-    //     ].join('\n'),
-    // })
-
-    // nuxt.hook('prepare:types', (moduleOptions) => {
-    //   moduleOptions.references.push({ path: resolve(nuxt.options.buildDir, 'types/mailer.d.ts') })
-    // })
-    // addImports({
-    //   name: 'useHello', // name of the composable to be used
-    //   as: 'useHello',
-    //   from: resolver.resolve('runtime/composables/useHello'), // path of composable
-    // })
-
-    // nuxt.hook('nitro:config', (nitroConfig) => {
-    //   nitroConfig.alias = nitroConfig.alias || {}
-    //   nitroConfig.externals = defu(typeof nitroConfig.externals === 'object' ? nitroConfig.externals : {}, {
-    //     inline: [resolve('./runtime')],
-    //   })
-    //   nitroConfig.alias['#useHello'] = resolve('./runtime/composables')
-    // })
-
-    //Add plugin for initial load
     addPlugin(resolve('./runtime/plugin'))
   },
 })
