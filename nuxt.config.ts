@@ -119,6 +119,9 @@ export default defineNuxtConfig({
     fromName: '',
     contactFormEmailRecipients: '',
 
+    abstractApiKey: '',
+    abstractApiUrl: '',
+
     public: {
       apiUrl: '',
       // siteUrl: '',

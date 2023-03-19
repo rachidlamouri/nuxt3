@@ -25,8 +25,8 @@ const defaults = {
     expiryInSeconds: 60 * 10,
     idLength: 64,
     storePrefix: 'sessions',
-    cookieSameSite: 'lax',
-    cookieSecure: true,
+    cookieSameSite: 'strict',
+    cookieSecure: false,
     cookieHttpOnly: true,
     storageOptions: {
       driver: 'memory',

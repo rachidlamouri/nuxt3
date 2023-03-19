@@ -1,7 +1,11 @@
 import { H3Event } from 'h3'
 import { createStorage } from 'unstorage'
+
 import memoryDriver from 'unstorage/drivers/memory'
 import mongodbDriver from 'unstorage/drivers/mongodb'
+import { mongoClient, ObjectId } from '~/utils/mongoClient'
+
+import { createUser, getSinedJwtToken } from '~/server/controllers/v1/auth'
 
 const config = useRuntimeConfig()
 
@@ -9,9 +13,11 @@ const storage = createStorage({
   driver: mongodbDriver({
     connectionString: useRuntimeConfig().dbUrl,
     databaseName: 'acs',
-    collectionName: 'session',
+    collectionName: 'sessions',
   }),
 })
+
+// console.log('SSSSSS', storage)
 
 // import { dropStorageSession, getStorageSession, setStorageSession } from './storage'
 
@@ -25,6 +31,8 @@ const safeSetCookie = (event: H3Event, name: string, value: string, createdAt: D
   const expirationDate = sessionOptions.expiryInSeconds
     ? new Date(createdAt.getTime() + sessionOptions.expiryInSeconds * 1000)
     : undefined
+
+  // console.log('here')
 
   setCookie(event, name, value, {
     // Set cookie expiration date to now + expiryInSeconds
@@ -41,26 +49,35 @@ const safeSetCookie = (event: H3Event, name: string, value: string, createdAt: D
 }
 
 const newSession = async (event: H3Event) => {
-  console.log('IP', event.node.req.headers)
+  const abstractRes = (await $fetch(`${config.abstractApiUrl}/?api_key=${config.abstractApiKey}`)) || { ip_address: '' }
+  console.log('IPPPPPPPPPPP', 'abstractRes')
+
+  const jwtToken = await getSinedJwtToken('', Number(config.jwtSignupTokenMaxAge))
+  // console.log('IPPPPPPPPPPP', jwtToken)
 
   const sessionOptions = config.session.session
   // const now = new Date()
 
   // (Re-)Set cookie
   // const sessionId = nanoid(sessionOptions.idLength)
-  // safeSetCookie(event, SESSION_COOKIE_NAME, sessionId, now)
+  safeSetCookie(event, SESSION_COOKIE_NAME, jwtToken, new Date())
+
+  // console.log('There')
 
   // Store session data in storage
   const session = {
-    // id: sessionId,
-    createdAtnow: new Date(),
-    ip: event.node.req.socket.remoteAddress,
-    // ip: sessionOptions.ipPinning ? await getHashedIpAddress(event) : undefined,
+    // jwtToken,
+    ip: abstractRes.ip_address,
+    // ip: '',
+    // city: abstractRes.city || '',
   }
 
-  console.log('STORAGE', await storage.setItem(SESSION_COOKIE_NAME, session))
-  console.log('HAS', await storage.hasItem(SESSION_COOKIE_NAME))
-  console.log('GET', await storage.getItem(SESSION_COOKIE_NAME))
+  await storage.setItem(jwtToken, session)
+  // console.log('HAS', await storage.hasItem(SESSION_COOKIE_NAME))
+  // console.log('GET', await storage.getItem(SESSION_COOKIE_NAME))
+
+  event.context.sessionId = jwtToken
+  event.context.session = session
 
   return session
 }
@@ -71,7 +88,14 @@ export default eventHandler(async (event: H3Event) => {
   // 1. Does the sessionId cookie exist on the request?
   const clientSessionId = parseCookies(event).sessionId
   console.log('client Cookie', clientSessionId)
-  if (!clientSessionId) return newSession(event)
+  console.log('event cookie', event.context)
+  if (event.node.req.headers.sessionauthorization) console.log('event ', event.node.req.headers)
+  // const clientSession = await mongoClient.db().collection('sessions').findOne({ key: clientSessionId })
+  // console.log('US', clientSession)
+  // if (!clientSessionId && !event.context.sessionId && clientSessionId !== event.context.sessionId && !clientSession)
+  //   newSession(event)
+
+  // if (!clientSessionId)
 
   // }
   // const eventSessionId = event.context.sessionId

@@ -51,7 +51,7 @@ const fetchProducts = async () => {
     method: 'GET',
     baseURL: config.apiUrl,
     params: productParams,
-    headers: { ...headers, authorization: 'jwtsession' },
+    headers: { ...headers, sessionAuthorization: 'jwtsession' },
   })
   if (error.value) throw createError(error.value)
   // console.log(data.value)
