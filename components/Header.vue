@@ -3,7 +3,9 @@
 // import { useCartStore } from '~~/stores/useCartStorexxexx'
 import { useToast } from 'vue-toastification'
 import { IAuthenticatedData } from '~/utils/schema'
-const { status, data, signIn, signOut } = useSession()
+// const { status, data, signIn, signOut } = useSession()
+
+const status = false
 
 // import IAuthUser from '~/ToDeelete/types/IAuthUser'
 
@@ -82,7 +84,7 @@ const signout = async () => {
   //   authUser.value.authToken = ''
   // }
 
-  await signOut({ redirect: false })
+  // await signOut({ redirect: false })
 
   useToast().success('You are logged out')
 
@@ -151,16 +153,16 @@ watch(
   { deep: true }
 )
 
-watch(
-  status,
-  async (newVal, oldVal) => {
-    console.log(oldVal)
-    console.log(newVal)
-    // if (props.duration != 0) {
-    // if (props.show) {
-  },
-  { deep: true }
-)
+// watch(
+//   status,
+//   async (newVal, oldVal) => {
+//     console.log(oldVal)
+//     console.log(newVal)
+//     // if (props.duration != 0) {
+//     // if (props.show) {
+//   },
+//   { deep: true }
+// )
 </script>
 
 <template>

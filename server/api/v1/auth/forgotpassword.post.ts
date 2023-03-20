@@ -9,10 +9,10 @@ import {
   hasPasswordChanged,
 } from '~/server/controllers/v1/auth'
 import AppError from '~/utils/AppError'
-import { sendMail } from '#mailer'
+// import { sendMail } from '#mailer'
 
-import emailTemplateBase from '~/modules/mailer/runtime/email-templates/base'
-import emailTemplatePasswordReset from '~~/modules/mailer/runtime/email-templates/forgot-password'
+// import emailTemplateBase from '~/modules/mailer/runtime/email-templates/base'
+// import emailTemplatePasswordReset from '~~/modules/mailer/runtime/email-templates/forgot-password'
 
 // import errorHandler from '~/utils/errorHandler'
 
@@ -39,11 +39,11 @@ export default defineEventHandler(async (event) => {
     console.log('US', updatedUser)
     if (!updatedUser) throw new AppError('We cannot update document', 'user_updare_failed', 404)
 
-    const emailBody = emailTemplatePasswordReset(user.name, event.node.req.headers.origin!, resetToken)
-    const info = await sendMail([user.email], emailTemplateBase(emailBody))
-    if (info && Array.isArray(info) && info.length && info[0].statusCode === 202)
-      return { statusCode: info[0].statusCode }
-    return { statusCode: null }
+    // const emailBody = emailTemplatePasswordReset(user.name, event.node.req.headers.origin!, resetToken)
+    // const info = await sendMail([user.email], emailTemplateBase(emailBody))
+    // if (info && Array.isArray(info) && info.length && info[0].statusCode === 202)
+    //   return { statusCode: info[0].statusCode }
+    // return { statusCode: null }
 
     // await new sendEmail({
     //   name: user.name as string,

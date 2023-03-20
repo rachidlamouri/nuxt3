@@ -63,19 +63,21 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/content',
     'nuxt-icon',
-    '@sidebase/nuxt-auth',
+    // '@sidebase/nuxt-auth',
     ['./modules/mongodb', {}],
-    ['./modules/mailer/module', {}],
-    ['./modules/session/module', {}],
+    ['./modules/nuxt-auth/module', {}],
+    // ['./modules/mailer/module', {}],
+    // ['./modules/session/module', {}],
   ],
-  auth: {},
-  mailer: {
-    emailSentMessage: 'Your message was sent successfully',
-    contactFormEmailSubject: 'New message from yrl-consulting.com site',
-    registrationEmailSubject: 'Please confirm your email address',
-    forgotPasswordEmailSubject: 'Your password reset token (valid for 1 hour)',
-  },
-  session: {},
+  nuxtAuth: {},
+  // auth: {},
+  // mailer: {
+  //   emailSentMessage: 'Your message was sent successfully',
+  //   contactFormEmailSubject: 'New message from yrl-consulting.com site',
+  //   registrationEmailSubject: 'Please confirm your email address',
+  //   forgotPasswordEmailSubject: 'Your password reset token (valid for 1 hour)',
+  // },
+  // session: {},
   vue: {
     compilerOptions: {
       isCustomElement: (tag) => ['UseFetchDemo'].includes(tag),
