@@ -9,10 +9,19 @@ import {
 } from '@nuxt/kit'
 import { defu } from 'defu'
 import { joinURL } from 'ufo'
+import { randomBytes } from 'crypto'
 
 const PACKAGE_NAME = 'nuxt-auth'
 const defaults = {
   isEnabled: true,
+  csrfCookieKey: 'csrf',
+  csrfCookieOpts: {
+    path: '/',
+    httpOnly: true,
+    sameSite: 'strict',
+  },
+  csrfEncryptAlgorithm: 'aes-256-cbc',
+  encryptSecret: randomBytes(22).toString('base64'),
   origin: process.env.NODE_ENV === 'production' ? 'https://yrl-consulting.com' : 'http://localhost:3000',
   basePath: '/api/auth',
   trustHost: false,
@@ -58,9 +67,7 @@ export default defineNuxtModule({
     logger.info(`Auth API location is \`${url}\``)
 
     nuxt.options.runtimeConfig = nuxt.options.runtimeConfig || { public: {} }
-    nuxt.options.runtimeConfig.auth = defu(nuxt.options.runtimeConfig.auth, {
-      ...options,
-    })
+    nuxt.options.runtimeConfig.auth = defu(nuxt.options.runtimeConfig.auth, options)
 
     // 3. Locate runtime directory
     const { resolve } = createResolver(import.meta.url)
@@ -75,6 +82,9 @@ export default defineNuxtModule({
       // export: 'Products', // (optional) if the component is a named (rather than default) export
       filePath: resolve('runtime/components/signin.vue'),
     })
+
+    // Add middleware
+    addServerHandler({ handler: resolve('runtime/server/middleware/csrf') })
 
     // Add an API route
     addServerHandler({

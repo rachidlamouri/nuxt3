@@ -8,6 +8,7 @@ const config = useRuntimeConfig()
 export default defineEventHandler(async (event) => {
   try {
     const { email, password } = await readBody(event)
+    console.log('???????', event.node.res._csrftoken)
     console.log('JJJJJJJJJJ')
     return 'Hi There'
     if (!email || !password) throw new AppError('Email and Password are required', 'email_and_or_password_missing', 404)

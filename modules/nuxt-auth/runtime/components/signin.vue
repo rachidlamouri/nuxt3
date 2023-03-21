@@ -12,6 +12,9 @@ import { IAuthenticatedData, signinUserSchema } from '~/utils/schema'
 // console.log(status.value)
 // console.log(data.value)
 
+// const csrf = useCsrf()
+// console.log(csrf)
+
 // const { authUser } = useAuthStore()
 // const { appErrorMsg, resetForm, parseZodError } = useErrorStore()
 const config = useRuntimeConfig()
@@ -25,9 +28,12 @@ const loading = ref<boolean>(false)
 
 // appErrorMsg.value = ''
 
+// console.log('starting login2', useNuxtApp().ssrContext)
+
 const signin = async () => {
   const form = document.querySelector('form')
-  console.log('starting login')
+  // console.log('starting login')
+  // console.log('starting login2', useNuxtApp().ssrContext)
 
   // Initialize error message, reset form errors & loading
   // appErrorMsg.value = ''
@@ -47,6 +53,7 @@ const signin = async () => {
     body: { ...formInputs },
   })
   loading.value = false
+
   // if (error.value) {
   //   // console.log(error.value.data.errorCode)
   //   if (error.value.data.data.errorCode === 'email_not_verified') return (emailNotVerified.value = true)
