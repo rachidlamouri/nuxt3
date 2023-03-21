@@ -32,6 +32,9 @@ const loading = ref<boolean>(false)
 
 const signin = async () => {
   const form = document.querySelector('form')
+  const { data, pending, error, refresh } = useCsrfFetch('/api/v2/auth/signin', { method: 'POST', body: { id: 1 } })
+  // console.log(useNuxtApp())
+  // useCsrf()
   // console.log('starting login')
   // console.log('starting login2', useNuxtApp().ssrContext)
 
@@ -47,19 +50,19 @@ const signin = async () => {
   //   return parseZodError(form!, result.error.issues || [])
   // }
 
-  const { data, error } = await useFetch('/api/v2/auth/signin', {
-    // baseURL: config.apiUrl,
-    method: 'POST',
-    body: { ...formInputs },
-  })
-  loading.value = false
+  // const { data, error } = await useFetch('/api/v2/auth/signin', {
+  //   // baseURL: config.apiUrl,
+  //   method: 'POST',
+  //   body: { ...formInputs },
+  // })
+  // loading.value = false
 
   // if (error.value) {
   //   // console.log(error.value.data.errorCode)
   //   if (error.value.data.data.errorCode === 'email_not_verified') return (emailNotVerified.value = true)
   //   else return (appErrorMsg.value = error.value.statusMessage || '')
   // }
-  console.log(data.value)
+  // console.log(data.value)
   // await signIn('credentials', { username: formInputs.email, password: formInputs.password, callbackUrl: '/products' })
   // const authToken = useCookie('authToken', { maxAge: (data.value as IAuthenticatedData).cookieMaxAge || 1 })
   // authToken.value = (data.value as IAuthenticatedData).authToken || ''

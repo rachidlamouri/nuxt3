@@ -20,6 +20,7 @@ const defaults = {
     httpOnly: true,
     sameSite: 'strict',
   },
+  methodsToProtect: ['GET', 'POST', 'PUT', 'PATCH'],
   csrfEncryptAlgorithm: 'aes-256-cbc',
   encryptSecret: randomBytes(22).toString('base64'),
   origin: process.env.NODE_ENV === 'production' ? 'https://yrl-consulting.com' : 'http://localhost:3000',

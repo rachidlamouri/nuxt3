@@ -14,8 +14,22 @@ const createCsrf = (secret: string): string => {
   return `${iv.toString('base64')}:${encrypted}`
 }
 
+const verifyCsrf = (secret: string, token: string): boolean => {
+  const [iv, encrypted] = token.split(':')
+  if (!iv || !encrypted) {
+    return false
+  }
+  let decrypted
+  try {
+    const decipher = createDecipheriv(csrfConfig.encryptAlgorithm, secrefBuffer, Buffer.from(iv, 'base64'))
+    decrypted = decipher.update(encrypted, 'base64', 'utf-8') + decipher.final('utf-8')
+  } catch (error) {
+    return false
+  }
+  return decrypted === secret
+}
+
 export default defineEventHandler((event) => {
-  console.log('RES', event.node.res._csrftoken)
   // if (process.server) console.log('MIddleware', event.node.req.method)
   let secret = getCookie(event, config.auth.csrfCookieKey)
   console.log('SECRET', secret)
@@ -27,5 +41,7 @@ export default defineEventHandler((event) => {
     value: createCsrf(secret),
     enumerable: true,
   })
-  console.log('RES1', event.node.res._csrftoken)
+  // useNuxtApp().payload.csrfToken = '1234'
+  // console.log('!!!!!!!!!!!!', useNuxtApp().payload.csrfToken)
+  console.log('Header', getHeader(event, 'csrf-token'))
 })

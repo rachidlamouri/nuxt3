@@ -7,22 +7,22 @@ const config = useRuntimeConfig()
 
 export default defineEventHandler(async (event) => {
   try {
-    const { email, password } = await readBody(event)
-    console.log('???????', event.node.res._csrftoken)
+    // const { email, password } = await readBody(event)
+    console.log('???????', getRequestHeader())
     console.log('JJJJJJJJJJ')
     return 'Hi There'
-    if (!email || !password) throw new AppError('Email and Password are required', 'email_and_or_password_missing', 404)
-    const user = await findByEmail(email as string)
-    if (!user) throw new AppError('Invalid login credentials', 'invalid-credentials', 401)
-    if (!(await checkPassword(password, user.password)))
-      throw new AppError('Invalid email or password', 'invalid_password', 401)
-    if (!user.verified) throw new AppError('You have not verified your email', 'email_not_verified', 401)
-    const cookieMaxAge = Number(config.jwtMaxAge) * 1 * 60 * 60
-    const authToken = await getSinedJwtToken(user._id, cookieMaxAge)
-    setAuthCookie(event, 'authToken', authToken, cookieMaxAge)
-    return authenticatedDataSchema.parse({ authToken, cookieMaxAge, ...user })
+    // if (!email || !password) throw new AppError('Email and Password are required', 'email_and_or_password_missing', 404)
+    // const user = await findByEmail(email as string)
+    // if (!user) throw new AppError('Invalid login credentials', 'invalid-credentials', 401)
+    // if (!(await checkPassword(password, user.password)))
+    //   throw new AppError('Invalid email or password', 'invalid_password', 401)
+    // if (!user.verified) throw new AppError('You have not verified your email', 'email_not_verified', 401)
+    // const cookieMaxAge = Number(config.jwtMaxAge) * 1 * 60 * 60
+    // const authToken = await getSinedJwtToken(user._id, cookieMaxAge)
+    // setAuthCookie(event, 'authToken', authToken, cookieMaxAge)
+    // return authenticatedDataSchema.parse({ authToken, cookieMaxAge, ...user })
   } catch (err) {
-    console.log('kkkkkkkkk')
+    // console.log('kkkkkkkkk')
 
     return errorHandler(event, err)
   }
