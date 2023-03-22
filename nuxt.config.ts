@@ -63,13 +63,18 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/content',
     'nuxt-icon',
+    // 'nuxt-csurf',
     // '@sidebase/nuxt-auth',
-    ['./modules/mongodb', {}],
-    ['./modules/nuxt-auth/module', {}],
+
+    './modules/mongodb',
+    ['./modules/yrl-nuxt-auth/module', {}],
+
+    // './modules/nuxt-csrf/module',
     // ['./modules/mailer/module', {}],
     // ['./modules/session/module', {}],
   ],
-  nuxtAuth: {},
+  // nuxtCsrf: {},
+  yrlNuxtAuth: {},
   // auth: {},
   // mailer: {
   //   emailSentMessage: 'Your message was sent successfully',
@@ -78,6 +83,21 @@ export default defineNuxtConfig({
   //   forgotPasswordEmailSubject: 'Your password reset token (valid for 1 hour)',
   // },
   // session: {},
+  // csurf: {
+  //   // optional
+  //   https: false, // default true if in production
+  //   cookieKey: '', // "__Host-csrf" if https is true otherwise just "csrf"
+  //   cookie: {
+  //     // CookieSerializeOptions from unjs/cookie-es
+  //     path: '/',
+  //     httpOnly: true,
+  //     sameSite: 'strict',
+  //   },
+  //   methodsToProtect: ['POST', 'PUT', 'PATCH'], // the request methods we want CSRF protection for
+  //   excludedUrls: ['/nocsrf1', ['/nocsrf2/.*', 'i']], // any URLs we want to exclude from CSRF protection
+  //   // encryptSecret: '',
+  //   encryptAlgorithm: 'aes-256-cbc',
+  // },
   vue: {
     compilerOptions: {
       isCustomElement: (tag) => ['UseFetchDemo'].includes(tag),

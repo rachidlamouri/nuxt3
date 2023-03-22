@@ -177,6 +177,7 @@ watch(
             <img class="" src="/images/logo-color.svg" alt="ACS Logo Home Page" v-else />
           </Nuxt-link>
         </div>
+        {{ useNuxtApp().payload.csrfToken }}
         <nav class="top-nav" aria-label="Top Navigation">
           <!-- {{ authUser }}----{{ status !=='authenticated' }} -->
           <ul class="" role="list">

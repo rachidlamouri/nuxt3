@@ -14,59 +14,65 @@
 
 // const { authUser } = useAuthStore()
 // const { appErrorMsg, resetForm, parseZodError } = useErrorStore()
-// const config = useRuntimeConfig()
+const config = useRuntimeConfig()
 
-// const formInputs = reactive({
-//   email: 'abbaslamouri@yrlus.com',
-//   password: 'Foo1234#',
-// })
-// const loading = ref<boolean>(false)
+const formInputs = reactive({
+  email: 'abbaslamouri@yrlus.com',
+  password: 'Foo1234#',
+})
+const loading = ref<boolean>(false)
 // const emailNotVerified = ref<boolean>(false)
 
 // appErrorMsg.value = ''
 
-// const signin = async () => {
-//   const form = document.querySelector('form')
+const signin = async () => {
+  const form = document.querySelector('form')
+  console.log(useCsrf())
+  // Initialize error message, reset form errors & loading
+  // appErrorMsg.value = ''
+  // resetForm(form!)
+  // loading.value = true
 
-//   // Initialize error message, reset form errors & loading
-//   appErrorMsg.value = ''
-//   resetForm(form!)
-//   loading.value = true
+  // Validate form inputs
+  // const result = signinUserSchema.safeParse(formInputs)
+  // if (!result.success) {
+  //   loading.value = false
+  //   return parseZodError(form!, result.error.issues || [])
+  // }
 
-//   // Validate form inputs
-//   const result = signinUserSchema.safeParse(formInputs)
-//   if (!result.success) {
-//     loading.value = false
-//     return parseZodError(form!, result.error.issues || [])
-//   }
+  const { data, pending, error, refresh } = await useCsrfFetch('/api/v1/auth/signin', {
+    method: 'POST',
+    body: { id: 1 },
+  })
+  console.log(data.value)
+  console.log(error.value.data)
+  // const { data, error } = await useFetch('auth/signin', {
+  //   baseURL: config.apiUrl,
+  //   method: 'POST',
+  //   body: { ...formInputs },
+  // })
+  // loading.value = false
+  // // if (error.value) {
+  //   // console.log(error.value.data.errorCode)
+  //   if (error.value.data.data.errorCode === 'email_not_verified') return (emailNotVerified.value = true)
+  //   else return (appErrorMsg.value = error.value.statusMessage || '')
+  // }
+  // console.log(data.value)
+  // await signIn('credentials', { username: formInputs.email, password: formInputs.password, callbackUrl: '/products' })
+  // const authToken = useCookie('authToken', { maxAge: (data.value as IAuthenticatedData).cookieMaxAge || 1 })
+  // authToken.value = (data.value as IAuthenticatedData).authToken || ''
+  // authUser.value.name = (data.value as IAuthenticatedData).name || ''
+  // authUser.value.authToken = (data.value as IAuthenticatedData).authToken || ''
+  // if (status.value === 'authenticated') useToast().success('You are logged in')
 
-//   // const { data, error } = await useFetch('auth/signin', {
-//   //   baseURL: config.apiUrl,
-//   //   method: 'POST',
-//   //   body: { ...formInputs },
-//   // })
-//   // loading.value = false
-//   // if (error.value) {
-//   //   // console.log(error.value.data.errorCode)
-//   //   if (error.value.data.data.errorCode === 'email_not_verified') return (emailNotVerified.value = true)
-//   //   else return (appErrorMsg.value = error.value.statusMessage || '')
-//   // }
-//   // console.log(data.value)
-//   // await signIn('credentials', { username: formInputs.email, password: formInputs.password, callbackUrl: '/products' })
-//   // const authToken = useCookie('authToken', { maxAge: (data.value as IAuthenticatedData).cookieMaxAge || 1 })
-//   // authToken.value = (data.value as IAuthenticatedData).authToken || ''
-//   // authUser.value.name = (data.value as IAuthenticatedData).name || ''
-//   // authUser.value.authToken = (data.value as IAuthenticatedData).authToken || ''
-//   // if (status.value === 'authenticated') useToast().success('You are logged in')
+  // return navigateTo({
+  //   path: '/products',
+  // })
+}
 
-//   // return navigateTo({
-//   //   path: '/products',
-//   // })
-// }
-
-// const forgotPassword = async () => {
-//   await navigateTo({ path: '/auth/forgotpassword', query: {} })
-// }
+const forgotPassword = async () => {
+  await navigateTo({ path: '/auth/forgotpassword', query: {} })
+}
 </script>
 
 <template>
@@ -78,10 +84,10 @@
     </Hero>
     <article class="container-wrapper">
       <div class="container | flow">
-        <SignIn />
-        <!-- <form class="" @submit.prevent="signin" novalidate>
+        <!-- <SignIn /> -->
+        <form class="" @submit.prevent="signin" novalidate>
           <ErrorMsg />
-          <div class="error-msg" v-if="emailNotVerified">
+          <!-- <div class="error-msg" v-if="emailNotVerified">
             <p>This email has nor been verified</p>
             <div class="link">
               <span class="">Clich here to get a new verification token </span>
@@ -89,7 +95,7 @@
                 <span class="">Signin</span>
               </button>
             </div>
-          </div>
+          </div> -->
           <FormsBaseInput type="email" label="Email" id="email" v-model="formInputs.email" required />
           <FormsPasswordInput type="password" label="Passsword" id="password" required v-model="formInputs.password" />
           <FormsBaseCheckbox id="remember-me" label="Remmeber me" />
@@ -104,7 +110,7 @@
             <span class="">Don't have an account? </span>
             <NuxtLink class="btn btn-accent btn-accent-text" :to="{ name: 'auth-signup' }"> Signup </NuxtLink>
           </div>
-        </form> -->
+        </form>
       </div>
     </article>
   </div>

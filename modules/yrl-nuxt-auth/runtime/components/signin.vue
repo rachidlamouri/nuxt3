@@ -32,7 +32,7 @@ const loading = ref<boolean>(false)
 
 const signin = async () => {
   const form = document.querySelector('form')
-  const { data, pending, error, refresh } = useCsrfFetch('/api/v2/auth/signin', { method: 'POST', body: { id: 1 } })
+  // const { data, pending, error, refresh } = useCsrfFetch('/api/v2/auth/signin', { method: 'POST', body: { id: 1 } })
   // console.log(useNuxtApp())
   // useCsrf()
   // console.log('starting login')

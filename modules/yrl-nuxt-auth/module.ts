@@ -6,12 +6,13 @@ import {
   addPlugin,
   addComponent,
   addServerHandler,
+  addImports,
 } from '@nuxt/kit'
 import { defu } from 'defu'
 import { joinURL } from 'ufo'
 import { randomBytes } from 'crypto'
 
-const PACKAGE_NAME = 'nuxt-auth'
+const PACKAGE_NAME = 'yrl-nuxt-auth'
 const defaults = {
   isEnabled: true,
   csrfCookieKey: 'csrf',
@@ -19,8 +20,10 @@ const defaults = {
     path: '/',
     httpOnly: true,
     sameSite: 'strict',
+    secure: false,
   },
-  methodsToProtect: ['GET', 'POST', 'PUT', 'PATCH'],
+  methodsToProtect: ['POST', 'PUT', 'PATCH'],
+  excludedUrls: [],
   csrfEncryptAlgorithm: 'aes-256-cbc',
   encryptSecret: randomBytes(22).toString('base64'),
   origin: process.env.NODE_ENV === 'production' ? 'https://yrl-consulting.com' : 'http://localhost:3000',
@@ -40,7 +43,7 @@ const defaults = {
 export default defineNuxtModule({
   meta: {
     name: PACKAGE_NAME,
-    configKey: 'nuxtAuth',
+    configKey: 'yrlNuxtAuth',
     compatibility: {
       nuxt: '^3.3.1',
     },
@@ -51,49 +54,55 @@ export default defineNuxtModule({
   setup(moduleOptions, nuxt) {
     // Initializelogger
     const logger = useLogger(PACKAGE_NAME)
-    // logger.info(nuxt)
 
     // 1. Check if module should be enabled at all
     if (!moduleOptions.isEnabled) {
       logger.info(`Skipping ${PACKAGE_NAME} setup, as module is disabled`)
       return
     }
-    logger.info('`nuxt-auth` setup starting')
+    logger.info(`${PACKAGE_NAME} module setup starting`)
 
     // 2. Set up runtime configuration
-    const options = defu(moduleOptions, {
-      ...defaults,
-    })
+    const options = defu(moduleOptions, defaults)
     const url = joinURL(options.origin ?? '', options.basePath)
-    logger.info(`Auth API location is \`${url}\``)
+    logger.info(`YRL Nuxt Auth API location is \`${url}\``)
 
     nuxt.options.runtimeConfig = nuxt.options.runtimeConfig || { public: {} }
-    nuxt.options.runtimeConfig.auth = defu(nuxt.options.runtimeConfig.auth, options)
+    nuxt.options.runtimeConfig.yrlNuxtAuth = defu(nuxt.options.runtimeConfig.yrlNuxtAuth, options)
 
     // 3. Locate runtime directory
     const { resolve } = createResolver(import.meta.url)
 
     // 4. Add nuxt-auth composables
-    const composables = resolve('./runtime/composables')
-    addImportsDir(composables)
+    addImportsDir(resolve('./runtime/composables'))
 
-    // Add signin component
-    addComponent({
-      name: 'SignIn', // name of the component to be used in vue templates
-      // export: 'Products', // (optional) if the component is a named (rather than default) export
-      filePath: resolve('runtime/components/signin.vue'),
-    })
-
-    // Add middleware
-    addServerHandler({ handler: resolve('runtime/server/middleware/csrf') })
-
-    // Add an API route
-    addServerHandler({
-      route: '/api/v2/auth/signin',
-      handler: resolve('./runtime/server/api/v1/signin'),
-    })
+    // 5. Add CSRF middleware
+    addServerHandler({ handler: resolve('runtime/server/middleware') })
 
     // 6. Add plugin for initial load
     addPlugin(resolve('./runtime/plugin'))
+
+    // Add an API route
+    // addServerHandler({
+    //   route: '/api/v2/auth/signin',
+    //   handler: resolve('./runtime/server/api/v1/signin'),
+    // })
+
+    // Add signin component
+    // addComponent({
+    //   name: 'SignIn', // name of the component to be used in vue templates
+    //   // export: 'Products', // (optional) if the component is a named (rather than default) export
+    //   filePath: resolve('runtime/components/signin.vue'),
+    // })
+
+    // nuxt.options.build.transpile.push(resolve('runtime'))
+
+    // addImports(
+    //   ['useCsrf', 'useCsrfFetch'].map((key) => ({
+    //     name: key,
+    //     as: key,
+    //     from: resolve('runtime/composables'),
+    //   }))
+    // )
   },
 })
