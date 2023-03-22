@@ -12,9 +12,31 @@ import { defu } from 'defu'
 import { joinURL } from 'ufo'
 import { randomBytes } from 'crypto'
 
-const PACKAGE_NAME = 'yrl-nuxt-auth'
+const PACKAGE_NAME = 'nuxt-auth'
 const defaults = {
   isEnabled: true,
+  session: {
+    cookieName: 'sessionId',
+    expiryInSeconds: 60 * 10,
+    idLength: 64,
+    storePrefix: 'sessions',
+    cookieSameSite: 'lax',
+    cookieSecure: true,
+    cookieHttpOnly: true,
+    storageOptions: {
+      driver: 'memory',
+      options: {},
+    },
+    domain: false,
+    ipPinning: false,
+    rolling: false,
+    api: {
+      isEnabled: true,
+      methods: ['patch', 'get', 'post', 'delete'],
+      basePath: '/api/session',
+    },
+  },
+
   csrfCookieKey: 'csrf',
   csrfCookieOpts: {
     path: '/',
@@ -26,6 +48,13 @@ const defaults = {
   excludedUrls: [],
   csrfEncryptAlgorithm: 'aes-256-cbc',
   encryptSecret: randomBytes(22).toString('base64'),
+  xssValidator: {
+    whiteList: {
+      a: [],
+    },
+    stripIgnoreTag: true,
+    throwError: false, // optional
+  },
   origin: process.env.NODE_ENV === 'production' ? 'https://yrl-consulting.com' : 'http://localhost:3000',
   basePath: '/api/auth',
   trustHost: false,
@@ -42,7 +71,7 @@ const defaults = {
 
 export default defineNuxtModule({
   meta: {
-    name: PACKAGE_NAME,
+    name: `@YRL/${PACKAGE_NAME}`,
     configKey: 'yrlNuxtAuth',
     compatibility: {
       nuxt: '^3.3.1',
@@ -60,20 +89,48 @@ export default defineNuxtModule({
       logger.info(`Skipping ${PACKAGE_NAME} setup, as module is disabled`)
       return
     }
-    logger.info(`${PACKAGE_NAME} module setup starting`)
+    logger.info(`${PACKAGE_NAME} module setup starting...`)
 
     // 2. Set up runtime configuration
     const options = defu(moduleOptions, defaults)
+    nuxt.options.runtimeConfig = nuxt.options.runtimeConfig || { public: {} }
+    nuxt.options.runtimeConfig.yrlNuxtAuth = defu(nuxt.options.runtimeConfig.yrlNuxtAuth, options)
     const url = joinURL(options.origin ?? '', options.basePath)
     logger.info(`YRL Nuxt Auth API location is \`${url}\``)
 
-    nuxt.options.runtimeConfig = nuxt.options.runtimeConfig || { public: {} }
-    nuxt.options.runtimeConfig.yrlNuxtAuth = defu(nuxt.options.runtimeConfig.yrlNuxtAuth, options)
+    // Setup unstorage
+    //
+    //
+    //
 
     // 3. Locate runtime directory
     const { resolve } = createResolver(import.meta.url)
 
-    // 4. Add nuxt-auth composables
+    // 4. Setup middleware, use `.unshift` to ensure (reasonably well) that the session middleware is first
+    const serverHandler = {
+      middleware: true,
+      handler: resolve('./runtime/server/middleware/session'),
+    }
+    nuxt.options.serverHandlers.unshift(serverHandler)
+
+    // 5. Register desired session API endpoints
+    if (options.session.api.isEnabled) {
+      for (const apiMethod of options.session.api.methods) {
+        addServerHandler({
+          handler: resolve(`./runtime/server/api/session/index.${apiMethod}`),
+          route: options.session.api.basePath,
+        })
+      }
+      logger.info(
+        `Session API "${options.session.api.methods.join(', ')}" endpoints registered at "${
+          options.session.api.basePath
+        }"`
+      )
+    } else {
+      logger.info('Session API disabled')
+    }
+
+    // 4. Add composables
     addImportsDir(resolve('./runtime/composables'))
 
     // 5. Add CSRF middleware
@@ -104,5 +161,7 @@ export default defineNuxtModule({
     //     from: resolve('runtime/composables'),
     //   }))
     // )
+
+    logger.success('Session setup complete')
   },
 })

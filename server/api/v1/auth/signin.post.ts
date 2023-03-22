@@ -8,9 +8,12 @@ const config = useRuntimeConfig()
 export default defineEventHandler(async (event) => {
   try {
     // console.log('Here', event.node.req.headers)
-    // console.log('Here', await readBody(event))
-    return true
+    // return await readBody(event)
+
     const { email, password } = await readBody(event)
+    console.log('??????', config.yrlNuxtAuth.xssValidator)
+    return email
+
     if (!email || !password) throw new AppError('Email and Password are required', 'email_and_or_password_missing', 404)
     const user = await findByEmail(email as string)
     if (!user) throw new AppError('Invalid login credentials', 'invalid-credentials', 401)

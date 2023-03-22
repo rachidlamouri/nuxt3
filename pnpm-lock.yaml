@@ -8,6 +8,7 @@ specifiers:
   '@types/bcryptjs': ^2.4.2
   '@types/jsonwebtoken': ^9.0.1
   '@types/nodemailer': ^6.4.7
+  '@types/xss-filters': ^0.0.27
   argon2: ^0.30.3
   bcryptjs: ^2.4.3
   jsonwebtoken: ^9.0.0
@@ -22,6 +23,7 @@ specifiers:
   slugify: ^1.6.5
   stripe: ^11.14.0
   vue-toastification: 2.0.0-rc.5
+  xss: ^1.0.14
   zod: ^3.21.4
 
 dependencies:
@@ -29,6 +31,7 @@ dependencies:
   '@types/bcryptjs': 2.4.2
   '@types/jsonwebtoken': 9.0.1
   '@types/nodemailer': 6.4.7
+  '@types/xss-filters': 0.0.27
   argon2: 0.30.3
   bcryptjs: 2.4.3
   jsonwebtoken: 9.0.0
@@ -40,6 +43,7 @@ dependencies:
   slugify: 1.6.5
   stripe: 11.14.0
   vue-toastification: 2.0.0-rc.5
+  xss: 1.0.14
   zod: 3.21.4
 
 devDependencies:
@@ -1851,6 +1855,10 @@ packages:
       '@types/webidl-conversions': 7.0.0
     dev: false
 
+  /@types/xss-filters/0.0.27:
+    resolution: {integrity: sha512-ctN3f7vl4tBXa+W11hm0oDwp67K6SYK07h4OmNgaEoIOVJ/rksnc2prpbjK+Ju3/fYIa3HQaH4x9Y525CXFOow==}
+    dev: false
+
   /@unhead/dom/1.1.23:
     resolution: {integrity: sha512-Ofa427IF7tMhL/Qw4JzlAbRVBnQjURZONcjhGHVOCoNLU+GAKfbDLBpR2r3kXQFFcv2aDKygoSVyxU6R0cLptw==}
     dependencies:
@@ -2630,7 +2638,6 @@ packages:
 
   /commander/2.20.3:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
-    dev: true
 
   /commander/6.2.1:
     resolution: {integrity: sha512-U7VdrJFnJgo4xjrHpTzu0yrHPGImdsmD95ZlgYSEajAn2JKzDhDTPG9kBTefmObL2w/ngeZnilk+OV9CG3d7UA==}
@@ -2800,6 +2807,10 @@ packages:
     engines: {node: '>=4'}
     hasBin: true
     dev: true
+
+  /cssfilter/0.0.10:
+    resolution: {integrity: sha512-FAaLDaplstoRsDR8XGYH51znUN0UY7nMc6Z9/fvE8EXGwvJE9hu7W2vHwx1+bd6gCYnln9nLbzxFTrcO9YQDZw==}
+    dev: false
 
   /cssnano-preset-default/5.2.14_postcss@8.4.21:
     resolution: {integrity: sha512-t0SFesj/ZV2OTylqQVOrFgEh5uanxbO6ZAdeCrNsUQ6fVuXwYTxJPNAGvGTxHbD68ldIJNec7PyYZDBrfDQ+6A==}
@@ -7559,6 +7570,15 @@ packages:
     resolution: {integrity: sha512-QKxVRxiRACQcVuQEYFsI1hhkrMlrXHPegbbd1yn9UHOmRxY+si12nQYzri3vbzt8VdTTRviqcKxcyllFas5z2A==}
     engines: {node: '>=0.4.0'}
     dev: true
+
+  /xss/1.0.14:
+    resolution: {integrity: sha512-og7TEJhXvn1a7kzZGQ7ETjdQVS2UfZyTlsEdDOqvQF7GoxNfY+0YLCzBy1kPdsDDx4QuNAonQPddpsn6Xl/7sw==}
+    engines: {node: '>= 0.10.0'}
+    hasBin: true
+    dependencies:
+      commander: 2.20.3
+      cssfilter: 0.0.10
+    dev: false
 
   /xtend/4.0.2:
     resolution: {integrity: sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==}

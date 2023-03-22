@@ -17,7 +17,7 @@
 const config = useRuntimeConfig()
 
 const formInputs = reactive({
-  email: 'abbaslamouri@yrlus.com',
+  email: '<div>alert()</div>',
   password: 'Foo1234#',
 })
 const loading = ref<boolean>(false)
@@ -42,10 +42,10 @@ const signin = async () => {
 
   const { data, pending, error, refresh } = await useCsrfFetch('/api/v1/auth/signin', {
     method: 'POST',
-    body: { id: 1 },
+    body: { ...formInputs },
   })
   console.log(data.value)
-  console.log(error.value.data)
+  if (error.value) console.log(error.value.data)
   // const { data, error } = await useFetch('auth/signin', {
   //   baseURL: config.apiUrl,
   //   method: 'POST',

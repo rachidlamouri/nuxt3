@@ -1,4 +1,6 @@
 import { randomUUID, randomBytes, createCipheriv, createDecipheriv } from 'crypto'
+import { FilterXSS } from 'xss'
+
 import errorHandler from '~/utils/errorHandler'
 import AppError from '~/utils/AppError'
 
@@ -27,7 +29,7 @@ const verifyCsrf = (secret, token) => {
   return decrypted === secret
 }
 
-export default defineEventHandler((event) => {
+export default defineEventHandler(async (event) => {
   // try {
   // if (process.server) console.log('MIddleware', event.node.req.method)
   let secret = getCookie(event, config.yrlNuxtAuth.csrfCookieKey)
@@ -40,6 +42,7 @@ export default defineEventHandler((event) => {
     value: createCsrf(secret),
     enumerable: true,
   })
+
   // useNuxtApp().payload.csrfToken = '1234'
   // console.log('!!!!!!!!!!!!', useNuxtApp().payload.csrfToken)
   // console.log('Header', getHeader(event, 'csrf-token'))
@@ -56,22 +59,26 @@ export default defineEventHandler((event) => {
     config.yrlNuxtAuth.excludedUrls?.filter((el) => (Array.isArray(el) ? new RegExp(...el).test(url) : el === url))
       .length > 0
   const token = getHeader(event, 'csrf-token') ?? ''
-  // console.log('token', token)
-  // console.log('verify', verifyCsrf(secret, token))
 
-  if (!excluded && verifyCsrf(secret, token)) {
-    // console.log('ERR')
-    // throw new AppError('Token mismatch', 'token-mismatch', 404)
+  if (!excluded && !verifyCsrf(secret, token)) {
     throw createError({
       statusCode: 403,
-      name: 'EBADCSRFTOKEN',
+      name: 'CSRFError',
       statusMessage: 'CSRF Token Mismatch',
       data: { ss: 'jdjdsjdsfjjkdkjfskjsdf' },
     })
   }
 
-  // console.log('HHHHHHHHHHHHHHHHH')
-  // } catch (err) {
-  //   return errorHandler(event, err)
-  // }
+  if (!['POST', 'GET', 'PATCH', 'DELETE'].includes(event.node.req.method!!)) return
+  const xxsValidator = new FilterXSS(config.yrlNuxtAuth.xssValidator)
+  const requestData = event.node.req.method === 'GET' ? getQuery(event) : await readBody(event)
+  if (!requestData || !Object.keys(requestData).length) return
+  if (JSON.stringify(requestData) !== xxsValidator.process(JSON.stringify(requestData))) {
+    throw createError({
+      statusCode: 403,
+      name: 'XXSError',
+      statusMessage: 'Bad request',
+      data: { ss: 'jdjdsjdsfjjkdkjfskjsdf' },
+    })
+  }
 })
