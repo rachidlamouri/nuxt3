@@ -1,1 +1,4 @@
-export default eventHandler((event) => event.context.session)
+export default eventHandler((event) => {
+  console.log('HHHHHERE')
+  return event.context.session
+})

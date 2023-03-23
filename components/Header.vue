@@ -4,6 +4,8 @@
 import { useToast } from 'vue-toastification'
 import { IAuthenticatedData } from '~/utils/schema'
 // const { status, data, signIn, signOut } = useSession()
+const { session } = await useSession()
+console.log(session)
 
 const status = false
 
@@ -177,7 +179,7 @@ watch(
             <img class="" src="/images/logo-color.svg" alt="ACS Logo Home Page" v-else />
           </Nuxt-link>
         </div>
-        {{ useNuxtApp().payload.csrfToken }}
+        {{ useNuxtApp().payload.csrfToken }}----{{ useNuxtApp().payload.sessionMeta }}
         <nav class="top-nav" aria-label="Top Navigation">
           <!-- {{ authUser }}----{{ status !=='authenticated' }} -->
           <ul class="" role="list">

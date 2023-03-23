@@ -17,11 +17,11 @@ const defaults = {
   isEnabled: true,
   session: {
     cookieName: 'sessionId',
-    expiryInSeconds: 60 * 10,
+    expiryInSeconds: process.env.NUXT_JWT_MAX_AGE,
     idLength: 64,
     storePrefix: 'sessions',
-    cookieSameSite: 'lax',
-    cookieSecure: true,
+    cookieSameSite: 'strict',
+    cookieSecure: false,
     cookieHttpOnly: true,
     storageOptions: {
       driver: 'memory',
@@ -33,7 +33,7 @@ const defaults = {
     api: {
       isEnabled: true,
       methods: ['patch', 'get', 'post', 'delete'],
-      basePath: '/api/session',
+      basePath: 'api/v1/session',
     },
   },
 
@@ -95,6 +95,7 @@ export default defineNuxtModule({
     const options = defu(moduleOptions, defaults)
     nuxt.options.runtimeConfig = nuxt.options.runtimeConfig || { public: {} }
     nuxt.options.runtimeConfig.yrlNuxtAuth = defu(nuxt.options.runtimeConfig.yrlNuxtAuth, options)
+    nuxt.options.runtimeConfig.public.yrlNuxtAuth = defu(nuxt.options.runtimeConfig.public.yrlNuxtAuth, options)
     const url = joinURL(options.origin ?? '', options.basePath)
     logger.info(`YRL Nuxt Auth API location is \`${url}\``)
 
@@ -117,7 +118,7 @@ export default defineNuxtModule({
     if (options.session.api.isEnabled) {
       for (const apiMethod of options.session.api.methods) {
         addServerHandler({
-          handler: resolve(`./runtime/server/api/session/index.${apiMethod}`),
+          handler: resolve(`./runtime/server/${options.session.api.basePath}/index.${apiMethod}`),
           route: options.session.api.basePath,
         })
       }

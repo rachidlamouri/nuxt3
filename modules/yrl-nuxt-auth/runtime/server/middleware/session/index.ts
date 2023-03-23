@@ -1,6 +1,7 @@
 import { H3Event } from 'h3'
 import { createStorage } from 'unstorage'
-
+import { nanoid } from 'nanoid'
+// import { getHashedIpAddress } from './ipPinning'
 import memoryDriver from 'unstorage/drivers/memory'
 import mongodbDriver from 'unstorage/drivers/mongodb'
 import { mongoClient, ObjectId } from '~/utils/mongoClient'
@@ -8,88 +9,106 @@ import { mongoClient, ObjectId } from '~/utils/mongoClient'
 import { createUser, getSinedJwtToken } from '~/server/controllers/v1/auth'
 
 const config = useRuntimeConfig()
+const sessionOptions = config.yrlNuxtAuth.session
 
-const storage = createStorage({
+export const storage = createStorage({
   driver: mongodbDriver({
-    connectionString: useRuntimeConfig().dbUrl,
+    connectionString: config.dbUrl,
     databaseName: 'acs',
     collectionName: 'sessions',
   }),
 })
-
-// console.log('SSSSSS', storage)
-
-// import { dropStorageSession, getStorageSession, setStorageSession } from './storage'
-
-import { nanoid } from 'nanoid'
-import { getHashedIpAddress } from './ipPinning'
-
-const SESSION_COOKIE_NAME = 'sessionId'
-
-const safeSetCookie = (event: H3Event, name: string, value: string, createdAt: Date) => {
-  const sessionOptions = useRuntimeConfig().session.session
-  const expirationDate = sessionOptions.expiryInSeconds
-    ? new Date(createdAt.getTime() + sessionOptions.expiryInSeconds * 1000)
-    : undefined
-
-  // console.log('here')
-
-  setCookie(event, name, value, {
-    // Set cookie expiration date to now + expiryInSeconds
-    expires: expirationDate,
-    // Wether to send cookie via HTTPs to mitigate man-in-the-middle attacks
-    secure: sessionOptions.cookieSecure,
-    // Wether to send cookie via HTTP requests and not allowing access of cookie from JS to mitigate XSS attacks
-    httpOnly: sessionOptions.cookieHttpOnly,
-    // Do not send cookies on many cross-site requests to mitigates CSRF and cross-site attacks, see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite#lax
-    sameSite: sessionOptions.cookieSameSite,
-    // Set cookie for subdomain
-    domain: sessionOptions.domain || undefined,
-  })
-}
+// console.log('STORAGE', storage)
+// const unwatch = await storage.watch((event, key) => {
+//   console.log('Storage watching')
+// })
 
 const newSession = async (event: H3Event) => {
-  const abstractRes = (await $fetch(`${config.abstractApiUrl}/?api_key=${config.abstractApiKey}`)) || { ip_address: '' }
-  console.log('IPPPPPPPPPPP', 'abstractRes')
+  // Fetch IP address
+  const abstractRes: { ip_address: string } = (await $fetch(
+    `${config.abstractApiUrl}/?api_key=${config.abstractApiKey}`
+  )) || { ip_address: '' }
+  const ipAddress = abstractRes.ip_address ?? nanoid(sessionOptions.idLength)
 
-  const jwtToken = await getSinedJwtToken('', Number(config.jwtSignupTokenMaxAge))
-  // console.log('IPPPPPPPPPPP', jwtToken)
-
-  const sessionOptions = config.session.session
-  // const now = new Date()
-
-  // (Re-)Set cookie
-  // const sessionId = nanoid(sessionOptions.idLength)
-  safeSetCookie(event, SESSION_COOKIE_NAME, jwtToken, new Date())
-
-  // console.log('There')
+  // Create JWT token based on address or random number
+  const jwtToken = await getSinedJwtToken(ipAddress, Number(config.jwtMaxAge))
+  setCookie(event, sessionOptions.cookieName, jwtToken, {
+    expires: sessionOptions.expiryInSeconds
+      ? new Date(Date.now() + Number(sessionOptions.expiryInSeconds) * 1000)
+      : undefined,
+    secure: sessionOptions.cookieSecure,
+    httpOnly: sessionOptions.cookieHttpOnly,
+    sameSite: sessionOptions.cookieSameSite,
+    domain: sessionOptions.domain || undefined,
+  })
 
   // Store session data in storage
   const session = {
-    // jwtToken,
-    ip: abstractRes.ip_address,
-    // ip: '',
-    // city: abstractRes.city || '',
+    ip: ipAddress,
   }
 
   await storage.setItem(jwtToken, session)
-  // console.log('HAS', await storage.hasItem(SESSION_COOKIE_NAME))
-  // console.log('GET', await storage.getItem(SESSION_COOKIE_NAME))
-
+  await storage.setMeta(jwtToken, { jwtToken, ip: ipAddress })
   event.context.sessionId = jwtToken
   event.context.session = session
 
   return session
 }
 
-export default eventHandler(async (event: H3Event) => {
-  const sessionOptions = config.session.session
+const getSession = async (event: H3Event) => {
+  // 1. Does the sessionId  exist on the request?
+  const sessionId = parseCookies(event)[sessionOptions.cookieName]
+  console.log('SESSIONID', sessionId)
+
+  let session
+  if (!sessionId) session = await newSession(event)
+  else session = await storage.getItem(sessionId)
+
+  console.log('SESSION', session)
+
+  // else session = (await storage.hasItem(sessionId))
+  // event.context.sessionId = parseCookies(event)[sessionOptions.cookieName]
+  event.context.sessionMeta = session && (await storage.hasItem(sessionId)) ? await storage.getMeta(sessionId) : {}
+  return session
+
+  // return await storage.getItem(sessionId)
+  // const session = await newSession(event)
+  // const sessionIdContext = event.context.sessionId
+
+  // if (sessionIdContext && requestSessionId && sessionIdContext !== requestSessionId) {
+  //   return null
+  // }
+
+  // return requestSessionId || sessionIdContext || null
+  // const currentSessionId = getCurrentSessionId(event)
+  // if (!existingSessionId) {
+  //   return null
+  // }
+}
+
+export default eventHandler(async (event) => {
+  let session = await getSession(event)
+  console.log('DDDDD', session)
+  // if (!session) session = console.log(session)
+
+  // if (!session) {
+  // await newSession(event)
+  // } else if (sessionOptions.rolling) {
+  //   session = updateSessionExpirationDate(session, event)
+  // }
+
+  // event.context.sessionId = session.id
+  // event.context.session = session
+  // return session
+  // // const sessionOptions = config.yrlNuxtAuth.session
+  // console.log('HHJJJKKKKKLL:')
+  // console.log(await newSession(event))
 
   // 1. Does the sessionId cookie exist on the request?
-  const clientSessionId = parseCookies(event).sessionId
-  console.log('client Cookie', clientSessionId)
-  console.log('event cookie', event.context)
-  if (event.node.req.headers.sessionauthorization) console.log('event ', event.node.req.headers)
+  // const clientSessionId = parseCookies(event).sessionId
+  // console.log('client Cookie', clientSessionId)
+  // console.log('event cookie', event.context)
+  // if (event.node.req.headers.sessionauthorization) console.log('event ', event.node.req.headers)
   // const clientSession = await mongoClient.db().collection('sessions').findOne({ key: clientSessionId })
   // console.log('US', clientSession)
   // if (!clientSessionId && !event.context.sessionId && clientSessionId !== event.context.sessionId && !clientSession)
