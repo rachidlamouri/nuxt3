@@ -1,4 +1,6 @@
 import { H3Event } from 'h3'
+import jwt, { JwtPayload } from 'jsonwebtoken'
+
 import { createStorage } from 'unstorage'
 import { nanoid } from 'nanoid'
 // import { getHashedIpAddress } from './ipPinning'
@@ -24,15 +26,18 @@ export const storage = createStorage({
 // })
 
 const newSession = async (event: H3Event) => {
-  // Fetch IP address
-  const abstractRes: { ip_address: string } = (await $fetch(
-    `${config.abstractApiUrl}/?api_key=${config.abstractApiKey}`
-  )) || { ip_address: '' }
-  const ipAddress = abstractRes.ip_address ?? nanoid(sessionOptions.idLength)
+  const sessionId = nanoid()
+  // // Fetch IP address
+  // const abstractRes: { ip_address: string } = (await $fetch(
+  //   `${config.abstractApiUrl}/?api_key=${config.abstractApiKey}`
+  // )) || { ip_address: '' }
+  // const ipAddress = abstractRes.ip_address ?? nanoid(sessionOptions.idLength)
 
   // Create JWT token based on address or random number
-  const jwtToken = await getSinedJwtToken(ipAddress, Number(config.jwtMaxAge))
-  setCookie(event, sessionOptions.cookieName, jwtToken, {
+  const jwtToken = jwt.sign({ sessionId }, config.yrlNuxtAuth.jwtSecret, {
+    expiresIn: Number(sessionOptions.expiryInSeconds),
+  })
+  setCookie(event, sessionOptions.cookieName, sessionId, {
     expires: sessionOptions.expiryInSeconds
       ? new Date(Date.now() + Number(sessionOptions.expiryInSeconds) * 1000)
       : undefined,
@@ -44,12 +49,13 @@ const newSession = async (event: H3Event) => {
 
   // Store session data in storage
   const session = {
-    ip: ipAddress,
+    jwtToken,
+    ip: '',
   }
 
-  await storage.setItem(jwtToken, session)
-  await storage.setMeta(jwtToken, { jwtToken, ip: ipAddress })
-  event.context.sessionId = jwtToken
+  await storage.setItem(sessionId, session)
+  // await storage.setMeta(sessionId, { jwtToken, ip: 'ipAddress' })
+  event.context.sessionId = sessionId
   event.context.session = session
 
   return session
@@ -58,13 +64,13 @@ const newSession = async (event: H3Event) => {
 const getSession = async (event: H3Event) => {
   // 1. Does the sessionId  exist on the request?
   const sessionId = parseCookies(event)[sessionOptions.cookieName]
-  console.log('SESSIONID', sessionId)
+  // console.log('SESSIONID', sessionId)
 
   let session
   if (!sessionId) session = await newSession(event)
   else session = await storage.getItem(sessionId)
 
-  console.log('SESSION', session)
+  // console.log('SESSION', session)
 
   // else session = (await storage.hasItem(sessionId))
   // event.context.sessionId = parseCookies(event)[sessionOptions.cookieName]
@@ -88,7 +94,9 @@ const getSession = async (event: H3Event) => {
 
 export default eventHandler(async (event) => {
   let session = await getSession(event)
-  console.log('DDDDD', session)
+
+  // console.log('DDDDD', session)
+
   // if (!session) session = console.log(session)
 
   // if (!session) {

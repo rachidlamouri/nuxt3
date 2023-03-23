@@ -15,9 +15,10 @@ import { randomBytes } from 'crypto'
 const PACKAGE_NAME = 'nuxt-auth'
 const defaults = {
   isEnabled: true,
+  jwtSecret: randomBytes(22).toString('base64'),
   session: {
     cookieName: 'sessionId',
-    expiryInSeconds: process.env.NUXT_JWT_MAX_AGE,
+    expiryInSeconds: 600, // in seconds
     idLength: 64,
     storePrefix: 'sessions',
     cookieSameSite: 'strict',
@@ -33,7 +34,7 @@ const defaults = {
     api: {
       isEnabled: true,
       methods: ['patch', 'get', 'post', 'delete'],
-      basePath: 'api/v1/session',
+      basePath: '/api/v1/session',
     },
   },
 
@@ -107,7 +108,7 @@ export default defineNuxtModule({
     // 3. Locate runtime directory
     const { resolve } = createResolver(import.meta.url)
 
-    // 4. Setup middleware, use `.unshift` to ensure (reasonably well) that the session middleware is first
+    // 4. Setup middleware, use `.unshift` to ensure (reasonably well) that the session middleware is firs
     const serverHandler = {
       middleware: true,
       handler: resolve('./runtime/server/middleware/session'),
@@ -115,10 +116,11 @@ export default defineNuxtModule({
     nuxt.options.serverHandlers.unshift(serverHandler)
 
     // 5. Register desired session API endpoints
+    logger.info(`YRL Nuxt Auth API location is \`/${options.session.api.basePath}\``)
     if (options.session.api.isEnabled) {
       for (const apiMethod of options.session.api.methods) {
         addServerHandler({
-          handler: resolve(`./runtime/server/${options.session.api.basePath}/index.${apiMethod}`),
+          handler: resolve(`./runtime/server${options.session.api.basePath}/index.${apiMethod}`),
           route: options.session.api.basePath,
         })
       }
@@ -135,7 +137,7 @@ export default defineNuxtModule({
     addImportsDir(resolve('./runtime/composables'))
 
     // 5. Add CSRF middleware
-    addServerHandler({ handler: resolve('runtime/server/middleware') })
+    addServerHandler({ handler: resolve('runtime/server/middleware/csrf') })
 
     // 6. Add plugin for initial load
     addPlugin(resolve('./runtime/plugin'))

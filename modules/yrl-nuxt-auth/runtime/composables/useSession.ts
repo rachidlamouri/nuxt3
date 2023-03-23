@@ -19,7 +19,9 @@ export default async () => {
     return useFetch(sessionOptions.api.basePath, {
       method: method.toUpperCase(),
       body,
+      server: false,
       onResponse({ request, response, options }) {
+        console.log('QQQQQ', response._data)
         // Process the response data
         session.value = response._data
         return response._data
@@ -27,6 +29,6 @@ export default async () => {
     })
   }
 
-  _sessionRequest('GET', {})
+  await _sessionRequest('GET', {})
   return { session }
 }
