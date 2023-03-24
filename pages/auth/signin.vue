@@ -27,7 +27,7 @@ const loading = ref<boolean>(false)
 
 const signin = async () => {
   const form = document.querySelector('form')
-  console.log(useCsrf())
+  // console.log(useCsrf())
   // Initialize error message, reset form errors & loading
   // appErrorMsg.value = ''
   // resetForm(form!)
@@ -46,11 +46,13 @@ const signin = async () => {
   })
   console.log(data.value)
   if (error.value) console.log(error.value.data)
-  // const { data, error } = await useFetch('auth/signin', {
+  // const { data, error } = await useFetch('auth/v1/signin', {
   //   baseURL: config.apiUrl,
   //   method: 'POST',
   //   body: { ...formInputs },
   // })
+
+  // console.log(data.value)
   // loading.value = false
   // // if (error.value) {
   //   // console.log(error.value.data.errorCode)
@@ -84,10 +86,10 @@ const forgotPassword = async () => {
     </Hero>
     <article class="container-wrapper">
       <div class="container | flow">
-        <!-- <SignIn /> -->
-        <form class="" @submit.prevent="signin" novalidate>
+        <SignInForm />
+        <!-- <form class="" @submit.prevent="signin" novalidate>
           <ErrorMsg />
-          <!-- <div class="error-msg" v-if="emailNotVerified">
+          <div class="error-msg" v-if="emailNotVerified">
             <p>This email has nor been verified</p>
             <div class="link">
               <span class="">Clich here to get a new verification token </span>
@@ -95,7 +97,7 @@ const forgotPassword = async () => {
                 <span class="">Signin</span>
               </button>
             </div>
-          </div> -->
+          </div>
           <FormsBaseInput type="email" label="Email" id="email" v-model="formInputs.email" required />
           <FormsPasswordInput type="password" label="Passsword" id="password" required v-model="formInputs.password" />
           <FormsBaseCheckbox id="remember-me" label="Remmeber me" />
@@ -110,7 +112,7 @@ const forgotPassword = async () => {
             <span class="">Don't have an account? </span>
             <NuxtLink class="btn btn-accent btn-accent-text" :to="{ name: 'auth-signup' }"> Signup </NuxtLink>
           </div>
-        </form>
+        </form> -->
       </div>
     </article>
   </div>

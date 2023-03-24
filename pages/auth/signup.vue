@@ -105,7 +105,8 @@ const signup = async () => {
           <p>Click on the link in the email to verify your email address and access you account.</p>
           <p>Please add support@acs.com to your whitelis.</p>
         </div>
-        <form @submit.prevent="signup" novalidate v-else>
+        <SignUpForm />
+        <!-- <form @submit.prevent="signup" novalidate v-else>
           <ErrorMsg />
           <FormsBaseInput
             type="email"
@@ -133,7 +134,7 @@ const signup = async () => {
             <span class="">Already have an account? </span>
             <NuxtLink class="btn btn-accent btn-accent-text" :to="{ name: 'auth-signin' }"> Signin </NuxtLink>
           </div>
-        </form>
+        </form> -->
       </div>
     </article>
   </div>

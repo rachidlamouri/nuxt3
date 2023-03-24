@@ -4,10 +4,17 @@
 import { useToast } from 'vue-toastification'
 import { IAuthenticatedData } from '~/utils/schema'
 // const { status, data, signIn, signOut } = useSession()
-const { session } = await useSession()
-console.log('IIIIII', session.value)
 
 const status = false
+
+// const { session } = await useSession()
+// console.log('IIIIII', session.value)
+// const { data, pending, error, refresh } = await useSession('/api/v1/session/getSession', {
+//   method: 'GET',
+//   // body: { ...formInputs },
+// })
+// console.log(data.value)
+// if (error.value) console.log(error.value.data)
 
 // import IAuthUser from '~/ToDeelete/types/IAuthUser'
 
@@ -25,6 +32,11 @@ const props = defineProps({
     // default: 0,
   },
 })
+
+// onMounted(async () => {
+//   const { session } = await useSession()
+//   console.log('IIIIIIddd', session.value)
+// })
 
 const { authUser, isAuthenticated } = useAuthStore()
 
@@ -54,7 +66,7 @@ const config = useRuntimeConfig()
 
 const signup = async () => {
   signupBtnRef.value.blur()
-  await navigateTo({ path: '/auth/signup', query: { action: 'signup' } })
+  await navigateTo({ path: '/auth/signup', query: { action: 'signup', csrf: useCsrf().csrf } })
 }
 
 const signin = async () => {

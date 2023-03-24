@@ -67,14 +67,14 @@ export default defineNuxtConfig({
     // '@sidebase/nuxt-auth',
 
     './modules/mongodb',
-    ['./modules/yrl-nuxt-auth/module', {}],
 
-    // './modules/nuxt-csrf/module',
+    './modules/nuxt-security/module',
+    './modules/nuxt-auth/module',
     // ['./modules/mailer/module', {}],
     // ['./modules/session/module', {}],
   ],
-  // nuxtCsrf: {},
-  yrlNuxtAuth: {},
+  nuxtSecurity: {},
+  nuxtAuth: {},
   // auth: {},
   // mailer: {
   //   emailSentMessage: 'Your message was sent successfully',
