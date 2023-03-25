@@ -147,15 +147,16 @@ onMounted(() => {
     />
 
     <p class="hint" v-if="action === 'signup'">
-      Password must be 8 charcters or more and conatins at least 1 number, 1 digit, 1 uppercase, 1 lowercase and 1
-      special character.
+      Password must be
+      <span :class="{ fail: hints[0].passFail === 'fail', pass: hints[0].passFail === 'pass' }">8 charcters</span> or
+      more and conatins at least 1 number, 1 digit, 1 uppercase, 1 lowercase and 1 special character.
     </p>
     <div class="strength" v-if="action === 'signup'">
-      <ul role="list">
+      <!-- <ul role="list">
         <li class="" :class="{ fail: hint.passFail === 'fail', pass: hint.passFail === 'pass' }" v-for="hint in hints">
           {{ hint.message }}
         </li>
-      </ul>
+      </ul> -->
 
       <div
         class="strength-meter"
@@ -184,6 +185,16 @@ onMounted(() => {
 <style lang="scss" scoped>
 .input {
   position: relative;
+
+  span {
+    &.fail {
+      color: red;
+    }
+
+    &.pass {
+      color: green;
+    }
+  }
 
   .strength {
     margin-block-start: 1rem;

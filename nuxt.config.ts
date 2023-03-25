@@ -67,37 +67,17 @@ export default defineNuxtConfig({
     // '@sidebase/nuxt-auth',
 
     './modules/mongodb',
-
+    './modules/nuxt-mailer/module',
     './modules/nuxt-security/module',
     './modules/nuxt-auth/module',
+
     // ['./modules/mailer/module', {}],
     // ['./modules/session/module', {}],
   ],
   nuxtSecurity: {},
   nuxtAuth: {},
-  // auth: {},
-  // mailer: {
-  //   emailSentMessage: 'Your message was sent successfully',
-  //   contactFormEmailSubject: 'New message from yrl-consulting.com site',
-  //   registrationEmailSubject: 'Please confirm your email address',
-  //   forgotPasswordEmailSubject: 'Your password reset token (valid for 1 hour)',
-  // },
-  // session: {},
-  // csurf: {
-  //   // optional
-  //   https: false, // default true if in production
-  //   cookieKey: '', // "__Host-csrf" if https is true otherwise just "csrf"
-  //   cookie: {
-  //     // CookieSerializeOptions from unjs/cookie-es
-  //     path: '/',
-  //     httpOnly: true,
-  //     sameSite: 'strict',
-  //   },
-  //   methodsToProtect: ['POST', 'PUT', 'PATCH'], // the request methods we want CSRF protection for
-  //   excludedUrls: ['/nocsrf1', ['/nocsrf2/.*', 'i']], // any URLs we want to exclude from CSRF protection
-  //   // encryptSecret: '',
-  //   encryptAlgorithm: 'aes-256-cbc',
-  // },
+  nuxtMailer: {},
+
   vue: {
     compilerOptions: {
       isCustomElement: (tag) => ['UseFetchDemo'].includes(tag),
@@ -139,7 +119,7 @@ export default defineNuxtConfig({
     // smtpSecure: '',
     fromEmail: '',
     fromName: '',
-    contactFormEmailRecipients: '',
+    // contactFormEmailRecipients: '',
 
     abstractApiKey: '',
     abstractApiUrl: '',

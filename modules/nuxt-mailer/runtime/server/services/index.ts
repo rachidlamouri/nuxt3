@@ -6,7 +6,7 @@ const config = useRuntimeConfig()
 
 export const sendMail = async (emailRecipients: string[], html: string) => {
   let info
-  if (config.mailer.mailTransporter === 'nodemailer') {
+  if (config.nuxtMailer.mailTransporter === 'nodemailer') {
     const transporter = nodemailer.createTransport({
       host: config.smtpHost,
       port: Number(config.smtpPort),
@@ -18,27 +18,27 @@ export const sendMail = async (emailRecipients: string[], html: string) => {
     })
 
     info = await transporter.sendMail({
-      from: config.mailer.fromEmail,
+      from: config.nuxtMailer.emailFromEmail,
       to: emailRecipients,
-      subject: config.mailer.contactFormEmailSubject,
+      subject: config.nuxtMailer.contactFormEmailSubject,
       html,
     })
     if (info.rejected)
       throw new AppError(`The following emails have been rejected ${info.rejected.join(', ')}`, 'emails_rejected', 400)
-  } else if (config.mailer.mailTransporter === 'sendgrid') {
+  } else if (config.nuxtMailer.mailTransporter === 'sendgrid') {
     sgMail.setApiKey(config.sendgridApiKey as string)
 
     const msg = {
       to: emailRecipients,
       from: {
-        email: config.mailer.fromEmail,
-        name: config.mailer.fromName,
+        email: config.nuxtMailer.emailFromEmail,
+        name: config.nuxtMailer.emailFromName,
       },
       replyTo: {
-        email: config.mailer.fromEmail,
-        name: config.mailer.fromName,
+        email: config.nuxtMailer.emailFromEmail,
+        name: config.nuxtMailer.emailFromName,
       },
-      subject: config.mailer.contactFormEmailSubject,
+      subject: config.nuxtMailer.contactFormEmailSubject,
       // template_id: templateId,
       // dynamic_template_data: { ...this.data, firstname: this.firstname, subject: this.subject },
       // text: ``,

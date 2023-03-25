@@ -54,11 +54,16 @@ export default defineEventHandler(async (event) => {
     return
   }
 
+  console.log('HHHHHHHHHH', event.node.req.url, event.node.req.method)
+  // if (event.node.req.method==='GET') return
+
+  if (!event.node.req.url?.includes('api/v1')) return
   const headerCsrf = getHeader(event, 'csrf') ?? ''
   const body = event.node.req.method !== 'GET' ? await readBody(event) : null
   const requestData = body ? body : getQuery(event)
-  if (!requestData || !Object.keys(requestData).length) return
   console.log('DATA', requestData)
+
+  if (!requestData || !Object.keys(requestData).length) return
 
   if (!verifyCsrf(secret, headerCsrf) || !requestData.nonce || requestData.nonce !== headerCsrf)
     throw createError({
@@ -76,4 +81,5 @@ export default defineEventHandler(async (event) => {
       data: { ss: 'Body or request params csrf invalid' },
     })
   }
+  console.log('ZZZZZZZZZZZZ')
 })

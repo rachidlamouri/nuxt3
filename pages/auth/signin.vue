@@ -86,33 +86,41 @@ const forgotPassword = async () => {
     </Hero>
     <article class="container-wrapper">
       <div class="container | flow">
-        <SignInForm />
-        <!-- <form class="" @submit.prevent="signin" novalidate>
-          <ErrorMsg />
-          <div class="error-msg" v-if="emailNotVerified">
-            <p>This email has nor been verified</p>
-            <div class="link">
-              <span class="">Clich here to get a new verification token </span>
-              <button class="btn btn-accent btn-accent-text">
-                <span class="">Signin</span>
-              </button>
+        <!-- <SignInForm /> -->
+        <div class="form auth">
+          <form class="" @submit.prevent="signin" novalidate>
+            <ErrorMsg />
+            <!-- <div class="error-msg" v-if="emailNotVerified">
+      <p>This email has nor been verified</p>
+      <div class="link">
+        <span class="">Clich here to get a new verification token </span>
+        <button class="btn btn-accent btn-accent-text">
+          <span class="">Signin</span>
+        </button>
+      </div>
+    </div> -->
+            <FormsBaseInput type="email" label="Email" id="email" v-model="formInputs.email" required />
+            <FormsPasswordInput
+              type="password"
+              label="Passsword"
+              id="password"
+              required
+              v-model="formInputs.password"
+            />
+            <FormsBaseCheckbox id="remember-me" label="Remmeber me" />
+            <div class="">
+              <button class="btn btn-accent btn-accent-text" @click.prevent="forgotPassword">Forgot password?</button>
             </div>
-          </div>
-          <FormsBaseInput type="email" label="Email" id="email" v-model="formInputs.email" required />
-          <FormsPasswordInput type="password" label="Passsword" id="password" required v-model="formInputs.password" />
-          <FormsBaseCheckbox id="remember-me" label="Remmeber me" />
-          <div class="">
-            <button class="btn btn-accent btn-accent-text" @click.prevent="forgotPassword">Forgot password?</button>
-          </div>
-          <button class="btn btn-primary">
-            <span class="">Signin</span>
-            <Spinner class="spinner" v-if="loading" />
-          </button>
-          <div class="link">
-            <span class="">Don't have an account? </span>
-            <NuxtLink class="btn btn-accent btn-accent-text" :to="{ name: 'auth-signup' }"> Signup </NuxtLink>
-          </div>
-        </form> -->
+            <button class="btn btn-primary">
+              <span class="">Signin</span>
+              <Spinner class="spinner" v-if="loading" />
+            </button>
+            <div class="link">
+              <span class="">Don't have an account? </span>
+              <NuxtLink class="btn btn-accent btn-accent-text" :to="{ name: 'auth-signup' }"> Signup </NuxtLink>
+            </div>
+          </form>
+        </div>
       </div>
     </article>
   </div>

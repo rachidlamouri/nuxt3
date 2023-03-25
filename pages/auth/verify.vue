@@ -27,10 +27,17 @@ const verify = async () => {
     return parseZodError(form!, result.error.issues || [])
   }
 
-  const { data, error } = await useFetch('auth/verify', {
+  // const { data, error } = await useFetch('auth/verify', {
+  //   baseURL: config.apiUrl,
+  //   method: 'POST',
+  //   body: { ...formInputs },
+  //   params: { signupToken: route.query.signupToken },
+  // })
+
+  const { data, pending, error, refresh } = await useCsrfFetch('auth/verify', {
     baseURL: config.apiUrl,
     method: 'POST',
-    body: { ...formInputs },
+    body: { ...result.data },
     params: { signupToken: route.query.signupToken },
   })
   loading.value = false
@@ -55,14 +62,16 @@ const verify = async () => {
     </Hero>
     <article class="container-wrapper">
       <div class="container | flow">
-        <form @submit.prevent="verify" novalidate>
-          <ErrorMsg />
-          <FormsBaseInput type="email" label="Email" id="email" v-model="formInputs.email" required />
-          <button class="btn btn-primary">
-            <span class="">Verify email</span>
-            <Spinner class="spinner" v-if="loading" />
-          </button>
-        </form>
+        <div class="form auth">
+          <form @submit.prevent="verify" novalidate>
+            <ErrorMsg />
+            <FormsBaseInput type="email" label="Email" id="email" v-model="formInputs.email" required />
+            <button class="btn btn-primary">
+              <span class="">Verify email</span>
+              <Spinner class="spinner" v-if="loading" />
+            </button>
+          </form>
+        </div>
       </div>
     </article>
   </div>

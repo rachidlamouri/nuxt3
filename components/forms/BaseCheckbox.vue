@@ -24,7 +24,7 @@ export default {
       class=""
       type="checkbox"
       v-bind="$attrs"
-      :value="props.modelValue"
+      :checked="props.modelValue"
       @input="$emit('update:modelValue', ($event.target as HTMLInputElement).checked)"
     />
   </div>

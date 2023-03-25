@@ -63,7 +63,7 @@ const defaults = {
   //   throwError: false, // optional
   // },
   origin: process.env.NODE_ENV === 'production' ? 'https://yrl-consulting.com' : 'http://localhost:3000',
-  basePath: '/api/auth',
+  // basePath: '/api/v1/auth',
   trustHost: false,
   enableSessionRefreshPeriodically: false,
   enableSessionRefreshOnWindowFocus: true,
@@ -103,8 +103,6 @@ export default defineNuxtModule({
     nuxt.options.runtimeConfig = nuxt.options.runtimeConfig || { public: {} }
     nuxt.options.runtimeConfig.nuxtAuth = defu(nuxt.options.runtimeConfig.nuxtAuth, options)
     nuxt.options.runtimeConfig.public.nuxtAuth = defu(nuxt.options.runtimeConfig.public.nuxtAuth, options)
-    const url = joinURL(options.origin ?? '', options.basePath)
-    logger.info(`YRL Nuxt Auth API location is \`${url}\``)
 
     // 3. Locate runtime directory
     const { resolve } = createResolver(import.meta.url)
@@ -116,29 +114,45 @@ export default defineNuxtModule({
     // }
     // nuxt.options.serverHandlers.unshift(serverHandler)
 
+    // const url = joinURL(options.origin ?? '', options.api.basePath)
+    // logger.info(`YRL Nuxt Auth API location is \`${url}\``)
+
     // 5. Register desired auth API endpoints
-    logger.info(`YRL Nuxt Auth API location is \`/${options.api.basePath}\``)
+    logger.info(`YRL Nuxt Auth API location is \`${options.api.basePath}\``)
+
     addServerHandler({
-      handler: resolve(`./runtime/server/api/v1/auth/signin.post`),
-      route: '/api/v1/auth/signin',
-    })
-    // From the runtime directory
-    addComponent({
-      name: 'SignInForm', // name of the component to be used in vue templates
-      // export: 'Products', // (optional) if the component is a named (rather than default) export
-      filePath: resolve('runtime/components/SignInForm.vue'),
+      handler: resolve(`./runtime/server/api/v1/auth/fetchAuthUser.post`),
+      route: '/api/v1/auth/fetchAuthUser',
     })
 
     addServerHandler({
       handler: resolve(`./runtime/server/api/v1/auth/signup.post`),
       route: '/api/v1/auth/signup',
     })
-    // From the runtime directory
-    addComponent({
-      name: 'signUpForm', // name of the component to be used in vue templates
-      // export: 'Products', // (optional) if the component is a named (rather than default) export
-      filePath: resolve('runtime/components/signUpForm.vue'),
+
+    addServerHandler({
+      handler: resolve(`./runtime/server/api/v1/auth/verify.post`),
+      route: '/api/v1/auth/verify',
     })
+
+    addServerHandler({
+      handler: resolve(`./runtime/server/api/v1/auth/signin.post`),
+      route: '/api/v1/auth/signin',
+    })
+
+    // From the runtime directory
+    // addComponent({
+    //   name: 'SignInForm', // name of the component to be used in vue templates
+    //   // export: 'Products', // (optional) if the component is a named (rather than default) export
+    //   filePath: resolve('runtime/components/SignInForm.vue'),
+    // })
+
+    // From the runtime directory
+    // addComponent({
+    //   name: 'signUpForm', // name of the component to be used in vue templates
+    //   // export: 'Products', // (optional) if the component is a named (rather than default) export
+    //   filePath: resolve('runtime/components/signUpForm.vue'),
+    // })
     // if (options.session.api.isEnabled) {
     //   for (const apiMethod of options.session.api.methods) {
     //     logger.info(

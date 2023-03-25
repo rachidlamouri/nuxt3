@@ -23,6 +23,7 @@ const formInputs = reactive({
   name: 'Jane Doe',
   email: 'abbaslamouri@yrlus.com',
   password: 'Foo1234#',
+  acceptTerms: false,
 })
 const loading = ref<boolean>(false)
 // const emailNotVerified = ref<boolean>(false)
@@ -154,27 +155,37 @@ const forgotPassword = async () => {
 </script>
 
 <template>
-  <form @submit.prevent="signup" novalidate>
-    <ErrorMsg />
-    <FormsBaseInput type="email" label="Email" id="email" v-model="formInputs.email" required />
-    <FormsBaseInput type="text" label="Name" id="name" v-model="formInputs.name" required />
-    <FormsPasswordInput
-      type="password"
-      label="Passsword"
-      id="password"
-      required
-      v-model="formInputs.password"
-      action="signup"
-    />
-    <button class="btn btn-primary">
-      <span class="">Signup</span>
-      <Spinner class="spinner" v-if="loading" />
-    </button>
-    <div class="link">
-      <span class="">Already have an account? </span>
-      <NuxtLink class="btn btn-accent btn-accent-text" :to="{ name: 'auth-signin' }"> Signin </NuxtLink>
-    </div>
-  </form>
+  <div class="form auth">
+    <form @submit.prevent="signup" novalidate>
+      <ErrorMsg />
+      <FormsBaseInput type="email" label="Email" id="email" v-model="formInputs.email" required />
+      <FormsBaseInput type="text" label="Name" id="name" v-model="formInputs.name" required />
+      <FormsPasswordInput
+        type="password"
+        label="Passsword"
+        id="password"
+        required
+        v-model="formInputs.password"
+        action="signup"
+      />
+      <div class="link">
+        <FormsBaseCheckbox id="remember-me" label="" />
+        <input type="checkbox" v-model="formInputs.acceptTerms" /> I accept YRL Consultingkkkk
+        <NuxtLink class="btn btn-accent btn-accent-text" to="/">Terms and Conditions</NuxtLink>
+      </div>
+      <p class="my-2">
+        Already have an account? <NuxtLink class="text-decoration-none" to="/iam/login">Log in here</NuxtLink>
+      </p>
+      <button class="btn btn-primary">
+        <span class="">Signup</span>
+        <Spinner class="spinner" v-if="loading" />
+      </button>
+      <div class="link">
+        <span class="">Already have an account? </span>
+        <NuxtLink class="btn btn-accent btn-accent-text" :to="{ name: 'auth-signin' }"> Signin </NuxtLink>
+      </div>
+    </form>
+  </div>
 </template>
 
 <style labg="scss" scoped></style>

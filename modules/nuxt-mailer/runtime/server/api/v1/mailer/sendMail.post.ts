@@ -1,6 +1,6 @@
 import errorHandler from '~/utils/errorHandler'
-import emailTemplateBase from '../../email-templates/base'
-import emailTemplateContact from '../../email-templates/contact'
+import emailTemplateBase from '~/modules/nuxt-mailer/runtime/emailTemplates/base'
+import emailTemplateContact from '~/modules/nuxt-mailer/runtime/emailTemplates/contact'
 import { sendMail } from '#mailer'
 
 const config = useRuntimeConfig()
@@ -10,10 +10,11 @@ export default defineEventHandler(async (event) => {
     const { name, email, phoneNumber, subject, message } = await readBody(event)
     const emailBody = emailTemplateContact(name, email, phoneNumber, subject, message)
     const info = await sendMail(
-      config.mailer.contactFormEmailRecipients.filter((r: string) => r),
+      config.nuxtMailer.contactFormEmailRecipients.split(',').map((r) => r.trim()),
       emailTemplateBase(emailBody)
+      // config.nuxtMailer.emailFromEmail,
+      // config.nuxtMailer.emailFromName
     )
-    console.log('Info', info)
     if (info && Array.isArray(info) && info.length && info[0].statusCode === 202)
       return { statusCode: info[0].statusCode }
     return { statusCode: null }

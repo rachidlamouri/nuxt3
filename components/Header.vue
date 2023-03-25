@@ -66,7 +66,7 @@ const config = useRuntimeConfig()
 
 const signup = async () => {
   signupBtnRef.value.blur()
-  await navigateTo({ path: '/auth/signup', query: { action: 'signup', csrf: useCsrf().csrf } })
+  await navigateTo({ path: '/auth/signup', query: { action: 'signup' } })
 }
 
 const signin = async () => {
