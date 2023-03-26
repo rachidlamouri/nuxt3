@@ -18,7 +18,7 @@ const config = useRuntimeConfig()
 
 const formInputs = reactive({
   email: 'abbaslamouri@yrlus.com',
-  password: 'Foo1234#',
+  password: 'Foo1234$',
   rememberMe: false,
 })
 const loading = ref<boolean>(false)

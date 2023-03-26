@@ -2,6 +2,7 @@ import { findByEmail, checkPassword, getSinedJwtToken, setAuthCookie } from '~/s
 import AppError from '~/utils/AppError'
 import errorHandler from '~/utils/errorHandler'
 import { authenticatedDataSchema } from '~/utils/schema'
+import { setUserSession } from '#session'
 
 const config = useRuntimeConfig()
 
@@ -14,7 +15,7 @@ export default defineEventHandler(async (event) => {
     if (!(await checkPassword(password, user.password)))
       throw new AppError('Invalid email or password', 'invalid_password', 401)
     if (!user.verified) throw new AppError('You have not verified your email', 'email_not_verified', 401)
-    return user
+    return setUserSession(event, user._id.toString())
     // const cookieMaxAge = Number(config.jwtMaxAge) * 1 * 60 * 60
     // const authToken = await getSinedJwtToken(user._id, cookieMaxAge)
     // setAuthCookie(event, 'authToken', authToken, cookieMaxAge)

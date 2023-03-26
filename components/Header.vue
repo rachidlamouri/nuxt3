@@ -6,6 +6,7 @@ import { IAuthenticatedData } from '~/utils/schema'
 // const { status, data, signIn, signOut } = useSession()
 
 const status = false
+const config = useRuntimeConfig()
 
 // const { session } = await useSession()
 // console.log('IIIIII', session.value)
@@ -33,6 +34,12 @@ const props = defineProps({
   },
 })
 
+const { data, pending, error, refresh } = await useCsrfFetch('session', {
+  baseURL: config.apiUrl,
+  method: 'GET',
+})
+console.log(data.value)
+
 // onMounted(async () => {
 //   const { session } = await useSession()
 //   console.log('IIIIIIddd', session.value)
@@ -59,7 +66,6 @@ const router = useRouter()
 
 const { cart } = useCartStore()
 const { loadCart } = useCartStore()
-const config = useRuntimeConfig()
 
 // const xyz = useCookie('cartTotal')
 // console.log(xyz.value)

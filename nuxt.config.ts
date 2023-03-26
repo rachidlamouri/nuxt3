@@ -67,6 +67,7 @@ export default defineNuxtConfig({
     // '@sidebase/nuxt-auth',
 
     './modules/mongodb',
+    './modules/nuxt-session/module',
     './modules/nuxt-mailer/module',
     './modules/nuxt-security/module',
     './modules/nuxt-auth/module',
@@ -74,6 +75,7 @@ export default defineNuxtConfig({
     // ['./modules/mailer/module', {}],
     // ['./modules/session/module', {}],
   ],
+  nuxtSession: {},
   nuxtSecurity: {},
   nuxtAuth: {},
   nuxtMailer: {},

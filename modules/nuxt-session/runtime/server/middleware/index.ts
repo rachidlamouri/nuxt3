@@ -67,7 +67,7 @@ const newSession = async (event: H3Event) => {
   // Store session data in storage
   const session = {
     // jwtToken,
-    ip: abstractRes.ip_address,
+    ip: '',
     // ip: '',
     // city: abstractRes.city || '',
   }
@@ -83,13 +83,13 @@ const newSession = async (event: H3Event) => {
 }
 
 export default eventHandler(async (event: H3Event) => {
-  const sessionOptions = config.session.session
+  // const sessionOptions = config.session.session
 
   // 1. Does the sessionId cookie exist on the request?
-  const clientSessionId = parseCookies(event).sessionId
-  console.log('client Cookie', clientSessionId)
-  console.log('event cookie', event.context)
-  if (event.node.req.headers.sessionauthorization) console.log('event ', event.node.req.headers)
+  const UserSessionId = parseCookies(event).userSessionId
+  console.log('User session ID', UserSessionId)
+  // console.log('event cookie', event.context)
+  // if (event.node.req.headers.sessionauthorization) console.log('event ', event.node.req.headers)
   // const clientSession = await mongoClient.db().collection('sessions').findOne({ key: clientSessionId })
   // console.log('US', clientSession)
   // if (!clientSessionId && !event.context.sessionId && clientSessionId !== event.context.sessionId && !clientSession)
