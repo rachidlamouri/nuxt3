@@ -2,7 +2,7 @@
 import { useToast } from 'vue-toastification'
 import { IAuthenticatedData, emailSchema } from '~/utils/schema'
 
-const { setAuthUser } = useAuthStore()
+// const { setAuthUser } = useAuthStore()
 const { appErrorMsg, resetForm, parseZodError } = useErrorStore()
 const route = useRoute()
 const config = useRuntimeConfig()
@@ -29,7 +29,7 @@ const resetPassword = async () => {
     return parseZodError(form!, result.error.issues || [])
   }
 
-  const { data, error } = await useFetch('auth/forgotpassword', {
+  const { data, pending, error, refresh } = await useCsrfFetch('auth/forgotPassword', {
     baseURL: config.apiUrl,
     method: 'POST',
     body: { ...formInputs },
@@ -68,28 +68,30 @@ const resetPassword = async () => {
         <div class="success" v-if="route.query.success">
           <p>Please check your email for instructions to reset your passwpord</p>
         </div>
-        <form @submit.prevent="resetPassword" novalidate v-else>
-          <div class="notice">
-            <p>
-              We will send you an email with a link to assist you with resetting your password. Check your spam folder
-              for an email from: support@acs-parts.com.
-            </p>
-            <p>support@acs-parts.com.</p>
-          </div>
-          <ErrorMsg />
-          <div class="error-msg" v-if="emailNotVerified">
-            <p>You have not verified your email</p>
-            <div class="flex gap-s">
-              <span class="">Clich here to get a new verification token </span>
-              <button class="tn btn-accent btn-accent-text">Signin</button>
+        <div class="form auth" v-else>
+          <form @submit.prevent="resetPassword" novalidate>
+            <div class="notice">
+              <p>
+                We will send you an email with a link to assist you with resetting your password. Check your spam folder
+                for an email from: support@acs-parts.com.
+              </p>
+              <p>support@acs-parts.com.</p>
             </div>
-          </div>
-          <FormsBaseInput type="email" label="Email" id="email" v-model="formInputs.email" required />
-          <button class="btn btn-primary">
-            <span class="">Reset password</span>
-            <Spinner class="spinner" v-if="loading" />
-          </button>
-        </form>
+            <ErrorMsg />
+            <div class="error-msg" v-if="emailNotVerified">
+              <p>You have not verified your email</p>
+              <div class="flex gap-s">
+                <span class="">Clich here to get a new verification token </span>
+                <button class="tn btn-accent btn-accent-text">Signin</button>
+              </div>
+            </div>
+            <FormsBaseInput type="email" label="Email" id="email" v-model="formInputs.email" required />
+            <button class="btn btn-primary">
+              <span class="">Reset password</span>
+              <Spinner class="spinner" v-if="loading" />
+            </button>
+          </form>
+        </div>
       </div>
     </article>
   </div>

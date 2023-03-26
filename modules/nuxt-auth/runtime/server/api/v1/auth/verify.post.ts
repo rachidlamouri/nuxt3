@@ -45,7 +45,7 @@ export default defineEventHandler(async (event) => {
         404
       )
     const emailBody = emailTemplateRegistrationConfirmation(user.name, event.node.req.headers.origin!)
-    const info = await sendMail(body.email, emailTemplateBase(emailBody))
+    const info = await sendMail(body.email, config.nuxtMailer.emailConfirmationSubject, emailTemplateBase(emailBody))
     if (info && Array.isArray(info) && info.length && info[0].statusCode === 202)
       return { statusCode: info[0].statusCode }
     return { statusCode: null }

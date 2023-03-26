@@ -4,7 +4,7 @@ import AppError from '~/utils/AppError'
 
 const config = useRuntimeConfig()
 
-export const sendMail = async (emailRecipients: string[], html: string) => {
+export const sendMail = async (emailRecipients: string[], subject: string, html: string) => {
   let info
   if (config.nuxtMailer.mailTransporter === 'nodemailer') {
     const transporter = nodemailer.createTransport({
@@ -20,7 +20,7 @@ export const sendMail = async (emailRecipients: string[], html: string) => {
     info = await transporter.sendMail({
       from: config.nuxtMailer.emailFromEmail,
       to: emailRecipients,
-      subject: config.nuxtMailer.contactFormEmailSubject,
+      subject,
       html,
     })
     if (info.rejected)
@@ -38,7 +38,7 @@ export const sendMail = async (emailRecipients: string[], html: string) => {
         email: config.nuxtMailer.emailFromEmail,
         name: config.nuxtMailer.emailFromName,
       },
-      subject: config.nuxtMailer.contactFormEmailSubject,
+      subject,
       // template_id: templateId,
       // dynamic_template_data: { ...this.data, firstname: this.firstname, subject: this.subject },
       // text: ``,

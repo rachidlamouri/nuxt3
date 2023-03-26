@@ -6,7 +6,6 @@ export default (
   message: string | null
 ) => {
   return `
-		<p>New message from yrl-consulting.com site</p>
 		Name: ${name}<br>
 		Email: ${email}<br>
 		Phone: ${phoneNumber}<br>

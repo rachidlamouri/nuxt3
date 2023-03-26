@@ -18,8 +18,7 @@ export default {
 </script>
 
 <template>
-  <div class="input">
-    <label :v-for="$attrs.id" v-if="label">{{ label }}</label>
+  <div class="input checkbox">
     <input
       class=""
       type="checkbox"
@@ -27,25 +26,26 @@ export default {
       :checked="props.modelValue"
       @input="$emit('update:modelValue', ($event.target as HTMLInputElement).checked)"
     />
+    <label :v-for="$attrs.id" v-if="label">{{ label }}</label>
   </div>
 </template>
 
 <style lang="scss" scoped>
-.input {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2xs);
+// .input {
+//   display: flex;
+//   align-items: center;
+//   gap: var(--space-2xs);
 
-  label {
-    order: 1;
-    display: block;
-  }
+//   label {
+//     order: 1;
+//     display: block;
+//   }
 
-  input {
-    border: 1px solid coral;
-    width: 1.2rem;
-    height: 1.2rem;
-    display: block;
-  }
-}
+//   input {
+//     border: 1px solid coral;
+//     width: 1.2rem;
+//     height: 1.2rem;
+//     display: block;
+//   }
+// }
 </style>

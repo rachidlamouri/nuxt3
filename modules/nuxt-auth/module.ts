@@ -18,7 +18,7 @@ const defaults = {
   isEnabled: true,
   api: {
     isEnabled: true,
-    methods: ['patch', 'get', 'post', 'delete'],
+    methods: 'fetchAuthUser, signup, signin, verify, forgotPassword, resetPassword',
     basePath: '/api/v1/auth',
   },
   jwtSecret: randomBytes(22).toString('base64'),
@@ -118,27 +118,35 @@ export default defineNuxtModule({
     // logger.info(`YRL Nuxt Auth API location is \`${url}\``)
 
     // 5. Register desired auth API endpoints
-    logger.info(`YRL Nuxt Auth API location is \`${options.api.basePath}\``)
+    if (options.api.isEnabled) {
+      for (const apiMethod of options.api.methods.split(',').map((m) => m.trim())) {
+        const handler = resolve(`./runtime/server/api/v1/auth/${apiMethod}.post`)
+        addServerHandler({ handler, route: `${options.api.basePath}/${apiMethod}` })
+      }
+      logger.info(`Auth API "${options.api.methods}" endpoints registered at "${options.api.basePath}"`)
+    }
 
-    addServerHandler({
-      handler: resolve(`./runtime/server/api/v1/auth/fetchAuthUser.post`),
-      route: '/api/v1/auth/fetchAuthUser',
-    })
+    // logger.info(`YRL Nuxt Auth API location is \`${options.api.basePath}\``)
 
-    addServerHandler({
-      handler: resolve(`./runtime/server/api/v1/auth/signup.post`),
-      route: '/api/v1/auth/signup',
-    })
+    // addServerHandler({
+    //   handler: resolve(`./runtime/server/api/v1/auth/fetchAuthUser.post`),
+    //   route: '/api/v1/auth',
+    // })
 
-    addServerHandler({
-      handler: resolve(`./runtime/server/api/v1/auth/verify.post`),
-      route: '/api/v1/auth/verify',
-    })
+    // addServerHandler({
+    //   handler: resolve(`./runtime/server/api/v1/auth/signup.post`),
+    //   route: '/api/v1/auth',
+    // })
 
-    addServerHandler({
-      handler: resolve(`./runtime/server/api/v1/auth/signin.post`),
-      route: '/api/v1/auth/signin',
-    })
+    // addServerHandler({
+    //   handler: resolve(`./runtime/server/api/v1/auth/verify.post`),
+    //   route: '/api/v1/auth',
+    // })
+
+    // addServerHandler({
+    //   handler: resolve(`./runtime/server/api/v1/auth/signin.post`),
+    //   route: '/api/v1/auth',
+    // })
 
     // From the runtime directory
     // addComponent({

@@ -11,9 +11,8 @@ export default defineEventHandler(async (event) => {
     const emailBody = emailTemplateContact(name, email, phoneNumber, subject, message)
     const info = await sendMail(
       config.nuxtMailer.contactFormEmailRecipients.split(',').map((r) => r.trim()),
+      config.nuxtMailer.contactFormEmailSubject,
       emailTemplateBase(emailBody)
-      // config.nuxtMailer.emailFromEmail,
-      // config.nuxtMailer.emailFromName
     )
     if (info && Array.isArray(info) && info.length && info[0].statusCode === 202)
       return { statusCode: info[0].statusCode }

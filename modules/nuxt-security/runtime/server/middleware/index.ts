@@ -68,9 +68,10 @@ export default defineEventHandler(async (event) => {
   if (!verifyCsrf(secret, headerCsrf) || !requestData.nonce || requestData.nonce !== headerCsrf)
     throw createError({
       statusCode: 403,
+
       name: 'CSRFError',
-      statusMessage: 'CSRF Token Mismatch',
-      data: { ss: 'Header csrf invalid' },
+      statusMessage: 'Bad request',
+      data: { code: 'csrf_token_mismatch' },
     })
   const xxsValidator = new FilterXSS(config.nuxtSecurity.xss)
   if (JSON.stringify(requestData) !== xxsValidator.process(JSON.stringify(requestData))) {
@@ -78,7 +79,7 @@ export default defineEventHandler(async (event) => {
       statusCode: 403,
       name: 'XXSError',
       statusMessage: 'Bad request',
-      data: { ss: 'Body or request params csrf invalid' },
+      data: { code: 'xxs_attempt' },
     })
   }
   console.log('ZZZZZZZZZZZZ')

@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
       event.node.req.headers.origin!,
       await getSinedJwtToken(insertedId, Number(config.jwtSignupTokenMaxAge))
     )
-    const info = await sendMail(body.email, emailTemplateBase(emailBody))
+    const info = await sendMail(body.email, config.nuxtMailer.registrationEmailSubject, emailTemplateBase(emailBody))
     if (info && Array.isArray(info) && info.length && info[0].statusCode === 202)
       return { statusCode: info[0].statusCode }
     return { statusCode: null }

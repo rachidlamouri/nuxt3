@@ -17,25 +17,25 @@ import {
   useLogger,
 } from 'nuxt/kit'
 
-const PACKAGE_NAME = 'session'
+const PACKAGE_NAME = 'nuxt-session'
 
 const defaults = {
   isEnabled: true,
-  session: {
-    expiryInSeconds: 60 * 10,
-    idLength: 64,
-    storePrefix: 'sessions',
-    cookieSameSite: 'strict',
-    cookieSecure: false,
-    cookieHttpOnly: true,
-    storageOptions: {
-      driver: 'memory',
-      options: {},
-    },
-    domain: false,
-    ipPinning: false,
-    rolling: false,
+  // session: {
+  expiryInSeconds: 60 * 10,
+  idLength: 64,
+  storePrefix: 'sessions',
+  cookieSameSite: 'strict',
+  cookieSecure: false,
+  cookieHttpOnly: true,
+  storageOptions: {
+    driver: 'memory',
+    options: {},
   },
+  domain: false,
+  ipPinning: false,
+  rolling: false,
+  // },
   api: {
     isEnabled: true,
     methods: ['patch', 'delete', 'get', 'post'],
@@ -45,8 +45,8 @@ const defaults = {
 
 export default defineNuxtModule({
   meta: {
-    name: '@yrl/nuxt-session',
-    configKey: 'session',
+    name: `@YRL/${PACKAGE_NAME}`,
+    configKey: 'nuxtSession',
     compatibility: {
       nuxt: '^3.3.1',
     },
@@ -56,8 +56,6 @@ export default defineNuxtModule({
   hooks: {},
 
   setup(moduleOptions, nuxt) {
-    // console.log('MMMMMMMVVVVVVV', moduleOptions)
-
     const logger = useLogger(PACKAGE_NAME)
 
     // 1. Check if module should be enabled at all
@@ -66,12 +64,14 @@ export default defineNuxtModule({
       return
     }
 
-    logger.info('Setting up sessions...')
+    logger.info(`${PACKAGE_NAME} module setup starting...`)
 
     // 2. Set public and private runtime configuration
-    nuxt.options.runtimeConfig.session = defu(nuxt.options.runtimeConfig.session, moduleOptions)
-    nuxt.options.runtimeConfig.public.session = defu(nuxt.options.runtimeConfig.public.session, {
-      api: moduleOptions.api,
+    const options = defu(moduleOptions, defaults)
+    nuxt.options.runtimeConfig = nuxt.options.runtimeConfig || { public: {} }
+    nuxt.options.runtimeConfig.nuxtSession = defu(nuxt.options.runtimeConfig.nuxtSession, options)
+    nuxt.options.runtimeConfig.public.nuxtSession = defu(nuxt.options.runtimeConfig.public.nuxtSession, {
+      api: options.api,
     })
 
     // setup unstorage

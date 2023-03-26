@@ -23,6 +23,7 @@ const defaults = {
   emailSentMessage: 'Your message was sent successfully',
   contactFormEmailSubject: 'New message from yrl-consulting.com site',
   registrationEmailSubject: 'Please confirm your email address',
+  emailConfirmationSubject: 'Thank you for confirming your email',
   forgotPasswordEmailSubject: 'Your password reset token (valid for 1 hour)',
 }
 
