@@ -5,10 +5,38 @@ import orderSchema from '../../server/modelSchemas/order'
 import productSchema from '../../server/modelSchemas/product'
 import provenceSchema from '../../server/modelSchemas/provence'
 import countrySchema from '../../server/modelSchemas/country'
+import { createClient } from 'redis'
+import { Schema, Repository, EntityId } from 'redis-om'
 
 export default async (inlineOptions: any, nuxt: any) => {
   nuxt.hook('listen', async (nuxt: any) => {
     try {
+      /////////redis
+
+      const redis = createClient({
+        url: process.env.NUXT_REDIS_URL as string,
+      })
+      redis.on('error', (err) => console.log('Redis Client Error', err))
+      await redis.connect()
+      console.log(`redis connection succesfull`)
+
+      const productSchema = new Schema('product', {
+        name: { type: 'string' },
+        price: { type: 'number' },
+      })
+
+      const productRepository = new Repository(productSchema, redis)
+      let product = {
+        name: 'The Righteous & The Butterfly',
+        price: 2014,
+      }
+
+      product = await productRepository.save(product)
+      console.log(product[EntityId])
+      console.log(await productRepository.fetch(product[EntityId]))
+
+      ////////////
+
       // Connect to database
       await mongoClient.connect()
       console.log(`Database connection succesfull`)
