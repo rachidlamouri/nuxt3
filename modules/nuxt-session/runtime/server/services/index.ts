@@ -13,13 +13,13 @@ const config = useRuntimeConfig()
 // const nuxtApp = useNuxtApp()
 // console.log(nuxtApp)
 
-const storage = createStorage({
-  driver: mongodbDriver({
-    connectionString: useRuntimeConfig().dbUrl,
-    databaseName: 'acs',
-    collectionName: 'sessions',
-  }),
-})
+// const storage = createStorage({
+//   driver: mongodbDriver({
+//     connectionString: useRuntimeConfig().dbUrl,
+//     databaseName: 'acs',
+//     collectionName: 'sessions',
+//   }),
+// })
 
 // const storage = createStorage({
 //   driver: memoryDriver(),
