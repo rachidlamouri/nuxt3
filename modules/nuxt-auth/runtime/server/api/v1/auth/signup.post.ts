@@ -4,12 +4,26 @@ import { sendMail } from '#mailer'
 import { createUser, getSinedJwtToken } from '~/server/controllers/v1/auth'
 import AppError from '~/utils/AppError'
 import errorHandler from '~/utils/errorHandler'
+import { userRepository, EntityId } from '~/server/redisSchemas/user'
+// import { createClient } from 'redis'
+import { redis } from '~/utils/redisClient'
+
+// import { Schema, Repository, EntityId } from 'redis-om'
 
 const config = useRuntimeConfig()
 
 export default defineEventHandler(async (event) => {
   try {
-    const body = await readBody(event)
+    // const redis = createClient({
+    //   url: process.env.NUXT_REDIS_URL as string,
+    // })
+    await redis.connect()
+    const user = await userRepository.save(await readBody(event))
+    console.log('E', user[EntityId])
+
+    // console.log(await userRepository.fetch(user[EntityId]))
+    return user[EntityId]
+
     const { insertedId } = await createUser(body)
     if (!insertedId)
       throw new AppError('Registration failed.  Please try a different email', 'registration_failed', 400)

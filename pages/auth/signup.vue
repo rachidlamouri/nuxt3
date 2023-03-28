@@ -76,6 +76,7 @@ const signup = async () => {
       // })
       loading.value = false
       console.log(data.value)
+      // console.log(error.value.data)
       if (error.value) return (appErrorMsg.value = error.value.statusMessage || '')
       // throw createError(error.value.data)
       // signupSuccess.value = true

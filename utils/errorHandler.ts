@@ -19,7 +19,7 @@ import { ZodError } from 'zod'
 
 export default (event: H3Event, err: any) => {
   console.log(`ERR --${err.name}--`)
-  console.log(err.message)
+  console.log(err)
   console.log(Array.isArray(err.response.body.errors))
   console.log(err.name == 'Bad Request')
   // console.log(colors.red.bold(`ERR ${err}`), err.name)
