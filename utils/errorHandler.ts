@@ -20,8 +20,8 @@ import { ZodError } from 'zod'
 export default (event: H3Event, err: any) => {
   console.log(`ERR --${err.name}--`)
   console.log(err)
-  console.log(Array.isArray(err.response.body.errors))
-  console.log(err.name == 'Bad Request')
+  // console.log(Array.isArray(err.response.body.errors))
+  // console.log(err.name == 'Bad Request')
   // console.log(colors.red.bold(`ERR ${err}`), err.name)
   // console.log(colors.red.bold(`ERRCODE ${err}.code`), err.code)
   // console.log('INFO', err.errorInfo
@@ -51,6 +51,7 @@ export default (event: H3Event, err: any) => {
   // }
 
   if (
+    err.name === 'Error' ||
     err.name === 'CustomError' ||
     err.name === 'TokenExpiredError' ||
     err.name === 'TypeError' ||

@@ -117,6 +117,29 @@ export default defineNuxtModule({
     // const url = joinURL(options.origin ?? '', options.api.basePath)
     // logger.info(`YRL Nuxt Auth API location is \`${url}\``)
 
+    // 5. Create virtual imports for server-side
+    nuxt.hook('nitro:config', (nitroConfig) => {
+      nitroConfig.alias = nitroConfig.alias || {}
+      // Inline module runtime in Nitro bundle
+      nitroConfig.externals = defu(typeof nitroConfig.externals === 'object' ? nitroConfig.externals : {}, {
+        inline: [resolve('./runtime')],
+      })
+      nitroConfig.alias['#auth'] = resolve('./runtime/server/services')
+    })
+    addTemplate({
+      filename: 'types/auth.d.ts',
+      getContents: () =>
+        [
+          "declare module  '#auth' {",
+          `  const createUser: typeof import('${resolve('./runtime/server/services')}').createUser`,
+          // `  const getUserSession: typeof import('${resolve('./runtime/server/services')}').getUserSession`,
+          '}',
+        ].join('\n'),
+    })
+    nuxt.hook('prepare:types', (options) => {
+      options.references.push({ path: resolve(nuxt.options.buildDir, 'types/auth.d.ts') })
+    })
+
     // 5. Register desired auth API endpoints
     if (options.api.isEnabled) {
       for (const apiMethod of options.api.methods.split(',').map((m) => m.trim())) {

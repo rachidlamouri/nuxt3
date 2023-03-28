@@ -1,6 +1,6 @@
 import { mongoClient } from '../../utils/mongoClient'
-import { redis } from '../../utils/redisClient'
-import { createClient } from 'redis'
+// import  redis  from '../../utils/redisClient'
+// import { createClient } from 'redis'
 
 // import colors from 'colors'
 import userSchema from '../../server/modelSchemas/user'
@@ -16,11 +16,7 @@ export default async (inlineOptions: any, nuxt: any) => {
       //   url: process.env.NUXT_REDIS_URL as string,
       // })
 
-      redis.on('error', (err: Error) => console.log('Redis Client Error', err))
-      redis.on('connect', () => {
-        console.log('redis connection succesfull')
-      })
-      await redis.connect()
+      // await redis.connect()
       // console.log(`redis connection succesfull`)
       // const redis = createClient({
       //   url: process.env.NUXT_REDIS_URL as string,
