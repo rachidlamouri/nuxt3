@@ -1,5 +1,5 @@
 import redis from '~/utils/redisClient'
-import { userRepository, EntityId } from '~/server/redisSchemas/User'
+import { userRepository, EntityId } from '~/server/redisSchemas/user'
 
 import AppError from '~/utils/AppError'
 import { H3Event } from 'h3'

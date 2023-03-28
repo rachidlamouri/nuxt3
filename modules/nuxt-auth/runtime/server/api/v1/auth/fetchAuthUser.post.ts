@@ -1,6 +1,6 @@
 import AppError from '~/utils/AppError'
 import redis from '~/utils/redisClient'
-import { userRepository, EntityId } from '../../../../../../../server/redisSchemas/User'
+import { userRepository, EntityId } from '~/server/redisSchemas/user'
 import errorHandler from '~/utils/errorHandler'
 
 import { findByEmail } from '~/server/controllers/v1/auth'
