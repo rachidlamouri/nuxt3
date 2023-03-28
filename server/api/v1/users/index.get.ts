@@ -6,6 +6,9 @@ import errorHandler from '~/utils/errorHandler'
 import { findByEmail } from '~/server/controllers/v1/auth'
 export default defineEventHandler(async (event) => {
   try {
+    const query = getQuery(event)
+    console.log(query)
+    return true
     const { email } = await readBody(event)
     await redis.connect()
     const found = await userRepository.search().where('email').eq(email).return.all()

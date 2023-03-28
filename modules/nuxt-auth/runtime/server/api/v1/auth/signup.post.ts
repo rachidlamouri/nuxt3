@@ -1,6 +1,8 @@
 import redis from '~/utils/redisClient'
-import { sendMail } from '#mailer'
 import { userRepository, EntityId } from '~~/server/redisSchemas/user'
+
+import { sendMail } from '#mailer'
+
 import emailTemplateBase from '~/modules/nuxt-mailer/runtime/emailTemplates/base'
 import emailTemplateRegistration from '~/modules/nuxt-mailer/runtime/emailTemplates/registration'
 import { getSinedJwtToken } from '~/server/controllers/v1/auth'

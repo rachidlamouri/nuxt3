@@ -3,6 +3,8 @@ import { H3Event } from 'h3'
 import { mongoClient, ObjectId } from '~/utils/mongoClient'
 import AppError from '~/utils/AppError'
 import errorHandler from '~/utils/errorHandler'
+import redis from '~/utils/redisClient'
+import { userRepository, EntityId } from '~/server/redisSchemas/user'
 
 const aggregateFetch = async (event: H3Event, collection: string, lookup: object[] = [], unwind: object[] = []) => {
   try {
@@ -97,6 +99,15 @@ const findBySlug = async (collection: string, slug: string) => {
 
 const createDocument = async (collection: string, doc: {}) => {
   return await mongoClient.db().collection('orders').insertOne(doc)
+}
+
+
+const findByEmail = async (email: string) => {
+  await redis.connect()
+  const found = await userRepository.search().where('email').eq(email).return.all()
+  console.log('E', found)
+  if (found && Array.isArray(found) && found.length) return found[0]
+  return {}
 }
 
 export { aggregateFetch, findById, findBySlug, createDocument }

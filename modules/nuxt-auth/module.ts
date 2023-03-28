@@ -18,7 +18,7 @@ const defaults = {
   isEnabled: true,
   api: {
     isEnabled: true,
-    methods: 'fetchAuthUser, signup, signin, verify, forgotPassword, resetPassword',
+    methods: 'signup, signin, verify, forgotPassword, resetPassword',
     basePath: '/api/v1/auth',
   },
   jwtSecret: randomBytes(22).toString('base64'),
@@ -151,25 +151,7 @@ export default defineNuxtModule({
 
     // logger.info(`YRL Nuxt Auth API location is \`${options.api.basePath}\``)
 
-    // addServerHandler({
-    //   handler: resolve(`./runtime/server/api/v1/auth/fetchAuthUser.post`),
-    //   route: '/api/v1/auth',
-    // })
-
-    // addServerHandler({
-    //   handler: resolve(`./runtime/server/api/v1/auth/signup.post`),
-    //   route: '/api/v1/auth',
-    // })
-
-    // addServerHandler({
-    //   handler: resolve(`./runtime/server/api/v1/auth/verify.post`),
-    //   route: '/api/v1/auth',
-    // })
-
-    // addServerHandler({
-    //   handler: resolve(`./runtime/server/api/v1/auth/signin.post`),
-    //   route: '/api/v1/auth',
-    // })
+   
 
     // From the runtime directory
     // addComponent({
