@@ -7,11 +7,20 @@ import { IAuthenticatedData } from '~/utils/schema'
 
 const status = false
 const config = useRuntimeConfig()
+// console.log('CC', useCookie('csrf').value)
+
+// const { data, pending, error, refresh } = await useCsrfFetch('session/getSession', {
+//   baseURL: config.apiUrl,
+//   method: 'GET',
+//   // params: { nonce: useCookie('csrf').value },
+// })
+// console.log(data.value)
 // console.log(config.public.nuxtSession.userSessionId)
 // console.log(useCookie(config.public.nuxtSession.userSessionId))
 
-// const { session } = await useSession()
-// console.log('IIIIII', session.value)
+const { session, getSession } = await useSession()
+// getSession()
+console.log('IIIIII', session.value)
 // const { data, pending, error, refresh } = await useSession('/api/v1/session/getSession', {
 //   method: 'GET',
 //   // body: { ...formInputs },

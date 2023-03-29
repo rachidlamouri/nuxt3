@@ -1,3 +1,4 @@
+// import { getUserSession } from './../../../nuxt-session/runtime/server/services/index';
 // export const useCsrf = () => {
 //   const nuxtApp = useNuxtApp()
 //   // if (process.server) {
@@ -6,32 +7,40 @@
 //   // }
 //   return { csrf: nuxtApp.payload.csrfToken }
 // }
+import { getUserSession } from '#auth'
 
 export default async () => {
   const config = useRuntimeConfig()
+  const session = ref(0)
   // console.log('NNNNN', config.public.yrlNuxtAuth)
-  const sessionOptions = config.public.yrlNuxtAuth.session
-  const session = ref()
-  console.log('PPPPPP', sessionOptions.api.basePath)
+  // const sessionOptions = config.public.yrlNuxtAuth.session
+  // const session = ref()
+  // console.log('PPPPPP', sessionOptions.api.basePath)
 
-  const _sessionRequest = (method, body) => {
-    const opts = { method: method.toUpperCase(), body }
+  // const _sessionRequest = (method, body) => {
+  const getSession = async () => {
+    // const opts = { method: method.toUpperCase(), body }
 
-    return useFetch('/api/v1/session/getSession', {
+    const { data } = useCsrfFetch('session/getSession', {
+      baseURL: config.apiUrl,
       method: 'GET',
-      // body,
-      // server: false,
-      onResponse({ request, response, options }) {
-        console.log('QQQQQ', response._data)
-        // Process the response data
-        session.value = response._data
-        return response._data
-      },
+      // body: { ...formInputs },
+      // onResponse({ request, response, options }) {
+      //   console.log('QQQQQ', response._data)
+      //   // Process the response data
+      //   session.value = response._data
+      //   return response._data
+      // },
     })
-  }
+    console.log('JJJJJJJ', data.value)
+    session.value = data.value
 
-  await _sessionRequest('get', {})
-  return { session }
+    // await useSession()
+    // return { session }
+  }
+  await getSession()
+
+  return { session, getSession }
 }
 
 // export function useCsrfFetch(request, opts) {

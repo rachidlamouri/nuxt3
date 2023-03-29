@@ -1,13 +1,8 @@
-import { EntityId } from 'redis-om'
 import redis from '~/utils/redisClient'
 import { userRepository, EntityId } from '~/server/redisSchemas/user'
 
-import AppError from '~/utils/AppError'
-import { H3Event } from 'h3'
-import { Ref, ref } from 'vue'
 import { createStorage } from 'unstorage'
 
-import memoryDriver from 'unstorage/drivers/memory'
 import mongodbDriver from 'unstorage/drivers/mongodb'
 import { mongoClient, ObjectId } from '~/utils/mongoClient'
 
@@ -26,9 +21,99 @@ import sendEmail from '~/utils/Email'
 import { IUser } from '~/utils/types'
 
 import { getSinedJwtToken } from '~/server/controllers/v1/factory'
-import { setUserSession } from '#session'
+// import { setUserSession } from '#session'
+import AppError from '~/utils/AppError'
+import { H3Event } from 'h3'
+import { Ref, ref } from 'vue'
+import memoryDriver from 'unstorage/drivers/memory'
+import redisDriver from 'unstorage/drivers/redis'
+import { nanoid } from 'nanoid'
 
 const config = useRuntimeConfig()
+
+// const nuxtApp = useNuxtApp()
+// console.log(nuxtApp)
+
+// const storage = createStorage({
+//   driver: mongodbDriver({
+//     connectionString: useRuntimeConfig().dbUrl,
+//     databaseName: 'acs',
+//     collectionName: 'sessions',
+//   }),
+// })
+
+// const storage = createStorage({
+//   driver: memoryDriver(),
+// })
+
+export const storage = createStorage({
+  driver: redisDriver({
+    base: config.nuxtAuth.session.userSessionId,
+    host: config.redisHost,
+    port: Number(config.redisPort),
+    password: config.redisPassword,
+    // tls: true as any,
+  }),
+})
+
+export const setUserSession = async (event: H3Event, userId: string) => {
+  // const abstractRes = (await $fetch(`${config.abstractApiUrl}/?api_key=${config.abstractApiKey}`)) || { ip_address: '' }
+  // console.log('IPPPPPPPPPPP', 'abstractRes')
+  const sessionKey = nanoid(config.nuxtAuth.session.idLength)
+
+  // const jwtToken = await getSinedJwtToken({ id }, Number(config.jwtSignupTokenMaxAge))
+  // console.log('IPPPPPPP', jwtToken)
+  // // return jwtToken
+
+  const expirationDate = config.nuxtAuth.session.expiryInSeconds
+    ? new Date(Date.now() + config.nuxtAuth.session.expiryInSeconds * 1000)
+    : undefined
+
+  // console.log('here')
+
+  setCookie(event, config.nuxtAuth.session.userSessionId, sessionKey, {
+    expires: expirationDate,
+    secure: config.nuxtAuth.session.cookieSecure,
+    httpOnly: config.nuxtAuth.session.cookieHttpOnly,
+    // sameSite: config.nuxtAuth.session.cookieSameSite as 'strict',
+    // domain: config.nuxtAuth.session.domain,
+  })
+  // const now = new Date()
+
+  // (Re-)Set cookie
+  // const userSessionId = nanoid(config.nuxtAuth.session.idLength)
+  // safeSetCookie(event, SESSION_COOKIE_NAME, jwtToken, new Date())
+
+  // console.log('There')
+
+  // Store session data in storage
+  const session = {
+    userId,
+    // jwtToken,
+    // ip: '989076',
+    // ip: '',
+    // city: abstractRes.city || '',
+  }
+
+  await storage.setItem(sessionKey, session, { ttl: config.nuxtAuth.session.expiryInSeconds })
+  // console.log('HAS', await storage.hasItem(SESSION_COOKIE_NAME))
+  // console.log('GET', await storage.getItem(SESSION_COOKIE_NAME))
+
+  // event.context.sessionId = jwtToken
+  // event.context.session = session
+
+  return session
+}
+
+export const getUserSession = async (event: H3Event) => {
+  let session
+  const userSessionId = parseCookies(event)[config.nuxtAuth.session.userSessionId]
+  console.log('User session ID', userSessionId)
+  console.log('HAS', await storage.hasItem(userSessionId))
+  if (await storage.hasItem(userSessionId)) session = await storage.getItem(userSessionId)
+  console.log('SSSSSS', session)
+  return session
+}
 
 const hashPassword = async (password: string = '4zE_h2n-mdWaZ9aq&3!G[Y{A,u"_xPvSD"a3q$B') => {
   const salt = await bcrypt.genSalt(12)
@@ -85,7 +170,8 @@ export const fetchAuthUser = async (event: H3Event) => {
     throw new AppError('Invalid email or password', 'invalid_password', 401)
   if (!user.verified) throw new AppError('You have not verified your email', 'email_not_verified', 401)
 
-  return setUserSession(event, user[EntityId])
+  await setUserSession(event, user[EntityId])
+  return true
 
   // // const cookieMaxAge = Number(config.jwtMaxAge) * 1 * 60 * 60
   // // const authToken = await getSinedJwtToken(user._id, cookieMaxAge)

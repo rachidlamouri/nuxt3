@@ -46,15 +46,15 @@ const signin = async () => {
     body: { ...formInputs },
   })
   console.log(data.value)
-  console.log(error.value.data)
+  // console.log(error.value.data)
   loading.value = false
   if (error.value) return (appErrorMsg.value = error.value.statusMessage || '')
 
-  useToast().success('You are logged in')
-
-  return navigateTo({
+  await navigateTo({
     path: '/',
   })
+  useToast().success('You are logged in')
+  window.location.reload()
 }
 
 const forgotPassword = async () => {

@@ -21,25 +21,49 @@ const defaults = {
     methods: 'signup, signin, verify, forgotPassword, resetPassword',
     basePath: '/api/v1/auth',
   },
+  csrf: {
+    isEnabled: true,
+    https: process.env.NODE_ENV === 'production',
+    cookieKey: 'csrf',
+    cookieOpts: {
+      path: '/',
+      httpOnly: true,
+      // sameSite: 'strict',
+      secure: false,
+    },
+    methodsToProtect: ['GET', 'POST', 'PUT', 'PATCH'],
+    // excludedUrls: [],
+    encryptSecret: randomBytes(22).toString('base64'),
+    encryptAlgorithm: 'aes-256-cbc',
+  },
+  xss: {
+    whiteList: {
+      a: [],
+    },
+    stripIgnoreTag: true,
+    throwError: false, // optional
+  },
   jwtSecret: randomBytes(22).toString('base64'),
   session: {
-    cookieName: 'sessionId',
-    expiryInSeconds: 600, // in seconds
+    isEnabled: true,
+    expiryInSeconds: 60 * 10,
+    userSessionId: 'userSession',
+    cartSessionId: 'cartSession',
     idLength: 64,
     storePrefix: 'sessions',
-    cookieSameSite: 'strict',
+    // cookieSameSite: 'strict',
     cookieSecure: false,
     cookieHttpOnly: true,
     storageOptions: {
       driver: 'memory',
       options: {},
     },
-    domain: false,
+    // domain: 'yrl-consulting.com',
     ipPinning: false,
     rolling: false,
     api: {
       isEnabled: true,
-      methods: ['patch', 'get', 'post', 'delete'],
+      methods: ['patch', 'delete', 'get', 'post'],
       basePath: '/api/v1/session',
     },
   },
@@ -102,10 +126,32 @@ export default defineNuxtModule({
     const options = defu(moduleOptions, defaults)
     nuxt.options.runtimeConfig = nuxt.options.runtimeConfig || { public: {} }
     nuxt.options.runtimeConfig.nuxtAuth = defu(nuxt.options.runtimeConfig.nuxtAuth, options)
-    nuxt.options.runtimeConfig.public.nuxtAuth = defu(nuxt.options.runtimeConfig.public.nuxtAuth, options)
+    nuxt.options.runtimeConfig.public.nuxtAuth = defu(nuxt.options.runtimeConfig.public.nuxtAuth, {
+      session: {
+        api: options.session.api,
+        userSessionId: options.session.userSessionId,
+        cartSessionId: options.session.cartSessionId,
+      },
+    })
+    // nuxt.options.runtimeConfig.public.nuxtAuth = defu(nuxt.options.runtimeConfig.public.nuxtAuth, options)
 
     // 3. Locate runtime directory
     const { resolve } = createResolver(import.meta.url)
+    // 4. Setup middleware,
+    addServerHandler({ handler: resolve('runtime/server/middleware/csrf') })
+
+    // 4. Add composables
+    addImportsDir(resolve('runtime/composables'))
+
+    // addImports(
+    //   ['useCsrf', 'useCsrfFetch'].map((key) => ({
+    //     name: key,
+    //     as: key,
+    //     from: resolve('runtime/composables/useCsrf'),
+    //   }))
+    // )
+    // 5. Add plugin
+    addPlugin(resolve('runtime/plugin'))
 
     // // 4. Setup middleware, use `.unshift` to ensure (reasonably well) that the session middleware is firs
     // const serverHandler = {
@@ -132,6 +178,10 @@ export default defineNuxtModule({
         [
           "declare module  '#auth' {",
           `  const createUser: typeof import('${resolve('./runtime/server/services')}').createUser`,
+          `  const fetchAuthUser: typeof import('${resolve('./runtime/server/services')}').fetchAuthUser`,
+          `  const setUserSession: typeof import('${resolve('./runtime/server/services')}').setUserSession`,
+          `  const getUserSession: typeof import('${resolve('./runtime/server/services')}').getUserSession`,
+          `  const storage: typeof import('${resolve('./runtime/server/services')}').storage`,
           // `  const getUserSession: typeof import('${resolve('./runtime/server/services')}').getUserSession`,
           '}',
         ].join('\n'),
@@ -149,9 +199,12 @@ export default defineNuxtModule({
       logger.info(`Auth API "${options.api.methods}" endpoints registered at "${options.api.basePath}"`)
     }
 
-    // logger.info(`YRL Nuxt Auth API location is \`${options.api.basePath}\``)
+    addServerHandler({
+      route: '/api/v1/session/getSession',
+      handler: resolve('./runtime/server/api/v1/session/index.get'),
+    })
 
-   
+    // logger.info(`YRL Nuxt Auth API location is \`${options.api.basePath}\``)
 
     // From the runtime directory
     // addComponent({

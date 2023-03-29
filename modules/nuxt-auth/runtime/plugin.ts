@@ -1,5 +1,5 @@
 // import { defineNuxtPlugin, useCsrf } from '#imports'
-import { storage } from './server/middleware/session/index'
+import { storage } from '../../../mymodules/session/index'
 export default defineNuxtPlugin(async () => {
   const nuxtApp = useNuxtApp()
 

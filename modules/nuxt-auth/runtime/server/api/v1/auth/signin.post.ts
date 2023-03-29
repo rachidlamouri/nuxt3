@@ -6,15 +6,17 @@ import { findByEmail, checkPassword, getSinedJwtToken, setAuthCookie } from '~/s
 import AppError from '~/utils/AppError'
 import errorHandler from '~/utils/errorHandler'
 import { authenticatedDataSchema } from '~/utils/schema'
-import { setUserSession } from '#session'
+// import { setUserSession } from '#session'
 import { fetchAuthUser } from '#auth'
 
 const config = useRuntimeConfig()
 
 export default defineEventHandler(async (event) => {
   try {
-    const result = fetchAuthUser(event)
-    return result
+    return await fetchAuthUser(event)
+
+    // console.log('OOOOOOO', result)
+    // return result
     // const { email, password } = await readBody(event)
     // if (!email || !password) throw new AppError('Email and Password are required', 'email_and_or_password_missing', 404)
     // const user = await findByEmail(email as string)
