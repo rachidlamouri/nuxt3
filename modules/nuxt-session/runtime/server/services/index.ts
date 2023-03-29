@@ -55,7 +55,7 @@ export const setUserSession = async (event: H3Event, userId: string) => {
     expires: expirationDate,
     secure: config.nuxtSession.cookieSecure,
     httpOnly: config.nuxtSession.cookieHttpOnly,
-    sameSite: config.nuxtSession.cookieSameSite as 'strict',
+    // sameSite: config.nuxtSession.cookieSameSite as 'strict',
     // domain: config.nuxtSession.domain,
   })
   // const now = new Date()

@@ -17,7 +17,7 @@ export default defineNuxtModule({
       cookieOpts: {
         path: '/',
         httpOnly: true,
-        sameSite: 'strict',
+        // sameSite: 'strict',
         secure: false,
       },
       methodsToProtect: ['GET', 'POST', 'PUT', 'PATCH'],
