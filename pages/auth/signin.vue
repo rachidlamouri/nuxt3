@@ -18,7 +18,7 @@ const config = useRuntimeConfig()
 
 const formInputs = reactive({
   email: 'abbaslamouri@yrlus.com',
-  password: 'Foo1234$',
+  password: 'Foo1234#',
   rememberMe: false,
 })
 const loading = ref<boolean>(false)
@@ -46,6 +46,7 @@ const signin = async () => {
     body: { ...formInputs },
   })
   console.log(data.value)
+  console.log(error.value.data)
   loading.value = false
   if (error.value) return (appErrorMsg.value = error.value.statusMessage || '')
 

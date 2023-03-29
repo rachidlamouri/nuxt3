@@ -126,6 +126,10 @@ export default defineNuxtConfig({
     abstractApiKey: '',
     abstractApiUrl: '',
 
+    redisHost: '',
+    redisPassword: '',
+    redisPort: '',
+
     public: {
       apiUrl: '',
       // siteUrl: '',

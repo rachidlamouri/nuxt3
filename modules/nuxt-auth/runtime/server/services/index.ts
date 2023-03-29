@@ -17,7 +17,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken'
 // import { ObjectId } from 'mongodb'
 // import { H3Event } from 'h3'
 import { promisify } from 'util'
-import { findById } from '~/server/controllers/v1/factory'
+import { findByEmail } from '~/server/controllers/v1/factory'
 
 // import AppError from '~/utils/AppError'
 // import { mongoClient, ObjectId } from '~/utils/mongoClient'
@@ -25,7 +25,8 @@ import errorHandler from '~/utils/errorHandler'
 import sendEmail from '~/utils/Email'
 import { IUser } from '~/utils/types'
 
-// import { getSinedJwtToken, hashPassword } from '~/server/controllers/v1/auth'
+import { getSinedJwtToken } from '~/server/controllers/v1/factory'
+import { setUserSession } from '#session'
 
 const config = useRuntimeConfig()
 
@@ -34,8 +35,8 @@ const hashPassword = async (password: string = '4zE_h2n-mdWaZ9aq&3!G[Y{A,u"_xPvS
   return await bcrypt.hash(password as string, salt)
 }
 
-const getSinedJwtToken = async function (id: any, maxAge: number) {
-  return jwt.sign({ id }, config.jwtSecret, { expiresIn: maxAge })
+const checkPassword = async (password: string, hash: string) => {
+  return await bcrypt.compare(password, hash)
 }
 
 export const createUser = async (payload) => {
@@ -58,11 +59,8 @@ export const createUser = async (payload) => {
     passwordChangeDate: Date.now(),
   }
 
-  // return true
   const user = await userRepository.save(userObj)
-  // console.log('E', user[EntityId])
   await redis.disconnect()
-
   return { userId: user[EntityId], token: await getSinedJwtToken(user[EntityId], Number(config.jwtSignupTokenMaxAge)) }
 }
 
@@ -75,17 +73,20 @@ export const isVerified = async (id: string) => {
   return false
 }
 
-export const fetchAuthUser = async (payload: { email: string; password: string }) => {
-  // const createUser = async (payload: Partial<IUser>) => {
+export const fetchAuthUser = async (event: H3Event) => {
   // await redis.connect()
-  // const { email, password } = payload
-  // if (!email || !password) throw new AppError('Email and Password are required', 'email_and_or_password_missing', 404)
-  // const user = await findByEmail(email as string)
-  // if (!user) throw new AppError('Invalid login credentials', 'invalid-credentials', 401)
-  // if (!(await checkPassword(password, user.password)))
-  //   throw new AppError('Invalid email or password', 'invalid_password', 401)
-  // if (!user.verified) throw new AppError('You have not verified your email', 'email_not_verified', 401)
-  // return setUserSession(event, user._id.toString())
+  const { email, password } = await readBody(event)
+  if (!email || !password) throw new AppError('Email and Password are required', 'email_and_or_password_missing', 404)
+  const user = await findByEmail(email as string)
+  if (!user) throw new AppError('Invalid login credentials', 'invalid-credentials', 401)
+  // await redis.disconnect()
+
+  if (!(await checkPassword(password, user.password as string)))
+    throw new AppError('Invalid email or password', 'invalid_password', 401)
+  if (!user.verified) throw new AppError('You have not verified your email', 'email_not_verified', 401)
+
+  return setUserSession(event, user[EntityId])
+
   // // const cookieMaxAge = Number(config.jwtMaxAge) * 1 * 60 * 60
   // // const authToken = await getSinedJwtToken(user._id, cookieMaxAge)
   // // setAuthCookie(event, 'authToken', authToken, cookieMaxAge)

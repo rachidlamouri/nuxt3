@@ -1,3 +1,4 @@
+import { H3Event } from 'h3'
 import redis from '~/utils/redisClient'
 import { userRepository, EntityId } from '~~/server/redisSchemas/user'
 
@@ -12,7 +13,8 @@ const config = useRuntimeConfig()
 
 export default defineEventHandler(async (event) => {
   try {
-    const result = fetchAuthUser(await readBody(event))
+    const result = fetchAuthUser(event)
+    return result
     // const { email, password } = await readBody(event)
     // if (!email || !password) throw new AppError('Email and Password are required', 'email_and_or_password_missing', 404)
     // const user = await findByEmail(email as string)

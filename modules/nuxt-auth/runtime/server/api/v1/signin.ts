@@ -8,9 +8,9 @@ const config = useRuntimeConfig()
 export default defineEventHandler(async (event) => {
   try {
     // const { email, password } = await readBody(event)
-    console.log('???????', getRequestHeader())
-    console.log('JJJJJJJJJJ')
-    return 'Hi There'
+    // console.log('???????', getRequestHeader())
+    // console.log('JJJJJJJJJJ')
+    // return 'Hi There'
     // if (!email || !password) throw new AppError('Email and Password are required', 'email_and_or_password_missing', 404)
     // const user = await findByEmail(email as string)
     // if (!user) throw new AppError('Invalid login credentials', 'invalid-credentials', 401)

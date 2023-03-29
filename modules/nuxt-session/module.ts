@@ -22,8 +22,9 @@ const PACKAGE_NAME = 'nuxt-session'
 const defaults = {
   isEnabled: true,
   expiryInSeconds: 60 * 10,
-  userSessionCookyName: 'userSessionId',
-  idLength: 64,
+  userSessionId: 'userSession',
+  cartSessionId: 'cartSession',
+  idLength: 16,
   storePrefix: 'sessions',
   cookieSameSite: 'strict',
   cookieSecure: false,
@@ -32,7 +33,7 @@ const defaults = {
     driver: 'memory',
     options: {},
   },
-  domain: false,
+  domain: 'yrl-consulting.com',
   ipPinning: false,
   rolling: false,
   api: {
@@ -71,6 +72,8 @@ export default defineNuxtModule({
     nuxt.options.runtimeConfig.nuxtSession = defu(nuxt.options.runtimeConfig.nuxtSession, options)
     nuxt.options.runtimeConfig.public.nuxtSession = defu(nuxt.options.runtimeConfig.public.nuxtSession, {
       api: options.api,
+      userSessionId: options.userSessionId,
+      cartSessionId: options.cartSessionId,
     })
 
     // setup unstorage
@@ -102,6 +105,7 @@ export default defineNuxtModule({
           "declare module  '#session' {",
           `  const setUserSession: typeof import('${resolve('./runtime/server/services')}').setUserSession`,
           `  const getUserSession: typeof import('${resolve('./runtime/server/services')}').getUserSession`,
+          `  const storage: typeof import('${resolve('./runtime/server/services')}').storage`,
           '}',
         ].join('\n'),
     })

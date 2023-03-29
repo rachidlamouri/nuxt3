@@ -7,6 +7,8 @@ import { IAuthenticatedData } from '~/utils/schema'
 
 const status = false
 const config = useRuntimeConfig()
+// console.log(config.public.nuxtSession.userSessionId)
+// console.log(useCookie(config.public.nuxtSession.userSessionId))
 
 // const { session } = await useSession()
 // console.log('IIIIII', session.value)

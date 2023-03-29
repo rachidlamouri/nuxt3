@@ -1,4 +1,7 @@
 import { Repository } from 'redis-om'
+
+import jwt, { JwtPayload } from 'jsonwebtoken'
+
 // import { fetchAll } from '~/server/controllers/v1/products'
 import { H3Event } from 'h3'
 import { mongoClient, ObjectId } from '~/utils/mongoClient'
@@ -6,6 +9,8 @@ import AppError from '~/utils/AppError'
 import errorHandler from '~/utils/errorHandler'
 import redis from '~/utils/redisClient'
 import { userRepository, EntityId } from '~/server/redisSchemas/user'
+
+const config = useRuntimeConfig()
 
 const aggregateFetch = async (event: H3Event, collection: string, lookup: object[] = [], unwind: object[] = []) => {
   try {
@@ -103,6 +108,12 @@ const findById = async (repository: Repository, id: string) => {
   return {}
 }
 
+//////////////////////*************************************///////////////
+
+const getSinedJwtToken = async function (id: any, maxAge: number) {
+  return jwt.sign({ id }, config.jwtSecret, { expiresIn: maxAge })
+}
+
 const findByEmail = async (email: string) => {
   await redis.connect()
   const found = await userRepository
@@ -110,8 +121,6 @@ const findByEmail = async (email: string) => {
     .where('email')
     .eq(email as string)
     .return.all()
-  console.log('E', found)
-
   await redis.disconnect()
   if (found && Array.isArray(found) && found.length) return found[0]
   return {}
@@ -121,15 +130,12 @@ const findByIdAndUpdate = async (repository: Repository, id: string, payload: ob
   await redis.connect()
   let newEntiry
   const found = await repository.fetch(id)
-  console.log('XXXXXX', found)
+  await redis.disconnect()
   if (found) {
     newEntiry = { ...found, ...payload }
     return await repository.save(newEntiry)
   }
   return {}
-
-  await redis.disconnect()
-  // if (found && Array.isArray(found) && found.length) return found[0]
-  // return {}
 }
-export { findByEmail, findById, findByIdAndUpdate, findBySlug, aggregateFetch, createDocument }
+
+export { getSinedJwtToken, findByEmail, findById, findByIdAndUpdate, findBySlug, aggregateFetch, createDocument }
