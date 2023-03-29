@@ -34,11 +34,11 @@ const props = defineProps({
   },
 })
 
-const { data, pending, error, refresh } = await useCsrfFetch('session', {
-  baseURL: config.apiUrl,
-  method: 'GET',
-})
-console.log(data.value)
+// const { data, pending, error, refresh } = await useCsrfFetch('session', {
+//   baseURL: config.apiUrl,
+//   method: 'GET',
+// })
+// console.log(data.value)
 
 // onMounted(async () => {
 //   const { session } = await useSession()

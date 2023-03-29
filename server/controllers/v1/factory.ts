@@ -1,3 +1,4 @@
+import { Repository } from 'redis-om'
 // import { fetchAll } from '~/server/controllers/v1/products'
 import { H3Event } from 'h3'
 import { mongoClient, ObjectId } from '~/utils/mongoClient'
@@ -86,13 +87,6 @@ const aggregateFetch = async (event: H3Event, collection: string, lookup: object
   }
 }
 
-const findById = async (collection: string, id: string) => {
-  return await mongoClient
-    .db()
-    .collection(collection)
-    .findOne({ _id: new ObjectId(id) })
-}
-
 const findBySlug = async (collection: string, slug: string) => {
   return await mongoClient.db().collection(collection).findOne({ slug })
 }
@@ -101,13 +95,41 @@ const createDocument = async (collection: string, doc: {}) => {
   return await mongoClient.db().collection('orders').insertOne(doc)
 }
 
+const findById = async (repository: Repository, id: string) => {
+  await redis.connect()
+  const found = await repository.fetch(id)
+  await redis.disconnect()
+  if (found) return found
+  return {}
+}
 
 const findByEmail = async (email: string) => {
   await redis.connect()
-  const found = await userRepository.search().where('email').eq(email).return.all()
+  const found = await userRepository
+    .search()
+    .where('email')
+    .eq(email as string)
+    .return.all()
   console.log('E', found)
+
+  await redis.disconnect()
   if (found && Array.isArray(found) && found.length) return found[0]
   return {}
 }
 
-export { aggregateFetch, findById, findBySlug, createDocument }
+const findByIdAndUpdate = async (repository: Repository, id: string, payload: object) => {
+  await redis.connect()
+  let newEntiry
+  const found = await repository.fetch(id)
+  console.log('XXXXXX', found)
+  if (found) {
+    newEntiry = { ...found, ...payload }
+    return await repository.save(newEntiry)
+  }
+  return {}
+
+  await redis.disconnect()
+  // if (found && Array.isArray(found) && found.length) return found[0]
+  // return {}
+}
+export { findByEmail, findById, findByIdAndUpdate, findBySlug, aggregateFetch, createDocument }

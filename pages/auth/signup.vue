@@ -32,7 +32,7 @@ const signup = async () => {
     }
     // If user exists (based on email) redirect to login otherwise show the rest of the signup form
     if (!newUser.value) {
-      const { data, pending, error, refresh } = await useCsrfFetch('user', {
+      const { data, pending, error, refresh } = await useCsrfFetch('users/email', {
         baseURL: config.apiUrl,
         method: 'GET',
         params: { ...result.data },
@@ -47,7 +47,7 @@ const signup = async () => {
 
       if (error.value) return (appErrorMsg.value = error.value.statusMessage || '')
       // throw createError(error.value.data)
-      if (data.value && (data.value as { userId: string | null }).userId)
+      if (data.value)
         return navigateTo({
           path: '/auth/signin',
         })

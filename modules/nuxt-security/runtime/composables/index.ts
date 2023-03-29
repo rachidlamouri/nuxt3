@@ -12,7 +12,8 @@ export function useCsrf() {
 export function useCsrfFetch(request: string, opts) {
   const { csrf } = useCsrf()
   const headers = { ...useRequestHeaders(['cookie']), csrf }
-  opts.body = opts.body ? { ...opts.body, nonce: csrf } : {}
-  opts.params = opts.params ? { ...opts.params, nonce: csrf } : {}
-  return useFetch(request, { ...opts, headers })
+  const options = { ...opts }
+  if (opts.body) options.body.nonce = csrf
+  if (opts.params) options.params.nonce = csrf
+  return useFetch(request, { ...options, headers })
 }

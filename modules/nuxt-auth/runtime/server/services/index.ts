@@ -1,3 +1,4 @@
+import { EntityId } from 'redis-om'
 import redis from '~/utils/redisClient'
 import { userRepository, EntityId } from '~/server/redisSchemas/user'
 
@@ -51,18 +52,27 @@ export const createUser = async (payload) => {
     password: await hashPassword(payload.password),
     active: false,
     verified: false,
-    // accountNumber: (await mongoClient.db().collection('users').countDocuments()) + 101013,
-    accountNumber: 111,
+    accountNumber: (await userRepository.search().return.count()) + 101013,
+    // accountNumber: 111,
     signupDate: Date.now(),
     passwordChangeDate: Date.now(),
   }
 
   // return true
   const user = await userRepository.save(userObj)
-  console.log('E', user[EntityId])
+  // console.log('E', user[EntityId])
   await redis.disconnect()
 
   return { userId: user[EntityId], token: await getSinedJwtToken(user[EntityId], Number(config.jwtSignupTokenMaxAge)) }
+}
+
+export const isVerified = async (id: string) => {
+  await redis.connect()
+  const found = await userRepository.fetch(id)
+  console.log('FOUND', found)
+  await redis.disconnect()
+  if (found && found.verified) return true
+  return false
 }
 
 export const fetchAuthUser = async (payload: { email: string; password: string }) => {

@@ -33,6 +33,7 @@ const verifyCsrf = (secret: string, token: string) => {
 export default defineEventHandler(async (event) => {
   let secret = getCookie(event, config.nuxtSecurity.csrf.cookieKey)
   console.log('SECRETffff', secret)
+  // console.log('HEADERS', getHeader(event, 'csrf'))
 
   if (!secret) {
     secret = randomUUID()
@@ -48,33 +49,45 @@ export default defineEventHandler(async (event) => {
     value: createCsrf(secret),
     enumerable: true,
   })
+  console.log('METHOD', event.node.req.url)
 
-  const method = event.node.req.method ?? ''
-  if (!config.nuxtSecurity.csrf.methodsToProtect.includes(method)) {
-    return
-  }
+  // const method = event.node.req.method ?? ''
+  // if (!config.nuxtSecurity.csrf.methodsToProtect.includes(method)) {
+  //   return
+  // }
 
-  console.log('HHHHHHHHHH', event.node.req.url, event.node.req.method)
+  // console.log('HHHHHHHHHH', event.node.req.url, event.node.req.method)
   // if (event.node.req.method==='GET') return
 
   if (!event.node.req.url?.includes('api/v1')) return
+  console.log('LLLLLLL')
   const headerCsrf = getHeader(event, 'csrf') ?? ''
   const body = event.node.req.method !== 'GET' ? await readBody(event) : null
-  const requestData = body ? body : getQuery(event)
-  console.log('DATA', requestData)
+  console.log('DATA', body)
 
-  if (!requestData || !Object.keys(requestData).length) return
-
-  if (!verifyCsrf(secret, headerCsrf) || !requestData.nonce || requestData.nonce !== headerCsrf)
+  if (!verifyCsrf(secret, headerCsrf))
     throw createError({
       statusCode: 403,
+      name: 'CSRFError',
+      statusMessage: 'Bad request',
+      data: { code: 'hedaer_csrf_missing' },
+    })
+  // const body = event.node.req.method !== 'GET' ? getQuery(event) : await readBody(event)
+  // const requestData = body ? body : getQuery(event)
 
+  // if (!requestData || !Object.keys(requestData).length) return
+  console.log('RRRRRRR')
+
+  if (body && (!body.nonce || body.nonce !== headerCsrf))
+    throw createError({
+      statusCode: 403,
       name: 'CSRFError',
       statusMessage: 'Bad request',
       data: { code: 'csrf_token_mismatch' },
     })
+
   const xxsValidator = new FilterXSS(config.nuxtSecurity.xss)
-  if (JSON.stringify(requestData) !== xxsValidator.process(JSON.stringify(requestData))) {
+  if (body && JSON.stringify(body) !== xxsValidator.process(JSON.stringify(body))) {
     throw createError({
       statusCode: 403,
       name: 'XXSError',
