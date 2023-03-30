@@ -30,7 +30,7 @@ const { data, pending, error, refresh } = await useCsrfFetch('session', {
   method: 'GET',
   // body: { ...formInputs },
 })
-console.log(data.value)
+// console.log(data.value)
 authUser.value = { ...data.value }
 
 onMounted(() => {

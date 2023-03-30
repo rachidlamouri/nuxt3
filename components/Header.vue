@@ -7,6 +7,9 @@ import { IAuthenticatedData } from '~/utils/schema'
 
 const status = false
 
+const nuxtApp = useNuxtApp()
+console.log(nuxtApp.payload)
+
 // console.log('CC', useCookie('csrf').value)
 
 // const { data, pending, error, refresh } = await useCsrfFetch('session/getSession', {
@@ -19,6 +22,8 @@ const status = false
 // console.log(useCookie(config.public.nuxtSession.userSessionId))
 const config = useRuntimeConfig()
 const { authUser, isAuthenticated } = useAuthStore()
+const { appErrorMsg, resetForm, parseZodError } = useErrorStore()
+
 // const { session } = await useSession()
 
 // const { data, pending, error, refresh } = await useSession('/api/v1/session/getSession', {
@@ -107,6 +112,23 @@ const profile = async () => {
 }
 
 const signout = async () => {
+  const { data, pending, error, refresh } = await useCsrfFetch('auth/signout', {
+    baseURL: config.apiUrl,
+    method: 'POST',
+    body: { id: 1 },
+  })
+  // console.log(data.value)
+  // console.log(error.value.data)
+  // loading.value = false
+  if (error.value) return (appErrorMsg.value = error.value.statusMessage || '')
+
+  authUser.value = { ...data.value }
+
+  // window.location.reload()
+  // await navigateTo({
+  //   path: '/',
+  // })
+  useToast().success('You are logged out')
   // const { data, pending, error } = await useFetch('auth/signout', {
   //   method: 'POST',
   //   baseURL: config.apiUrl,
@@ -126,7 +148,7 @@ const signout = async () => {
 
   // await signOut({ redirect: false })
 
-  useToast().success('You are logged out')
+  // useToast().success('You are logged out')
 
   // setAuthUser({ name: '', isAuthenticated: false })
   // await navigateTo({ path: '/' })
@@ -157,7 +179,7 @@ const cartModalCancelled = (event: any) => {
 }
 
 const getProduct = async (slug: string) => {
-  console.log(slug)
+  // console.log(slug)
   closeSearchModal()
   await navigateTo({ path: `/products/${slug}` })
 }
@@ -219,7 +241,7 @@ watch(
         </div>
         <!-- {{ useNuxtApp().payload.csrfToken }}----{{ useNuxtApp().payload.sessionMeta }} -->
         <nav class="top-nav" aria-label="Top Navigation">
-          {{ authUser }}
+          {{ nuxtApp.payload.session }}
           <ul class="" role="list">
             <li>
               <button class="btn" @click="$emit('showSearchModal')">

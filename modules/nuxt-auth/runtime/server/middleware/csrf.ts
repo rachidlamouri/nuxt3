@@ -28,7 +28,7 @@ const verifyCsrf = (secret: string, token: string) => {
 
 export default defineEventHandler(async (event) => {
   let secret = getCookie(event, config.nuxtAuth.csrf.cookieKey)
-  console.log('SECRETffff', secret)
+  // console.log('SECRETffff', secret)
   // console.log('HEADERS', getHeader(event, 'csrf'))
 
   if (!secret) {
@@ -40,7 +40,7 @@ export default defineEventHandler(async (event) => {
     value: createCsrf(secret),
     enumerable: true,
   })
-  console.log('METHOD', event.node.req.url)
+  // console.log('METHOD', event.node.req.url)
 
   // const method = event.node.req.method ?? ''
   // if (!config.nuxtAuth.csrf.methodsToProtect.includes(method)) {
@@ -51,10 +51,10 @@ export default defineEventHandler(async (event) => {
   // if (event.node.req.method==='GET') return
 
   if (!event.node.req.url?.includes('api/v1')) return
-  console.log('LLLLLLL')
+  // console.log('LLLLLLL')
   const headerCsrf = getHeader(event, 'csrf') ?? ''
   const body = event.node.req.method !== 'GET' ? await readBody(event) : null
-  console.log('DATA', body)
+  // console.log('DATA', body)
 
   if (!verifyCsrf(secret, headerCsrf))
     throw createError({
@@ -67,7 +67,7 @@ export default defineEventHandler(async (event) => {
   // const requestData = body ? body : getQuery(event)
 
   // if (!requestData || !Object.keys(requestData).length) return
-  console.log('RRRRRRR')
+  // console.log('RRRRRRR')
 
   if (body && (!body.nonce || body.nonce !== headerCsrf))
     throw createError({
@@ -86,5 +86,5 @@ export default defineEventHandler(async (event) => {
       data: { code: 'xxs_attempt' },
     })
   }
-  console.log('ZZZZZZZZZZZZ')
+  // console.log('ZZZZZZZZZZZZ')
 })

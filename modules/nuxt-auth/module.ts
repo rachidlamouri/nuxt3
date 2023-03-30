@@ -18,7 +18,7 @@ const defaults = {
   isEnabled: true,
   api: {
     isEnabled: true,
-    methods: 'signup, signin, verify, forgotPassword, resetPassword',
+    methods: 'signup, signin, signout, verify, forgotPassword, resetPassword',
     basePath: '/api/v1/auth',
   },
   csrf: {
@@ -47,8 +47,8 @@ const defaults = {
   session: {
     isEnabled: true,
     expiryInSeconds: 60 * 10,
-    userSessionId: 'userSession',
-    cartSessionId: 'cartSession',
+    userSessionId: 'userSID',
+    cartSessionId: 'cartSID',
     idLength: 64,
     storePrefix: 'sessions',
     // cookieSameSite: 'strict',
@@ -139,6 +139,7 @@ export default defineNuxtModule({
     const { resolve } = createResolver(import.meta.url)
     // 4. Setup middleware,
     addServerHandler({ handler: resolve('runtime/server/middleware/csrf') })
+    addServerHandler({ handler: resolve('runtime/server/middleware/session') })
 
     // 4. Add composables
     addImportsDir(resolve('runtime/composables'))
@@ -181,7 +182,7 @@ export default defineNuxtModule({
           `  const fetchAuthUser: typeof import('${resolve('./runtime/server/services')}').fetchAuthUser`,
           `  const setUserSession: typeof import('${resolve('./runtime/server/services')}').setUserSession`,
           `  const getUserSession: typeof import('${resolve('./runtime/server/services')}').getUserSession`,
-          `  const storage: typeof import('${resolve('./runtime/server/services')}').storage`,
+          `  const removeUserSession: typeof import('${resolve('./runtime/server/services')}').removeUserSession`,
           // `  const getUserSession: typeof import('${resolve('./runtime/server/services')}').getUserSession`,
           '}',
         ].join('\n'),
@@ -270,6 +271,6 @@ export default defineNuxtModule({
     //   }))
     // )
 
-    logger.success('Session setup complete')
+    logger.success(`${PACKAGE_NAME} module setup complete`)
   },
 })

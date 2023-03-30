@@ -46,7 +46,7 @@ const config = useRuntimeConfig()
 //   driver: memoryDriver(),
 // })
 
-export const storage = createStorage({
+const storage = createStorage({
   driver: redisDriver({
     base: config.nuxtAuth.session.userSessionId,
     host: config.redisHost,
@@ -57,66 +57,44 @@ export const storage = createStorage({
 })
 
 export const setUserSession = async (event: H3Event, user, isAuthenticated: boolean) => {
-  console.log('????????', user)
-  // const abstractRes = (await $fetch(`${config.abstractApiUrl}/?api_key=${config.abstractApiKey}`)) || { ip_address: '' }
-  // console.log('IPPPPPPPPPPP', 'abstractRes')
   const sessionKey = nanoid(config.nuxtAuth.session.idLength)
-
-  // const jwtToken = await getSinedJwtToken({ id }, Number(config.jwtSignupTokenMaxAge))
-  // console.log('IPPPPPPP', jwtToken)
-  // // return jwtToken
-
   const expirationDate = config.nuxtAuth.session.expiryInSeconds
     ? new Date(Date.now() + config.nuxtAuth.session.expiryInSeconds * 1000)
     : undefined
-
-  // console.log('here')
 
   setCookie(event, config.nuxtAuth.session.userSessionId, sessionKey, {
     expires: expirationDate,
     secure: config.nuxtAuth.session.cookieSecure,
     httpOnly: config.nuxtAuth.session.cookieHttpOnly,
-    // sameSite: config.nuxtAuth.session.cookieSameSite as 'strict',
-    // domain: config.nuxtAuth.session.domain,
   })
-  // const now = new Date()
-
-  // (Re-)Set cookie
-  // const userSessionId = nanoid(config.nuxtAuth.session.idLength)
-  // safeSetCookie(event, SESSION_COOKIE_NAME, jwtToken, new Date())
-
-  // console.log('There')
-
-  // Store session data in storage
   const session = {
     userId: user[EntityId],
     userName: user.name,
     isAuthenticated,
-    // jwtToken,
-    // ip: '989076',
-    // ip: '',
-    // city: abstractRes.city || '',
   }
 
   await storage.setItem(sessionKey, session, { ttl: config.nuxtAuth.session.expiryInSeconds })
-  // console.log('HAS', await storage.hasItem(SESSION_COOKIE_NAME))
-  // console.log('GET', await storage.getItem(SESSION_COOKIE_NAME))
-
-  // event.context.sessionId = jwtToken
-  // event.context.session = session
-
   return session
+}
+
+export const removeUserSession = async (event: H3Event) => {
+  const sessionKey = parseCookies(event)[config.nuxtAuth.session.userSessionId]
+  if (!sessionKey) return false
+  setCookie(event, config.nuxtAuth.session.userSessionId, sessionKey, {
+    expires: new Date(Date.now()),
+    secure: config.nuxtAuth.session.cookieSecure,
+    httpOnly: config.nuxtAuth.session.cookieHttpOnly,
+  })
+  if (!(await storage.hasItem(sessionKey))) return false
+  await storage.removeItem(sessionKey)
+  return true
 }
 
 export const getUserSession = async (event: H3Event) => {
   let session
   const userSessionId = parseCookies(event)[config.nuxtAuth.session.userSessionId]
-  console.log('User session ID', userSessionId)
   if (!userSessionId) return {}
-  console.log('HAS', await storage.hasItem(userSessionId))
-  if (await storage.hasItem(userSessionId)) session = await storage.getItem(userSessionId)
-  console.log('SSSSSS', session)
-  return session
+  if (await storage.hasItem(userSessionId)) return await storage.getItem(userSessionId)
   return {}
 }
 

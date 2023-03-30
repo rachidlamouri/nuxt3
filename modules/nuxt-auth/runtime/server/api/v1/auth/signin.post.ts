@@ -14,7 +14,7 @@ const config = useRuntimeConfig()
 export default defineEventHandler(async (event) => {
   try {
     const user = await fetchAuthUser(event)
-    console.log('>>>>>>>>>', user)
+    // console.log('>>>>>>>>>', user)
     await setUserSession(event, user, true)
     return { userName: user.name, isAuthenticated: true }
 
