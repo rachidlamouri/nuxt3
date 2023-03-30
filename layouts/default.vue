@@ -22,6 +22,17 @@ const scrolled = ref()
 const headerWidth = ref()
 const resized = ref()
 
+const config = useRuntimeConfig()
+const { authUser, isAuthenticated } = useAuthStore()
+
+const { data, pending, error, refresh } = await useCsrfFetch('session', {
+  baseURL: config.apiUrl,
+  method: 'GET',
+  // body: { ...formInputs },
+})
+console.log(data.value)
+authUser.value = { ...data.value }
+
 onMounted(() => {
   const resizeObserver = new ResizeObserver((entries) => {
     entries.forEach(async (entry) => {

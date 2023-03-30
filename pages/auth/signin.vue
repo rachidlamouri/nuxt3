@@ -12,7 +12,7 @@ import { useToast } from 'vue-toastification'
 // console.log(status.value)
 // console.log(data.value)
 
-// const { authUser } = useAuthStore()
+const { authUser } = useAuthStore()
 const { appErrorMsg, resetForm, parseZodError } = useErrorStore()
 const config = useRuntimeConfig()
 
@@ -49,12 +49,13 @@ const signin = async () => {
   // console.log(error.value.data)
   loading.value = false
   if (error.value) return (appErrorMsg.value = error.value.statusMessage || '')
+  authUser.value = { ...data.value }
 
+  // window.location.reload()
   await navigateTo({
     path: '/',
   })
   useToast().success('You are logged in')
-  window.location.reload()
 }
 
 const forgotPassword = async () => {

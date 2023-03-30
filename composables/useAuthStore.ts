@@ -5,7 +5,7 @@ const useAuthStore = () => {
     return {}
   })
 
-  const isAuthenticated = computed(() => (authUser.value.authToken ? true : false))
+  const isAuthenticated = computed(() => (authUser.value.isAuthenticated ? true : false))
 
   return {
     authUser,

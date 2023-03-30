@@ -56,7 +56,8 @@ export const storage = createStorage({
   }),
 })
 
-export const setUserSession = async (event: H3Event, userId: string) => {
+export const setUserSession = async (event: H3Event, user, isAuthenticated: boolean) => {
+  console.log('????????', user)
   // const abstractRes = (await $fetch(`${config.abstractApiUrl}/?api_key=${config.abstractApiKey}`)) || { ip_address: '' }
   // console.log('IPPPPPPPPPPP', 'abstractRes')
   const sessionKey = nanoid(config.nuxtAuth.session.idLength)
@@ -88,7 +89,9 @@ export const setUserSession = async (event: H3Event, userId: string) => {
 
   // Store session data in storage
   const session = {
-    userId,
+    userId: user[EntityId],
+    userName: user.name,
+    isAuthenticated,
     // jwtToken,
     // ip: '989076',
     // ip: '',
@@ -109,10 +112,12 @@ export const getUserSession = async (event: H3Event) => {
   let session
   const userSessionId = parseCookies(event)[config.nuxtAuth.session.userSessionId]
   console.log('User session ID', userSessionId)
+  if (!userSessionId) return {}
   console.log('HAS', await storage.hasItem(userSessionId))
   if (await storage.hasItem(userSessionId)) session = await storage.getItem(userSessionId)
   console.log('SSSSSS', session)
   return session
+  return {}
 }
 
 const hashPassword = async (password: string = '4zE_h2n-mdWaZ9aq&3!G[Y{A,u"_xPvSD"a3q$B') => {
@@ -149,14 +154,14 @@ export const createUser = async (payload) => {
   return { userId: user[EntityId], token: await getSinedJwtToken(user[EntityId], Number(config.jwtSignupTokenMaxAge)) }
 }
 
-export const isVerified = async (id: string) => {
-  await redis.connect()
-  const found = await userRepository.fetch(id)
-  console.log('FOUND', found)
-  await redis.disconnect()
-  if (found && found.verified) return true
-  return false
-}
+// export const isVerified = async (id: string) => {
+//   await redis.connect()
+//   const found = await userRepository.fetch(id)
+//   console.log('FOUND', found)
+//   await redis.disconnect()
+//   if (found && found.verified) return true
+//   return false
+// }
 
 export const fetchAuthUser = async (event: H3Event) => {
   // await redis.connect()
@@ -169,9 +174,7 @@ export const fetchAuthUser = async (event: H3Event) => {
   if (!(await checkPassword(password, user.password as string)))
     throw new AppError('Invalid email or password', 'invalid_password', 401)
   if (!user.verified) throw new AppError('You have not verified your email', 'email_not_verified', 401)
-
-  await setUserSession(event, user[EntityId])
-  return true
+  return user
 
   // // const cookieMaxAge = Number(config.jwtMaxAge) * 1 * 60 * 60
   // // const authToken = await getSinedJwtToken(user._id, cookieMaxAge)

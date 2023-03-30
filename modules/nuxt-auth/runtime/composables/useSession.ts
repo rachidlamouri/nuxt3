@@ -11,7 +11,8 @@ import { getUserSession } from '#auth'
 
 export default async () => {
   const config = useRuntimeConfig()
-  const session = ref(0)
+  const session = ref()
+  session.value = { isAuthenticated: false, userName: '' }
   // console.log('NNNNN', config.public.yrlNuxtAuth)
   // const sessionOptions = config.public.yrlNuxtAuth.session
   // const session = ref()
@@ -21,7 +22,7 @@ export default async () => {
   const getSession = async () => {
     // const opts = { method: method.toUpperCase(), body }
 
-    const { data } = useCsrfFetch('session/getSession', {
+    const { data } = useCsrfFetch('session', {
       baseURL: config.apiUrl,
       method: 'GET',
       // body: { ...formInputs },
@@ -32,15 +33,20 @@ export default async () => {
       //   return response._data
       // },
     })
-    console.log('JJJJJJJ', data.value)
-    session.value = data.value
 
+    if (data.value && Object.keys(data.value).length) session.value = data.value
+    console.log('JJJJJJJ', session.value)
     // await useSession()
     // return { session }
   }
   await getSession()
+  console.log('ZZZZZZZZXXXXXXX', session.value)
 
-  return { session, getSession }
+  // const isAuthenticated = computed(() => session.value.isAuthenticated)
+  // const userName = computed(() => session.value.userName)
+  // console.log('ZZZZZZZZXXXXXXXYYYYYY', isAuthenticated.value)
+
+  return { session }
 }
 
 // export function useCsrfFetch(request, opts) {

@@ -200,7 +200,7 @@ export default defineNuxtModule({
     }
 
     addServerHandler({
-      route: '/api/v1/session/getSession',
+      route: '/api/v1/session',
       handler: resolve('./runtime/server/api/v1/session/index.get'),
     })
 

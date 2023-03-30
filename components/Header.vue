@@ -6,7 +6,7 @@ import { IAuthenticatedData } from '~/utils/schema'
 // const { status, data, signIn, signOut } = useSession()
 
 const status = false
-const config = useRuntimeConfig()
+
 // console.log('CC', useCookie('csrf').value)
 
 // const { data, pending, error, refresh } = await useCsrfFetch('session/getSession', {
@@ -17,10 +17,10 @@ const config = useRuntimeConfig()
 // console.log(data.value)
 // console.log(config.public.nuxtSession.userSessionId)
 // console.log(useCookie(config.public.nuxtSession.userSessionId))
+const config = useRuntimeConfig()
+const { authUser, isAuthenticated } = useAuthStore()
+// const { session } = await useSession()
 
-const { session, getSession } = await useSession()
-// getSession()
-console.log('IIIIII', session.value)
 // const { data, pending, error, refresh } = await useSession('/api/v1/session/getSession', {
 //   method: 'GET',
 //   // body: { ...formInputs },
@@ -48,15 +48,24 @@ const props = defineProps({
 // const { data, pending, error, refresh } = await useCsrfFetch('session', {
 //   baseURL: config.apiUrl,
 //   method: 'GET',
+//   // body: { ...formInputs },
+// })
+// console.log(data.value)
+// authUser.value.isAuthenticated = data.value.isAuthenticated
+// authUser.value.userName = data.value.userName
+
+// const { data, pending, error, refresh } = await useCsrfFetch('session', {
+//   baseURL: config.apiUrl,
+//   method: 'GET',
 // })
 // console.log(data.value)
 
-// onMounted(async () => {
-//   const { session } = await useSession()
-//   console.log('IIIIIIddd', session.value)
-// })
-
-const { authUser, isAuthenticated } = useAuthStore()
+onMounted(async () => {
+  // getSession()
+  // console.log('IIIIII', session.value)
+  // authUser.value.isAuthenticated = session.value.isAuthenticated
+  // authUser.value.userName = session.value.userName
+})
 
 const { numberOfItems } = useCartStore()
 
@@ -210,7 +219,7 @@ watch(
         </div>
         <!-- {{ useNuxtApp().payload.csrfToken }}----{{ useNuxtApp().payload.sessionMeta }} -->
         <nav class="top-nav" aria-label="Top Navigation">
-          <!-- {{ authUser }}----{{ status !=='authenticated' }} -->
+          {{ authUser }}
           <ul class="" role="list">
             <li>
               <button class="btn" @click="$emit('showSearchModal')">
@@ -228,22 +237,16 @@ watch(
                 ref="dropdownTriggerRef"
               >
                 <Icon class="" name="mdi:account-outline" />
-                <span class="btn-text" v-if="status === 'authenticated' && data && data.user"
-                  >Welcome {{ data.user.name }}</span
-                >
+                <span class="btn-text" v-if="isAuthenticated">Welcome {{ authUser.userName }}</span>
                 <span class="btn-text" v-else>Sign in / Create account</span>
               </button>
               <ul class="dropdown__menu" id="auth-dropdown" role="list" ref="dropdownMenuRef">
                 <li class="">
-                  <button class="btn" ref="signinBtnRef" @click="profile" v-if="status === 'authenticated'">
-                    profile
-                  </button>
+                  <button class="btn" ref="signinBtnRef" @click="profile" v-if="isAuthenticated">profile</button>
                   <button class="btn" ref="signinBtnRef" @click.prevent="signin" v-else>Signin</button>
                 </li>
                 <li class="">
-                  <button class="btn" ref="signoutBtnRef" @click="signout" v-if="status === 'authenticated'">
-                    Signout
-                  </button>
+                  <button class="btn" ref="signoutBtnRef" @click="signout" v-if="isAuthenticated">Signout</button>
                   <button class="btn" ref="signupBtnRef" @click.prevent="signup" v-else>Create account</button>
                 </li>
               </ul>

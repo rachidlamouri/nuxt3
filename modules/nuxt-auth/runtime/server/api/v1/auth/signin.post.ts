@@ -7,13 +7,16 @@ import AppError from '~/utils/AppError'
 import errorHandler from '~/utils/errorHandler'
 import { authenticatedDataSchema } from '~/utils/schema'
 // import { setUserSession } from '#session'
-import { fetchAuthUser } from '#auth'
+import { fetchAuthUser, setUserSession } from '#auth'
 
 const config = useRuntimeConfig()
 
 export default defineEventHandler(async (event) => {
   try {
-    return await fetchAuthUser(event)
+    const user = await fetchAuthUser(event)
+    console.log('>>>>>>>>>', user)
+    await setUserSession(event, user, true)
+    return { userName: user.name, isAuthenticated: true }
 
     // console.log('OOOOOOO', result)
     // return result
