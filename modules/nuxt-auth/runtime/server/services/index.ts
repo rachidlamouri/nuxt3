@@ -189,7 +189,7 @@ export const createUser = async (payload) => {
 
 export const fetcheSessionUser = async (event: H3Event) => {
   const session = await getUserSession(event)
-  console.log('SSSS', session)
+  // console.log('SSSS', session)
   if (!session || !(session as ISession).userId) return {}
   const user = await findById(userRepository, (session as ISession).userId)
   if (user) return user

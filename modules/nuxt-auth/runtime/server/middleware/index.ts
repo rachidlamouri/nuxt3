@@ -77,6 +77,8 @@ export default defineEventHandler(async (event) => {
   // Retreive params i request method is  GET
   // Decrypt params session token (same token = cookie is sent via header and params if it is a get request)  and veiry that it matches the secret
   const params = event.node.req.method === 'GET' ? getQuery(event) : null
+  // console.log('PARAMS', params)
+
   if (params && (!params.sessionToken || !verifySessionKey(secret, (params as QueryObject).sessionToken)))
     throw createError({
       statusCode: 403,
@@ -96,5 +98,5 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  console.log('ZZZZZZZZZZZZ')
+  // console.log('ZZZZZZZZZZZZ')
 })

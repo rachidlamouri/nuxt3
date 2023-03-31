@@ -10,18 +10,27 @@ import { useNuxtApp, useFetch } from '#app'
 //   }
 //   return { csrf: nuxtApp.payload.csrfToken }
 // }
-export function useCsrfFetch(request: string, opts) {
+export const useCsrfFetch = (request: string, opts) => {
   const nuxtApp = useNuxtApp()
-  // const csrf = nuxtApp.payload.csrfToken
   const sessionToken = nuxtApp.payload.sessionToken
-  // getHeader(event, 'csrf')
-  // const { csrf } = useCsrf()
   const headers = { ...useRequestHeaders(['cookie']), sessionToken }
   const options = { ...opts }
   if (opts.body) {
-    // options.body.nonce = csrf
     options.body.sessionToken = sessionToken
   }
-  if (opts.params) options.params.sessionToken = sessionToken
+  options.params = { ...options.params, sessionToken: sessionToken }
   return useFetch(request, { ...options, headers })
+}
+
+export const useAuthStore = () => {
+  const authUser = useState('authUser', () => {
+    return { userName: '', authenticated: false }
+  })
+
+  const authenticated = computed(() => (authUser.value.authenticated ? true : false))
+
+  return {
+    authUser,
+    authenticated,
+  }
 }

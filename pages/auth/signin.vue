@@ -49,12 +49,14 @@ const signin = async () => {
   // console.log(error.value.data)
   loading.value = false
   if (error.value) return (appErrorMsg.value = error.value.statusMessage || '')
-  authUser.value = { ...data.value }
+  authUser.value = { userName: data.value.userName, authenticated: data.value.authenticated }
 
-  // window.location.reload()
-  await navigateTo({
-    path: '/',
-  })
+  // await navigateTo({
+  //   path: '/',
+  // })
+
+  await navigateTo({ path: '/', query: { login: 'success' } })
+  window.location.reload()
   useToast().success('You are logged in')
 }
 

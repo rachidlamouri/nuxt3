@@ -13,7 +13,7 @@ const props = defineProps({
 <template>
   <div class="products-list">
     <ul class="gap-s" role="list">
-      <!-- <UsersCard :user="user" v-for="user in users" :key="user._id" /> -->
+      <UsersCard :user="user" v-for="user in users" :key="user._id" />
     </ul>
   </div>
 </template>

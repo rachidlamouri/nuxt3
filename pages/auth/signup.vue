@@ -37,11 +37,6 @@ const signup = async () => {
         method: 'GET',
         params: { ...result.data },
       })
-      // const { data, error } = await useFetch('auth/fetchuser', {
-      //   baseURL: config.apiUrl,
-      //   method: 'POST',
-      //   body: { ...result.data },
-      // })
       console.log(data.value)
       loading.value = false
 

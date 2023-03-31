@@ -21,7 +21,7 @@ const status = false
 // console.log(config.public.nuxtSession.userSessionId)
 // console.log(useCookie(config.public.nuxtSession.userSessionId))
 const config = useRuntimeConfig()
-const { authUser, isAuthenticated } = useAuthStore()
+const { authUser, authenticated } = useAuthStore()
 const { appErrorMsg, resetForm, parseZodError } = useErrorStore()
 
 // const { session } = await useSession()
@@ -56,7 +56,7 @@ const props = defineProps({
 //   // body: { ...formInputs },
 // })
 // console.log(data.value)
-// authUser.value.isAuthenticated = data.value.isAuthenticated
+// authUser.value.authenticated = data.value.authenticated
 // authUser.value.userName = data.value.userName
 
 // const { data, pending, error, refresh } = await useCsrfFetch('session', {
@@ -68,7 +68,7 @@ const props = defineProps({
 onMounted(async () => {
   // getSession()
   // console.log('IIIIII', session.value)
-  // authUser.value.isAuthenticated = session.value.isAuthenticated
+  // authUser.value.authenticated = session.value.authenticated
   // authUser.value.userName = session.value.userName
 })
 
@@ -128,6 +128,8 @@ const signout = async () => {
   // await navigateTo({
   //   path: '/',
   // })
+  window.location.reload()
+
   useToast().success('You are logged out')
   // const { data, pending, error } = await useFetch('auth/signout', {
   //   method: 'POST',
@@ -150,7 +152,7 @@ const signout = async () => {
 
   // useToast().success('You are logged out')
 
-  // setAuthUser({ name: '', isAuthenticated: false })
+  // setAuthUser({ name: '', authenticated: false })
   // await navigateTo({ path: '/' })
 }
 
@@ -205,6 +207,7 @@ const navItems = ref([
   { routeName: 'index', title: 'News' },
   { routeName: 'contact', title: 'Contact Us' },
   { routeName: 'about', title: 'About Us' },
+  { routeName: 'admin-users', title: 'Users' },
 ])
 
 watch(
@@ -258,16 +261,16 @@ watch(
                 ref="dropdownTriggerRef"
               >
                 <Icon class="" name="mdi:account-outline" />
-                <span class="btn-text" v-if="isAuthenticated">Welcome {{ authUser.userName }}</span>
+                <span class="btn-text" v-if="authenticated">Welcome {{ authUser.userName }}</span>
                 <span class="btn-text" v-else>Sign in / Create account</span>
               </button>
               <ul class="dropdown__menu" id="auth-dropdown" role="list" ref="dropdownMenuRef">
                 <li class="">
-                  <button class="btn" ref="signinBtnRef" @click="profile" v-if="isAuthenticated">profile</button>
+                  <button class="btn" ref="signinBtnRef" @click="profile" v-if="authenticated">profile</button>
                   <button class="btn" ref="signinBtnRef" @click.prevent="signin" v-else>Signin</button>
                 </li>
                 <li class="">
-                  <button class="btn" ref="signoutBtnRef" @click="signout" v-if="isAuthenticated">Signout</button>
+                  <button class="btn" ref="signoutBtnRef" @click="signout" v-if="authenticated">Signout</button>
                   <button class="btn" ref="signupBtnRef" @click.prevent="signup" v-else>Create account</button>
                 </li>
               </ul>

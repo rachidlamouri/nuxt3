@@ -126,7 +126,7 @@ export type ICartItem = z.infer<typeof cartItemSchema>
 
 /************ User schema **************/
 export const userSchema = z.object({
-  _id: z.string(),
+  id: z.string(),
   name: z.string(),
   email: z
     .string({

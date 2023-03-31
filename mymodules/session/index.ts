@@ -94,7 +94,7 @@ const getSession = async (event: H3Event) => {
 
 export default eventHandler(async (event) => {
   let session = await getSession(event)
-  console.log('SSSSS', session)
+  // console.log('SSSSS', session)
   return
 
   // Object.defineProperty(event.node.res, '_csrftoken', {

@@ -91,6 +91,6 @@ export const getUserSession = async (event: H3Event) => {
   console.log('User session ID', userSessionId)
   console.log('HAS', await storage.hasItem(userSessionId))
   if (await storage.hasItem(userSessionId)) session = await storage.getItem(userSessionId)
-  console.log('SSSSSS', session)
+  // console.log('SSSSSS', session)
   return session
 }

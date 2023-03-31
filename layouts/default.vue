@@ -25,8 +25,9 @@ const resized = ref()
 const nuxtApp = useNuxtApp(0)
 
 const config = useRuntimeConfig()
-const { authUser, isAuthenticated } = useAuthStore()
-authUser.value = { ...nuxtApp.payload.session }
+const { authUser } = useAuthStore()
+// console.log(nuxtApp.payload.sessionUser)
+authUser.value = { ...nuxtApp.payload.sessionUser }
 
 // const { data, pending, error, refresh } = await useCsrfFetch('session', {
 //   baseURL: config.apiUrl,
@@ -84,8 +85,8 @@ watch(
   <div class="" id="main-container">
     <header class="main-header" :class="{ scrolled }" ref="headerRef">
       <Header :scrolled="scrolled" :headerWidth="headerWidth" :resized="resized" />
-      {{ nuxtApp.payload.sessionToken }}-------
-      {{ nuxtApp.payload.sessionUser }}
+      <!-- {{ nuxtApp.payload.sessionToken }}------- -->
+      <!-- {{ nuxtApp.payload.sessionUser }} -->
     </header>
     <main class="" id="main" tabindex="-1">
       <div class="observer" ref="mainRef"></div>

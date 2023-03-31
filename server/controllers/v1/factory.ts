@@ -9,6 +9,7 @@ import AppError from '~/utils/AppError'
 import errorHandler from '~/utils/errorHandler'
 import redis from '~/utils/redisClient'
 import { userRepository, EntityId } from '~/server/redisSchemas/user'
+import { IUser } from '~/utils/schema'
 
 const config = useRuntimeConfig()
 
@@ -114,7 +115,14 @@ const getSinedJwtToken = async function (id: any, maxAge: number) {
   return jwt.sign({ id }, config.jwtSecret, { expiresIn: maxAge })
 }
 
-const findByEmail = async (email: string) => {
+export const fetchAll = async (repository: Repository) => {
+  await redis.connect()
+  const found = await repository.search().return.all()
+  await redis.disconnect()
+  return found
+}
+
+export const findByEmail = async (email: string) => {
   await redis.connect()
   const found = await userRepository
     .search()
@@ -126,16 +134,13 @@ const findByEmail = async (email: string) => {
   return {}
 }
 
-const findByIdAndUpdate = async (repository: Repository, id: string, payload: object) => {
+const findByIdAndUpdate = async (repository: Repository, id: string, payload: object): Promise<Partial<IUser>> => {
   await redis.connect()
-  let newEntiry
+  let newEntity
   const found = await repository.fetch(id)
+  if (found) newEntity = await repository.save({ ...found, ...payload })
   await redis.disconnect()
-  if (found) {
-    newEntiry = { ...found, ...payload }
-    return await repository.save(newEntiry)
-  }
-  return {}
+  return newEntity as IUser
 }
 
-export { getSinedJwtToken, findByEmail, findById, findByIdAndUpdate, findBySlug, aggregateFetch, createDocument }
+export { getSinedJwtToken, findById, findByIdAndUpdate, findBySlug, aggregateFetch, createDocument }

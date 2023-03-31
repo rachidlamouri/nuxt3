@@ -2,6 +2,8 @@
 import { storage } from '../../../mymodules/session/index'
 export default defineNuxtPlugin(async () => {
   const nuxtApp = useNuxtApp()
+  const config = useRuntimeConfig()
+
   // const { authUser } = useAuthStore()
   // const { session } = await useSession()
   // console.log('PPPPPXXXXXX', useCookie('userSID').value)
@@ -26,11 +28,31 @@ export default defineNuxtPlugin(async () => {
   //   sessionMeta: nuxtApp.payload.sessionMeta
   // }
 
-  addRouteMiddleware((to, from) => {
-    // console.log('TO', nuxtApp.payload)
-    if (to.path === '/about') {
-      return false
-    }
+  addRouteMiddleware('auth', async (to) => {
+    // console.log('NUXT', nuxtApp.payload)
+    console.log(
+      'this named middleware was added in a plugin and would override any existing middleware of the same name'
+    )
+
+    // const { data, pending, error, refresh } = await useCsrfFetch('session', {
+    //   baseURL: config.apiUrl,
+    //   method: 'GET',
+    // })
+    // console.log(data.value)
+
+    // const { authenticated } = useAuthStore(
+
+    if (
+      (!nuxtApp.payload || !nuxtApp.payload.sessionUser || !nuxtApp.payload.sessionUser.authenticated) &&
+      to.name === 'admin-users'
+    )
+      return navigateTo('/auth/signin')
+
+    // return abortNavigation()
+    // createError({
+    //   statusCode: 404,
+    //   message: 'The route could not be found :(',
+    // })
   })
   // console.log('Meta', await storage.getMeta()
 

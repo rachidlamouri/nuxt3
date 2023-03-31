@@ -8,7 +8,7 @@ const props = defineProps({
   },
 })
 
-const { updateCart } = useCart1()
+// const { updateCart } = useCart1()
 </script>
 
 <template>
@@ -18,9 +18,11 @@ const { updateCart } = useCart1()
       <p class="text-0 font-bold text-primary-10">{{ user.name }}</p>
       <p class="text-0 font-bold text-primary-10">{{ user.verified }}</p>
       <p class="text-0 font-bold text-primary-10">{{ user.active }}</p>
+
       <!-- <p class="text--1" v-if="user.price != 10000">${{ user.price.toFixed(2) }}</p>
       <p class="text--2" v-else>Request Quote</p> -->
     </div>
+    {{ user }}
     <!-- <div class="image">
       <img
         :src="`https://acs-space.nyc3.cdn.digitaloceanspaces.com/users/${user.media[0].name}.jpg`"
