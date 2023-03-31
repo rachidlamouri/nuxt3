@@ -5,6 +5,6 @@ const redis = createClient({
 })
 
 redis.on('error', (err: Error) => console.log('Redis Client Error', err))
-// redis.on('connect', () => console.log('redis connection succesfull'))
+redis.on('connect', () => console.log('redis connection succesfull'))
 
 export default redis

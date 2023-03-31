@@ -23,6 +23,7 @@ export default defineEventHandler(async (event) => {
       throw new AppError('Invalid email or password', 'invalid_password', 401)
     if (!user.verified) throw new AppError('You have not verified your email', 'email_not_verified', 401)
     // const payload = { userId: user[EntityId], userName: user.name, authenticated: true }
+
     await updateUserSession(event, { userId: user[EntityId], userName: user.name, authenticated: true })
     return { userName: user.name, authenticated: true }
   } catch (err) {

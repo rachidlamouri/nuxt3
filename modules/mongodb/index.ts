@@ -8,10 +8,28 @@ import orderSchema from '../../server/modelSchemas/order'
 import productSchema from '../../server/modelSchemas/product'
 import provenceSchema from '../../server/modelSchemas/provence'
 import countrySchema from '../../server/modelSchemas/country'
+import redis from '../../utils/redisClient'
+
+import { productRepository } from '../../server/redisSchemas/product'
+import { userRepository } from '../../server/redisSchemas/user'
 
 export default async (inlineOptions: any, nuxt: any) => {
   nuxt.hook('listen', async (nuxt: any) => {
     try {
+      // const createUserIndex = async () => {
+
+      // redis.on('error', (err) => console.log('Redis Client Error', err))
+
+      await redis.connect()
+      await redis.set('framework', 'ReactJS')
+      // console.log(await redis.get('framework'))
+      // redis.set(['framework', 'ReactJS'])
+      // await userRepository.createIndex()
+      // await productRepository.createIndex()
+      // await redis.disconnect()
+      // }
+
+      // createUserIndex()
       // const redis = createClient({
       //   url: process.env.NUXT_REDIS_URL as string,
       // })
@@ -20,7 +38,6 @@ export default async (inlineOptions: any, nuxt: any) => {
       // const redis = createClient({
       //   url: process.env.NUXT_REDIS_URL as string,
       // })
-      // redis.on('error', (err) => console.log('Redis Client Error', err))
       // await redis.connect()
       // console.log(`redis connection succesfull`)
       // Connect to database

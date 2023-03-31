@@ -71,6 +71,7 @@ export default defineNuxtConfig({
     './modules/nuxt-mailer/module',
     // './modules/nuxt-security/module',
     './modules/nuxt-auth/module',
+    './modules/nuxt-commerce/module',
 
     // ['./modules/mailer/module', {}],
     // ['./modules/session/module', {}],
@@ -78,6 +79,7 @@ export default defineNuxtConfig({
   // nuxtSession: {},
   // nuxtSecurity: {},
   nuxtAuth: {},
+  nuxtCommerce: {},
   nuxtMailer: {},
 
   vue: {

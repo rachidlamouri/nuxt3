@@ -14,6 +14,7 @@ const eligibilitiesMigrated = ref(false)
 const nextHigherAssembliesMigrated = ref(false)
 const showAlert = ref(false)
 const relevantSheet = 'products-tiny.csv'
+const config = useRuntimeConfig()
 
 const totalCount = ref()
 
@@ -21,14 +22,14 @@ const migrate = async () => {
   // showAlert.value = true
 
   // Create databases
-  dbCreated.value = false
-  const { data: dbTables, error: dbTablesErrors } = await useFetch('/api/v1/products/migrate/createDb', {
-    method: 'POST',
-    body: {},
-  })
+  // dbCreated.value = false
+  // const { data: dbTables, error: dbTablesErrors } = await useFetch('/api/v1/products/migrate/createDb', {
+  //   method: 'POST',
+  //   body: {},
+  // })
 
-  if (dbTablesErrors.value) throw createError(dbTablesErrors.value)
-  dbCreated.value = true
+  // if (dbTablesErrors.value) throw createError(dbTablesErrors.value)
+  // dbCreated.value = true
 
   const { data: csvData } = await useAsyncData('/products-new-small', () => queryContent('/').find())
   if (csvData.value && csvData.value.length > 0) {
@@ -65,47 +66,56 @@ const migrate = async () => {
     // oemPartNumbersMigrated.value = true
 
     //  Migrate Eligibilities
-    eligibilitiesMigrated.value = false
-    const { data: eligibilities, error: eligibilitiesErrors } = await useFetch(
-      '/api/v1/products/migrate/eligibilities',
-      {
-        method: 'POST',
-        body: sheet.body,
-      }
-    )
-    if (eligibilitiesErrors.value) throw createError(eligibilitiesErrors.value)
-    if (eligibilities.value && !eligibilities.value.insertedCount)
-      throw createError('There were no eligibilities to migrate')
-    console.log(eligibilities.value)
-    eligibilitiesMigrated.value = true
+    // eligibilitiesMigrated.value = false
+    // const { data: eligibilities, error: eligibilitiesErrors } = await useFetch(
+    //   '/api/v1/products/migrate/eligibilities',
+    //   {
+    //     method: 'POST',
+    //     body: sheet.body,
+    //   }
+    // )
+    // if (eligibilitiesErrors.value) throw createError(eligibilitiesErrors.value)
+    // if (eligibilities.value && !eligibilities.value.insertedCount)
+    //   throw createError('There were no eligibilities to migrate')
+    // console.log(eligibilities.value)
+    // eligibilitiesMigrated.value = true
 
     //  Migrate Next Higher Assemblies
-    nextHigherAssembliesMigrated.value = true
-    const { data: nextHigherAssemblies, error: nextHigherAssembliesErrors } = await useFetch(
-      '/api/v1/products/migrate/nextHigherAssemblies',
-      {
-        method: 'POST',
-        body: sheet.body,
-      }
-    )
-    if (nextHigherAssembliesErrors.value) throw createError(nextHigherAssembliesErrors.value)
-    if (nextHigherAssemblies.value && !nextHigherAssemblies.value.insertedCount)
-      throw createError('There were no nextHigherAssemblies to migrate')
-    console.log(nextHigherAssemblies.value)
-    nextHigherAssembliesMigrated.value = true
+    // nextHigherAssembliesMigrated.value = true
+    // const { data: nextHigherAssemblies, error: nextHigherAssembliesErrors } = await useFetch(
+    //   '/api/v1/products/migrate/nextHigherAssemblies',
+    //   {
+    //     method: 'POST',
+    //     body: sheet.body,
+    //   }
+    // )
+    // if (nextHigherAssembliesErrors.value) throw createError(nextHigherAssembliesErrors.value)
+    // if (nextHigherAssemblies.value && !nextHigherAssemblies.value.insertedCount)
+    //   throw createError('There were no nextHigherAssemblies to migrate')
+    // console.log(nextHigherAssemblies.value)
+    // nextHigherAssembliesMigrated.value = true
 
-    for (const item of sheet.body) {
-      const { data: product, error: productErrors } = await useFetch('/api/v1/products/migrate/products', {
-        method: 'POST',
-        body: item,
-      })
-      if (productErrors.value) throw createError(productErrors.value)
+    const { data, error } = await useCsrfFetch(`products/migrate`, {
+      method: 'POST',
+      baseURL: config.apiUrl,
+      body: { data: sheet.body },
+      // headers: { ...headers, sessionAuthorization: 'jwtsession' },
+    })
+    if (error.value) console.log(error.value.data)
+    console.log(data.value)
 
-      console.log(productErrors.value)
-      console.log(product.value)
-      uploadedProducts.value.push({ ...item, _id: product.value!.insertedId, media: [{ name: item.image }] })
-      totalCount.value = sheet.body.length
-    }
+    // for (const item of sheet.body) {
+    //   const { data: product, error: productErrors } = await useFetch('/api/v1/products/migrate/products', {
+    //     method: 'POST',
+    //     body: item,
+    //   })
+    //   if (productErrors.value) throw createError(productErrors.value)
+
+    //   console.log(productErrors.value)
+    //   console.log(product.value)
+    //   uploadedProducts.value.push({ ...item, _id: product.value!.insertedId, media: [{ name: item.image }] })
+    //   totalCount.value = sheet.body.length
+    // }
   }
 }
 </script>

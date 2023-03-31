@@ -47,14 +47,14 @@ const productParams = computed(() => {
 
 const fetchProducts = async () => {
   const headers = useRequestHeaders(['cookie']) as HeadersInit
-  const { data, error } = await useFetch(`products/list`, {
+  const { data, error } = await useCsrfFetch(`products`, {
     method: 'GET',
     baseURL: config.apiUrl,
-    params: productParams,
-    headers: { ...headers, sessionAuthorization: 'jwtsession' },
+    params: productParams.value,
+    // headers: { ...headers, sessionAuthorization: 'jwtsession' },
   })
   if (error.value) throw createError(error.value)
-  // console.log(data.value)
+  console.log(data.value)
   fetchedProducts.value = data.value
   products.value = products.value ? products.value.concat(fetchedProducts.value) : fetchedProducts.value
   // products.value = [products.value[0]]

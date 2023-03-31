@@ -7,6 +7,8 @@ definePageMeta({
   middleware: ['auth'],
 })
 
+const { appErrorMsg, resetForm, clientFormValidator, parseZodError } = useErrorStore()
+
 const config = useRuntimeConfig()
 
 const containerRef = ref()
@@ -41,7 +43,7 @@ const productParams = computed(() => {
   }
 })
 
-const fetchProducts = async () => {
+const fetchUsers = async () => {
   const headers = useRequestHeaders(['cookie']) as HeadersInit
   const { data, error } = await useCsrfFetch(`users`, {
     method: 'GET',
@@ -49,7 +51,7 @@ const fetchProducts = async () => {
     params: productParams.value,
     // headers: { ...headers, sessionAuthorization: 'jwtsession' },
   })
-  if (error.value) throw createError(error.value)
+  if (error.value) return (appErrorMsg.value = error.value.statusMessage || '')
   // console.log(data.value)
   fetchedUsers.value = data.value
   users.value = users.value ? users.value.concat(fetchedUsers.value) : fetchedUsers.value
@@ -63,7 +65,7 @@ onMounted(() => {
     entries.forEach(async (entry) => {
       if (entry.isIntersecting) {
         page.value = page.value + 1
-        await fetchProducts()
+        await fetchUsers()
       }
     })
   }, options)
@@ -100,7 +102,7 @@ const sortProducts = async (sortOption: string) => {
   }
 }
 
-await fetchProducts()
+await fetchUsers()
 </script>
 
 <template>
@@ -129,6 +131,7 @@ await fetchProducts()
             @update:modelValue="sortProducts"
           />
         </form> -->
+        <ErrorMsg />
         <div v-if="users && users.length">
           <UsersList :users="users" />
         </div>

@@ -208,6 +208,7 @@ const navItems = ref([
   { routeName: 'contact', title: 'Contact Us' },
   { routeName: 'about', title: 'About Us' },
   { routeName: 'admin-users', title: 'Users' },
+  { routeName: 'admin-products-migrate', title: 'Migrate Products' },
 ])
 
 watch(

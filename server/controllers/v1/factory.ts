@@ -124,11 +124,7 @@ export const fetchAll = async (repository: Repository) => {
 
 export const findByEmail = async (email: string) => {
   await redis.connect()
-  const found = await userRepository
-    .search()
-    .where('email')
-    .eq(email as string)
-    .return.all()
+  const found = await userRepository.search().where('email').eq(email).return.all()
   await redis.disconnect()
   if (found && Array.isArray(found) && found.length) return found[0]
   return {}

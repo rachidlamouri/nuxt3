@@ -197,7 +197,7 @@ export const fetcheSessionUser = async (event: H3Event) => {
 }
 
 export const protect = async (event: H3Event) => {
-  // console.log('EEEEEE', event.context.user)
+  console.log('EEEEEE', event.context.user)
   if (!event.context.user) return false
   return true
   // const session = await getUserSession(event)
