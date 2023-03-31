@@ -12,13 +12,12 @@ import jwt, { JwtPayload } from 'jsonwebtoken'
 // import { ObjectId } from 'mongodb'
 // import { H3Event } from 'h3'
 import { promisify } from 'util'
-import { findByEmail } from '~/server/controllers/v1/factory'
 
 // import AppError from '~/utils/AppError'
 // import { mongoClient, ObjectId } from '~/utils/mongoClient'
 import errorHandler from '~/utils/errorHandler'
 import sendEmail from '~/utils/Email'
-import { IUser } from '~/utils/types'
+// import { IUser } from '~/utils/types'
 
 import { getSinedJwtToken } from '~/server/controllers/v1/factory'
 // import { setUserSession } from '#session'
@@ -30,6 +29,10 @@ import redisDriver from 'unstorage/drivers/redis'
 import { nanoid } from 'nanoid'
 
 import { randomUUID, randomBytes, createCipheriv, createDecipheriv } from 'crypto'
+
+import { ISession, IUser } from '~/utils/schema'
+import { findById } from '~/server/controllers/v1/factory'
+import { QueryValue } from 'ufo'
 
 const config = useRuntimeConfig()
 const secrefBuffer = Buffer.from(config.nuxtAuth.encryptSecret)
@@ -66,8 +69,8 @@ export const createSessionKey = (secret: string): string => {
   return `${iv.toString('base64')}:${encrypted}`
 }
 
-export const verifySessionKey = (secret: string, token: string) => {
-  const [iv, encrypted] = token.split(':')
+export const verifySessionKey = (secret: string, token: QueryValue) => {
+  const [iv, encrypted] = (token as string).split(':')
   if (!iv || !encrypted) {
     return false
   }
@@ -101,13 +104,13 @@ export const createUserSession = async (event: H3Event, secret: string) => {
   await storage.setItem(secret, session, { ttl: config.nuxtAuth.cookieOpts.expiryInSeconds })
 }
 
-export const updateUserSession = async (event: H3Event, user) => {
+export const updateUserSession = async (event: H3Event, payload: object) => {
   const userSessionKey = parseCookies(event)[config.nuxtAuth.sessionCookieName]
   if (!(await storage.hasItem(userSessionKey))) return false
   let session = await storage.getItem(userSessionKey)
   // console.log('IIIIII', session, user)
-  if (!session) session = { userId: user[EntityId] }
-  else session = { ...(session as object), userId: user[EntityId] }
+  if (!session) session = {}
+  else session = { ...(session as object), ...payload }
   await storage.setItem(userSessionKey, session, { ttl: config.nuxtAuth.cookieOpts.expiryInSeconds })
   return true
   // let ipAddress = ''
@@ -182,6 +185,15 @@ export const createUser = async (payload) => {
   const user = await userRepository.save(userObj)
   await redis.disconnect()
   return { userId: user[EntityId], token: await getSinedJwtToken(user[EntityId], Number(config.jwtSignupTokenMaxAge)) }
+}
+
+export const fetcheSessionUser = async (event: H3Event) => {
+  const session = await getUserSession(event)
+  console.log('SSSS', session)
+  if (!session || !(session as ISession).userId) return {}
+  const user = await findById(userRepository, (session as ISession).userId)
+  if (user) return user
+  return {}
 }
 
 // export const isVerified = async (id: string) => {

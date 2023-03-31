@@ -1,6 +1,25 @@
 import { z } from 'zod'
 import { passwordPattern } from '~/utils/patterns'
 
+// Registration user schema
+export const sessionSchema = z.object({
+  ipAddress: z
+    .string({
+      invalid_type_error: 'Name must be a string',
+    })
+    .nonempty({ message: 'Name is required' })
+    .max(40, { message: 'Name must be 4 or fewer characters' }),
+  userId: z.string({
+    invalid_type_error: 'Name must be a string',
+  }),
+  userName: z.string({
+    invalid_type_error: 'Name must be a string',
+  }),
+})
+export type ISession = z.infer<typeof sessionSchema>
+
+///////////////***********************//////////////////
+
 // Email schema
 export const emailSchema = z.object({
   email: z

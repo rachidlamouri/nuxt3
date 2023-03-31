@@ -69,13 +69,23 @@ onMounted(() => {
   }, options)
   if (mainRef.value) mainObserver.observe(mainRef.value)
 })
+
+watch(
+  () => nuxtApp.payload.sessionUser,
+  (currentValue, oldValue) => {
+    console.log(currentValue)
+    console.log(oldValue)
+    // if (props.showAlert) alertRef.value.showModal()
+  }
+)
 </script>
 
 <template>
   <div class="" id="main-container">
     <header class="main-header" :class="{ scrolled }" ref="headerRef">
       <Header :scrolled="scrolled" :headerWidth="headerWidth" :resized="resized" />
-      {{ nuxtApp.payload.sessionToken }}
+      {{ nuxtApp.payload.sessionToken }}-------
+      {{ nuxtApp.payload.sessionUser }}
     </header>
     <main class="" id="main" tabindex="-1">
       <div class="observer" ref="mainRef"></div>

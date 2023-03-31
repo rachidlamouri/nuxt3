@@ -22,6 +22,6 @@ export function useCsrfFetch(request: string, opts) {
     // options.body.nonce = csrf
     options.body.sessionToken = sessionToken
   }
-  if (opts.params) options.params.nonce = sessionToken
+  if (opts.params) options.params.sessionToken = sessionToken
   return useFetch(request, { ...options, headers })
 }

@@ -198,6 +198,7 @@ export default defineNuxtModule({
           `  const createSessionKey: typeof import('${resolve('./runtime/server/services')}').createSessionKey`,
           `  const verifySessionKey: typeof import('${resolve('./runtime/server/services')}').verifySessionKey`,
           `  const checkPassword: typeof import('${resolve('./runtime/server/services')}').checkPassword`,
+          `  const fetcheSessionUser: typeof import('${resolve('./runtime/server/services')}').fetcheSessionUser`,
           // `  const getUserSession: typeof import('${resolve('./runtime/server/services')}').getUserSession`,
           '}',
         ].join('\n'),

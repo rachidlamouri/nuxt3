@@ -45,7 +45,7 @@ const signin = async () => {
     method: 'POST',
     body: { ...formInputs },
   })
-  // console.log(data.value)
+  console.log(data.value)
   // console.log(error.value.data)
   loading.value = false
   if (error.value) return (appErrorMsg.value = error.value.statusMessage || '')
