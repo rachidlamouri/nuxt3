@@ -22,16 +22,19 @@ const scrolled = ref()
 const headerWidth = ref()
 const resized = ref()
 
+const nuxtApp = useNuxtApp(0)
+
 const config = useRuntimeConfig()
 const { authUser, isAuthenticated } = useAuthStore()
+authUser.value = { ...nuxtApp.payload.session }
 
-const { data, pending, error, refresh } = await useCsrfFetch('session', {
-  baseURL: config.apiUrl,
-  method: 'GET',
-  // body: { ...formInputs },
-})
+// const { data, pending, error, refresh } = await useCsrfFetch('session', {
+//   baseURL: config.apiUrl,
+//   method: 'GET',
+//   // body: { ...formInputs },
+// })
 // console.log(data.value)
-authUser.value = { ...data.value }
+// authUser.value = { ...data.value }
 
 onMounted(() => {
   const resizeObserver = new ResizeObserver((entries) => {
@@ -72,6 +75,7 @@ onMounted(() => {
   <div class="" id="main-container">
     <header class="main-header" :class="{ scrolled }" ref="headerRef">
       <Header :scrolled="scrolled" :headerWidth="headerWidth" :resized="resized" />
+      {{ nuxtApp.payload.sessionToken }}
     </header>
     <main class="" id="main" tabindex="-1">
       <div class="observer" ref="mainRef"></div>

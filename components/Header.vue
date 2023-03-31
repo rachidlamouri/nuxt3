@@ -7,8 +7,8 @@ import { IAuthenticatedData } from '~/utils/schema'
 
 const status = false
 
-const nuxtApp = useNuxtApp()
-console.log(nuxtApp.payload)
+// const nuxtApp = useNuxtApp()
+// console.log(nuxtApp.payload)
 
 // console.log('CC', useCookie('csrf').value)
 
@@ -115,7 +115,7 @@ const signout = async () => {
   const { data, pending, error, refresh } = await useCsrfFetch('auth/signout', {
     baseURL: config.apiUrl,
     method: 'POST',
-    body: { id: 1 },
+    body: {},
   })
   // console.log(data.value)
   // console.log(error.value.data)
@@ -241,7 +241,6 @@ watch(
         </div>
         <!-- {{ useNuxtApp().payload.csrfToken }}----{{ useNuxtApp().payload.sessionMeta }} -->
         <nav class="top-nav" aria-label="Top Navigation">
-          {{ nuxtApp.payload.session }}
           <ul class="" role="list">
             <li>
               <button class="btn" @click="$emit('showSearchModal')">

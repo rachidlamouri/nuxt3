@@ -29,7 +29,10 @@ import memoryDriver from 'unstorage/drivers/memory'
 import redisDriver from 'unstorage/drivers/redis'
 import { nanoid } from 'nanoid'
 
+import { randomUUID, randomBytes, createCipheriv, createDecipheriv } from 'crypto'
+
 const config = useRuntimeConfig()
+const secrefBuffer = Buffer.from(config.nuxtAuth.encryptSecret)
 
 // const nuxtApp = useNuxtApp()
 // console.log(nuxtApp)
@@ -56,31 +59,88 @@ const storage = createStorage({
   }),
 })
 
-export const setUserSession = async (event: H3Event, user, isAuthenticated: boolean) => {
-  const sessionKey = nanoid(config.nuxtAuth.session.idLength)
-  const expirationDate = config.nuxtAuth.session.expiryInSeconds
-    ? new Date(Date.now() + config.nuxtAuth.session.expiryInSeconds * 1000)
-    : undefined
-
-  setCookie(event, config.nuxtAuth.session.userSessionId, sessionKey, {
-    expires: expirationDate,
-    secure: config.nuxtAuth.session.cookieSecure,
-    httpOnly: config.nuxtAuth.session.cookieHttpOnly,
-  })
-  const session = {
-    userId: user[EntityId],
-    userName: user.name,
-    isAuthenticated,
-  }
-
-  await storage.setItem(sessionKey, session, { ttl: config.nuxtAuth.session.expiryInSeconds })
-  return session
+export const createSessionKey = (secret: string): string => {
+  const iv = randomBytes(16)
+  const cipher = createCipheriv(config.nuxtAuth.csrf.encryptAlgorithm, secrefBuffer, iv)
+  const encrypted = cipher.update(secret, 'utf8', 'base64') + cipher.final('base64')
+  return `${iv.toString('base64')}:${encrypted}`
 }
 
+export const verifySessionKey = (secret: string, token: string) => {
+  const [iv, encrypted] = token.split(':')
+  if (!iv || !encrypted) {
+    return false
+  }
+  let decrypted
+  try {
+    const decipher = createDecipheriv(config.nuxtAuth.csrf.encryptAlgorithm, secrefBuffer, Buffer.from(iv, 'base64'))
+    decrypted = decipher.update(encrypted, 'base64', 'utf-8') + decipher.final('utf-8')
+    return decrypted === secret
+  } catch (error) {
+    return false
+  }
+}
+export const createUserSession = async (event: H3Event, secret: string) => {
+  let ipAddress = ''
+  const abstractRes: { ip_address: string } = (await $fetch(
+    `${config.abstractApiUrl}/?api_key=${config.abstractApiKey}`
+  )) || { ip_address: '' }
+  ipAddress = abstractRes.ip_address
+  setCookie(event, config.nuxtAuth.sessionCookieName, secret, {
+    ...(config.nuxtAuth.cookieOpts as CookieSerializeOptions),
+    expires: new Date(Date.now() + config.nuxtAuth.cookieOpts.expiryInSeconds * 1000),
+  })
+
+  const session = {
+    ipAddress,
+    // userId: user[EntityId],
+    // userName: user.name,
+    // isAuthenticated,
+  }
+
+  await storage.setItem(secret, session, { ttl: config.nuxtAuth.cookieOpts.expiryInSeconds })
+}
+
+export const updateUserSession = async (event: H3Event, user) => {
+  const userSessionKey = parseCookies(event)[config.nuxtAuth.sessionCookieName]
+  if (!(await storage.hasItem(userSessionKey))) return false
+  let session = await storage.getItem(userSessionKey)
+  // console.log('IIIIII', session, user)
+  if (!session) session = { userId: user[EntityId] }
+  else session = { ...(session as object), userId: user[EntityId] }
+  await storage.setItem(userSessionKey, session, { ttl: config.nuxtAuth.cookieOpts.expiryInSeconds })
+  return true
+  // let ipAddress = ''
+  // const abstractRes: { ip_address: string } = (await $fetch(
+  //   `${config.abstractApiUrl}/?api_key=${config.abstractApiKey}`
+  // )) || { ip_address: '' }
+  // ipAddress = abstractRes.ip_address
+  // setCookie(event, config.nuxtAuth.sessionCookieName, secret, {
+  //   ...(config.nuxtAuth.cookieOpts as CookieSerializeOptions),
+  //   expires: new Date(Date.now() + config.nuxtAuth.cookieOpts.expiryInSeconds * 1000),
+  // })
+
+  // const session = {
+  //   ipAddress,
+  //   // userId: user[EntityId],
+  //   // userName: user.name,
+  //   // isAuthenticated,
+  // }
+
+  // await storage.setItem(secret, session, { ttl: config.nuxtAuth.cookieOpts.expiryInSeconds })
+}
+
+export const getUserSession = async (event: H3Event) => {
+  // let session
+  const userSessionKey = parseCookies(event)[config.nuxtAuth.sessionCookieName]
+  if (!userSessionKey) return {}
+  if (await storage.hasItem(userSessionKey)) return await storage.getItem(userSessionKey)
+  return {}
+}
 export const removeUserSession = async (event: H3Event) => {
-  const sessionKey = parseCookies(event)[config.nuxtAuth.session.userSessionId]
+  const sessionKey = parseCookies(event)[config.nuxtAuth.sessionCookieName]
   if (!sessionKey) return false
-  setCookie(event, config.nuxtAuth.session.userSessionId, sessionKey, {
+  setCookie(event, config.nuxtAuth.sessionCookieName, sessionKey, {
     expires: new Date(Date.now()),
     secure: config.nuxtAuth.session.cookieSecure,
     httpOnly: config.nuxtAuth.session.cookieHttpOnly,
@@ -90,20 +150,12 @@ export const removeUserSession = async (event: H3Event) => {
   return true
 }
 
-export const getUserSession = async (event: H3Event) => {
-  let session
-  const userSessionId = parseCookies(event)[config.nuxtAuth.session.userSessionId]
-  if (!userSessionId) return {}
-  if (await storage.hasItem(userSessionId)) return await storage.getItem(userSessionId)
-  return {}
-}
-
-const hashPassword = async (password: string = '4zE_h2n-mdWaZ9aq&3!G[Y{A,u"_xPvSD"a3q$B') => {
+export const hashPassword = async (password: string = '4zE_h2n-mdWaZ9aq&3!G[Y{A,u"_xPvSD"a3q$B') => {
   const salt = await bcrypt.genSalt(12)
   return await bcrypt.hash(password as string, salt)
 }
 
-const checkPassword = async (password: string, hash: string) => {
+export const checkPassword = async (password: string, hash: string) => {
   return await bcrypt.compare(password, hash)
 }
 
@@ -141,26 +193,26 @@ export const createUser = async (payload) => {
 //   return false
 // }
 
-export const fetchAuthUser = async (event: H3Event) => {
-  // await redis.connect()
-  const { email, password } = await readBody(event)
-  if (!email || !password) throw new AppError('Email and Password are required', 'email_and_or_password_missing', 404)
-  const user = await findByEmail(email as string)
-  if (!user) throw new AppError('Invalid login credentials', 'invalid-credentials', 401)
-  // await redis.disconnect()
+// export const fetchAuthUser = async (event: H3Event) => {
+//   // await redis.connect()
+//   const { email, password } = await readBody(event)
+//   if (!email || !password) throw new AppError('Email and Password are required', 'email_and_or_password_missing', 404)
+//   const user = await findByEmail(email as string)
+//   if (!user) throw new AppError('Invalid login credentials', 'invalid-credentials', 401)
+//   // await redis.disconnect()
 
-  if (!(await checkPassword(password, user.password as string)))
-    throw new AppError('Invalid email or password', 'invalid_password', 401)
-  if (!user.verified) throw new AppError('You have not verified your email', 'email_not_verified', 401)
-  return user
+//   if (!(await checkPassword(password, user.password as string)))
+//     throw new AppError('Invalid email or password', 'invalid_password', 401)
+//   if (!user.verified) throw new AppError('You have not verified your email', 'email_not_verified', 401)
+//   return user
 
-  // // const cookieMaxAge = Number(config.jwtMaxAge) * 1 * 60 * 60
-  // // const authToken = await getSinedJwtToken(user._id, cookieMaxAge)
-  // // setAuthCookie(event, 'authToken', authToken, cookieMaxAge)
-  // // return authenticatedDataSchema.parse({ authToken, cookieMaxAge, ...user })
-  // // return true
-  // const user = await userRepository.save(userObj)
-  // console.log('E', user[EntityId])
-  // await redis.disconnect()
-  // return { userId: user[EntityId], token: await getSinedJwtToken(user[EntityId], Number(config.jwtSignupTokenMaxAge)) }
-}
+//   // // const cookieMaxAge = Number(config.jwtMaxAge) * 1 * 60 * 60
+//   // // const authToken = await getSinedJwtToken(user._id, cookieMaxAge)
+//   // // setAuthCookie(event, 'authToken', authToken, cookieMaxAge)
+//   // // return authenticatedDataSchema.parse({ authToken, cookieMaxAge, ...user })
+//   // // return true
+//   // const user = await userRepository.save(userObj)
+//   // console.log('E', user[EntityId])
+//   // await redis.disconnect()
+//   // return { userId: user[EntityId], token: await getSinedJwtToken(user[EntityId], Number(config.jwtSignupTokenMaxAge)) }
+// }

@@ -4,6 +4,7 @@ export default defineNuxtPlugin(async () => {
   const nuxtApp = useNuxtApp()
   // const { authUser } = useAuthStore()
   // const { session } = await useSession()
+  // console.log('PPPPPXXXXXX', useCookie('userSID').value)
 
   // if (process.client) {
   //   console.log('IIIIII', session.value)
@@ -13,15 +14,23 @@ export default defineNuxtPlugin(async () => {
   // const { csrf } = useCsrf()
   // console.log('PluginCSRFXXXXXXXXXXXXXXZZZZZZZ', nuxtApp.ssrContext?.event.node.res._csrftoken)
   const res = nuxtApp.ssrContext?.event.node.res ?? {}
-  if ('_csrftoken' in res) nuxtApp.payload.csrfToken = res._csrftoken // expose csrftoken to client
-  if ('_session' in res) nuxtApp.payload.session = res._session // expose csrftoken to client
+  // if ('_csrftoken' in res) nuxtApp.payload.csrfToken = res._csrftoken // expose csrftoken to client
+  if ('_sessionToken' in res) nuxtApp.payload.sessionToken = res._sessionToken // expose csrftoken to client
   if (process.server) {
     // console.log('NUXTAPP', nuxtApp.ssrContext.event.context)
     // nuxtApp.payload.sessionMeta = nuxtApp.ssrContext.event.context.sessionMeta
   }
-  provide: {
-    sessionMeta: nuxtApp.payload.sessionMeta
-  }
+
+  // provide: {
+  //   sessionMeta: nuxtApp.payload.sessionMeta
+  // }
+
+  addRouteMiddleware((to, from) => {
+    // console.log('TO', nuxtApp.payload)
+    if (to.path === '/about') {
+      return false
+    }
+  })
   // console.log('Meta', await storage.getMeta()
 
   // console.log('Pluginzzzz', useNuxtApp().ssrContext?.event.node.res._csrftoken)

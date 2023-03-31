@@ -97,10 +97,10 @@ export default eventHandler(async (event: H3Event) => {
   const user = await findById(userRepository, session.userId)
   if (!user) return
   event.context.user = user
-  event.context.session = session
+  event.context.sessionKey = sessionKey
 
-  Object.defineProperty(event.node.res, '_session', {
-    value: session,
+  Object.defineProperty(event.node.res, '_sessionKey', {
+    value: sessionKey,
     enumerable: true,
   })
   // console.log('UUUUUUUU', user)

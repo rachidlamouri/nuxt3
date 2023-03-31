@@ -16,6 +16,16 @@ import { randomBytes } from 'crypto'
 const PACKAGE_NAME = 'nuxt-auth'
 const defaults = {
   isEnabled: true,
+  sessionCookieName: 'userSID',
+  cookieOpts: {
+    path: '/',
+    httpOnly: true,
+    sameSite: 'strict',
+    secure: false,
+    expiryInSeconds: 10 * 60,
+  },
+  encryptSecret: randomBytes(22).toString('base64'),
+  // sessionExpiryInSeconds: 60 * 10,
   api: {
     isEnabled: true,
     methods: 'signup, signin, signout, verify, forgotPassword, resetPassword',
@@ -45,6 +55,7 @@ const defaults = {
   },
   jwtSecret: randomBytes(22).toString('base64'),
   session: {
+    cookieKey: 'userSID',
     isEnabled: true,
     expiryInSeconds: 60 * 10,
     userSessionId: 'userSID',
@@ -138,8 +149,8 @@ export default defineNuxtModule({
     // 3. Locate runtime directory
     const { resolve } = createResolver(import.meta.url)
     // 4. Setup middleware,
-    addServerHandler({ handler: resolve('runtime/server/middleware/csrf') })
-    addServerHandler({ handler: resolve('runtime/server/middleware/session') })
+    addServerHandler({ handler: resolve('runtime/server/middleware') })
+    // addServerHandler({ handler: resolve('runtime/server/middleware/session') })
 
     // 4. Add composables
     addImportsDir(resolve('runtime/composables'))
@@ -179,10 +190,14 @@ export default defineNuxtModule({
         [
           "declare module  '#auth' {",
           `  const createUser: typeof import('${resolve('./runtime/server/services')}').createUser`,
-          `  const fetchAuthUser: typeof import('${resolve('./runtime/server/services')}').fetchAuthUser`,
-          `  const setUserSession: typeof import('${resolve('./runtime/server/services')}').setUserSession`,
+          // `  const fetchAuthUser: typeof import('${resolve('./runtime/server/services')}').fetchAuthUser`,
+          `  const createUserSession: typeof import('${resolve('./runtime/server/services')}').createUserSession`,
+          `  const updateUserSession: typeof import('${resolve('./runtime/server/services')}').updateUserSession`,
           `  const getUserSession: typeof import('${resolve('./runtime/server/services')}').getUserSession`,
           `  const removeUserSession: typeof import('${resolve('./runtime/server/services')}').removeUserSession`,
+          `  const createSessionKey: typeof import('${resolve('./runtime/server/services')}').createSessionKey`,
+          `  const verifySessionKey: typeof import('${resolve('./runtime/server/services')}').verifySessionKey`,
+          `  const checkPassword: typeof import('${resolve('./runtime/server/services')}').checkPassword`,
           // `  const getUserSession: typeof import('${resolve('./runtime/server/services')}').getUserSession`,
           '}',
         ].join('\n'),
@@ -200,10 +215,10 @@ export default defineNuxtModule({
       logger.info(`Auth API "${options.api.methods}" endpoints registered at "${options.api.basePath}"`)
     }
 
-    addServerHandler({
-      route: '/api/v1/session',
-      handler: resolve('./runtime/server/api/v1/session/index.get'),
-    })
+    // addServerHandler({
+    //   route: '/api/v1/session',
+    //   handler: resolve('./runtime/server/api/v1/session/index.get'),
+    // })
 
     // logger.info(`YRL Nuxt Auth API location is \`${options.api.basePath}\``)
 
