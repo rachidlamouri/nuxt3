@@ -191,6 +191,10 @@ export default defineNuxtModule({
           "declare module  '#auth' {",
           `  const createUser: typeof import('${resolve('./runtime/server/services')}').createUser`,
           `  const findByEmail: typeof import('${resolve('./runtime/server/services')}').findByEmail`,
+          `  const findUserByIdAndUpdate: typeof import('${resolve(
+            './runtime/server/services'
+          )}').findUserByIdAndUpdate`,
+          `  const findUserById: typeof import('${resolve('./runtime/server/services')}').findUserById`,
           `  const createUserSession: typeof import('${resolve('./runtime/server/services')}').createUserSession`,
           `  const updateUserSession: typeof import('${resolve('./runtime/server/services')}').updateUserSession`,
           `  const getUserSession: typeof import('${resolve('./runtime/server/services')}').getUserSession`,

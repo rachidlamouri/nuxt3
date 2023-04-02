@@ -41,15 +41,16 @@ const verify = async () => {
     params: { signupToken: route.query.signupToken },
   })
   loading.value = false
+  console.log(data.value)
   if (error.value) {
     return (appErrorMsg.value = error.value.statusMessage || '')
   }
 
   useToast().success('Thank you for verifying your email')
 
-  return navigateTo({
-    path: '/auth/signin',
-  })
+  // return navigateTo({
+  //   path: '/auth/signin',
+  // })
 }
 </script>
 

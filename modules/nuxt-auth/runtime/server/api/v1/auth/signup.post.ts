@@ -25,8 +25,8 @@ export default defineEventHandler(async (event) => {
     // return await createUser(await readBody(event))
     const body = await readBody(event)
 
-    const { userId, token } = await createUser(event, body)
-    if (!userId) throw new AppError('Registration failed.  Please try a different email', 'registration_failed', 400)
+    const token = await createUser(event, body)
+    if (!token) throw new AppError('Registration failed.  Please try a different email', 'registration_failed', 400)
     const emailBody = emailTemplateRegistration(body.name, event.node.req.headers.origin!, token)
     const info = await sendMail(body.email, config.nuxtMailer.registrationEmailSubject, emailTemplateBase(emailBody))
     if (info && Array.isArray(info) && info.length && info[0].statusCode === 202)

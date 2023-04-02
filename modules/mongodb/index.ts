@@ -29,6 +29,11 @@ export default async (inlineOptions: any, nuxt: any) => {
         await redis.ft.create(
           'idx:User',
           {
+            '$.id': {
+              type: SchemaFieldTypes.TEXT,
+              AS: 'id',
+              SORTABLE: true,
+            },
             '$.name': {
               type: SchemaFieldTypes.TEXT,
               AS: 'name',

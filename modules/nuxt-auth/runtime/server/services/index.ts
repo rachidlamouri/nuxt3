@@ -164,38 +164,44 @@ export const checkPassword = async (password: string, hash: string) => {
 }
 
 export const createUser = async (event: H3Event, body: IUser) => {
-  // const createUser = async (payload: Partial<IUser>) => {
+  try {
+    await redis.connect()
 
-  await redis.connect()
-  // const results = await redis.ft.search('idx:User', `*`)
-  // console.log(results)
-  // await redis.disconnect()
-  // return results
+    // Generate Ulid
+    const userUlid = ulid()
 
-  const userUlid = ulid()
+    // Get document count
+    const allDocuments = await redis.ft.search('idx:User', `*`)
+    const documentCount = allDocuments && allDocuments.total ? allDocuments.total : 0
 
-  const userObj = {
-    id: userUlid,
-    name: body.name,
-    email: body.email,
-    userAddresses: body.userAddresses || [],
-    phoneNumber: body.phoneNumber || '',
-    media: [],
-    role: 'customer',
-    password: await hashPassword(body.password),
-    active: false,
-    verified: false,
-    // accountNumber: (await userRepository.search().return.count()) + 101013,
-    // accountNumber: 111,
-    signupDate: Date.now(),
-    passwordChangeDate: Date.now(),
+    // Set new user object
+    const userObj = {
+      id: userUlid,
+      name: body.name,
+      email: body.email,
+      userAddresses: body.userAddresses || [],
+      phoneNumber: body.phoneNumber || '',
+      media: [],
+      role: 'customer',
+      password: await hashPassword(body.password),
+      active: false,
+      verified: false,
+      accountNumber: documentCount + 101013,
+      signupDate: Date.now(),
+      passwordChangeDate: Date.now(),
+    }
+
+    // Save new user
+    const result = await redis.json.set(`User:${userUlid}`, '$', userObj)
+
+    await redis.disconnect()
+
+    // Return userId and Token
+    if (result && result === 'OK') return await getSinedJwtToken(userUlid, Number(config.jwtSignupTokenMaxAge))
+    return null
+  } catch (err) {
+    return errorHandler(event, err)
   }
-
-  const user = await redis.json.set(`User:${userUlid}`, '$', userObj)
-  console.log(user)
-  await redis.disconnect()
-  return { userId: userUlid, token: await getSinedJwtToken(userUlid, Number(config.jwtSignupTokenMaxAge)) }
-  // return true
 }
 
 export const findByEmail = async (event: H3Event, email: string) => {
@@ -206,6 +212,40 @@ export const findByEmail = async (event: H3Event, email: string) => {
     console.log(results.total)
     if (results && results.total > 0) return { id: results.documents[0].id, ...results.documents[0].value }
     return {}
+  } catch (err) {
+    return errorHandler(event, err)
+  }
+}
+
+export const findUserById = async (event: H3Event, id: string) => {
+  try {
+    await redis.connect()
+    const results = await redis.ft.search('idx:User', `@id:${id}`)
+    await redis.disconnect()
+    // console.log(results)
+    if (results && results.total > 0) return { id: results.documents[0].id, ...results.documents[0].value }
+    return {}
+  } catch (err) {
+    return errorHandler(event, err)
+  }
+}
+
+export const findUserByIdAndUpdate = async (event: H3Event, id: string, payload: object) => {
+  try {
+    // let newEntity
+    const found = await findUserById(event, id)
+    console.log(found)
+    if (!found || Object.values(found).length == 0)
+      throw new AppError('We cannot find any records associated with this ID', 'user_by_id_not_found', 404)
+    await redis.connect()
+    const result = await redis.json.set(`User:${id}`, '$', { ...found, ...payload })
+    // if (found) newEntity = await repository.save({ ...found, ...payload })
+    await redis.disconnect()
+    // return // Return userId and Token
+    if (result && result === 'OK') return found
+    return {}
+
+    // return newEntity as IUser
   } catch (err) {
     return errorHandler(event, err)
   }

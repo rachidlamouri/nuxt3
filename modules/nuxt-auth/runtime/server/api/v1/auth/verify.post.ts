@@ -5,8 +5,9 @@ import emailTemplateRegistrationConfirmation from '~/modules/nuxt-mailer/runtime
 import { sendMail } from '#mailer'
 import AppError from '~/utils/AppError'
 import errorHandler from '~/utils/errorHandler'
-import { findById, findByIdAndUpdate } from '~/server/controllers/v1/factory'
+import { findByIdAndUpdate } from '~/server/controllers/v1/factory'
 import { IUser } from '~/utils/schema'
+import { createUser, findUserById, findUserByIdAndUpdate } from '#auth'
 
 const config = useRuntimeConfig()
 
@@ -15,15 +16,19 @@ export default defineEventHandler(async (event) => {
     const body = await readBody(event)
     const query = getQuery(event)
     const decoded = jwt.verify(query.signupToken as string, config.jwtSecret, {})
-    const user = await findById(userRepository, (decoded as JwtPayload).id)
-    if (!user) throw new AppError('Invalid registration token', 'invalid_signup_token', 404)
-    if (user.email !== body.email)
+    console.log(decoded)
+    if (!decoded || !(decoded as JwtPayload).id)
+      throw new AppError('Invalid registration token', 'invalid_signup_token', 404)
+    const user = await findUserById(event, (decoded as JwtPayload).id)
+    if (!user)
+      throw new AppError('We cannot find any records associated with your token', 'user_by_token_not_found', 404)
+    if (!('email' in user) || user.email !== body.email)
       throw new AppError(
         'We were not able to vefify your email.  Please try a different email address or contact customer serveice at 555-555-5555',
         'verify_email_not_found',
         404
       )
-    const updatedUser = await findByIdAndUpdate(userRepository, (decoded as JwtPayload).id, { verified: true })
+    const updatedUser = await findUserByIdAndUpdate(event, (decoded as JwtPayload).id, { verified: true })
     if (!updatedUser || !Object.keys(updatedUser) || !Object.keys(updatedUser).length)
       throw new AppError(
         'We were not able to verify your emai.  Please contact customer serveice at 555-555-5555',
