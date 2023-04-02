@@ -1,4 +1,4 @@
-import redis from '../../utils/redisClient'
+import { redis } from '../../utils/redisClient'
 import { Schema, Repository, EntityId } from 'redis-om'
 
 const productSchema = new Schema('Product', {

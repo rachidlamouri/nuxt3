@@ -1,4 +1,4 @@
-import redis from '~/utils/redisClient'
+import { redis } from '~/utils/redisClient'
 import { userRepository, EntityId } from '~/server/redisSchemas/user'
 
 import { createStorage } from 'unstorage'
@@ -33,6 +33,7 @@ import { randomUUID, randomBytes, createCipheriv, createDecipheriv } from 'crypt
 import { ISession, IUser } from '~/utils/schema'
 import { findById } from '~/server/controllers/v1/factory'
 import { QueryValue } from 'ufo'
+import { ulid } from 'ulid'
 
 const config = useRuntimeConfig()
 const secrefBuffer = Buffer.from(config.nuxtAuth.encryptSecret)
@@ -164,7 +165,8 @@ export const checkPassword = async (password: string, hash: string) => {
 
 export const createUser = async (payload) => {
   // const createUser = async (payload: Partial<IUser>) => {
-  await redis.connect()
+  // await redis.connect()
+  return true
 
   const userObj = {
     name: payload.name,
@@ -183,8 +185,25 @@ export const createUser = async (payload) => {
   }
 
   const user = await userRepository.save(userObj)
-  await redis.disconnect()
+  // await redis.disconnect()
   return { userId: user[EntityId], token: await getSinedJwtToken(user[EntityId], Number(config.jwtSignupTokenMaxAge)) }
+}
+
+export const findByEmail = async (email: string) => {
+  console.log('here')
+  await redis.connect()
+  // FT.CREATE idx:User ON JSON PREFIX 1 User: SCHEMA $.name AS name TEXT $.email AS email text
+  // await redis.ft.create('userIdx', 'User:')
+  const result = await redis.ft.search('idx:User', 'xyz')
+  console.log(result)
+  // const user = await redis.json.set(`User:${ulid()}`, '$', { name: 'Mila Lamouri', email: 'mila@cincinnati.com' })
+  await redis.disconnect()
+  return result
+
+  return true
+  const found = await userRepository.search().where('email').eq(email).return.all()
+  if (found && Array.isArray(found) && found.length) return found[0]
+  return {}
 }
 
 export const fetcheSessionUser = async (event: H3Event) => {

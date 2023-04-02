@@ -24,6 +24,7 @@ specifiers:
   sass: ^1.59.2
   slugify: ^1.6.5
   stripe: ^11.14.0
+  ulid: ^2.3.0
   vue-toastification: 2.0.0-rc.5
   xss: ^1.0.14
   zod: ^3.21.4
@@ -46,6 +47,7 @@ dependencies:
   redis-om: 0.4.0-beta.2
   slugify: 1.6.5
   stripe: 11.14.0
+  ulid: 2.3.0
   vue-toastification: 2.0.0-rc.5
   xss: 1.0.14
   zod: 3.21.4

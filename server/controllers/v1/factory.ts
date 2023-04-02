@@ -7,7 +7,7 @@ import { H3Event } from 'h3'
 import { mongoClient, ObjectId } from '~/utils/mongoClient'
 import AppError from '~/utils/AppError'
 import errorHandler from '~/utils/errorHandler'
-import redis from '~/utils/redisClient'
+import { redis } from '~/utils/redisClient'
 import { userRepository, EntityId } from '~/server/redisSchemas/user'
 import { IUser } from '~/utils/schema'
 
@@ -122,13 +122,13 @@ export const fetchAll = async (repository: Repository) => {
   return found
 }
 
-export const findByEmail = async (email: string) => {
-  await redis.connect()
-  const found = await userRepository.search().where('email').eq(email).return.all()
-  await redis.disconnect()
-  if (found && Array.isArray(found) && found.length) return found[0]
-  return {}
-}
+// export const findByEmail = async (email: string) => {
+//   await redis.connect()
+//   const found = await userRepository.search().where('email').eq(email).return.all()
+//   await redis.disconnect()
+//   if (found && Array.isArray(found) && found.length) return found[0]
+//   return {}
+// }
 
 const findByIdAndUpdate = async (repository: Repository, id: string, payload: object): Promise<Partial<IUser>> => {
   await redis.connect()

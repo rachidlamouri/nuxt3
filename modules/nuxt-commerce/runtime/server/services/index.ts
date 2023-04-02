@@ -1,4 +1,4 @@
-import redis from '~/utils/redisClient'
+import { redis } from '~/utils/redisClient'
 import { userRepository, EntityId } from '~/server/redisSchemas/user'
 
 import { createStorage } from 'unstorage'

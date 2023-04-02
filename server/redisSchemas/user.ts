@@ -1,5 +1,5 @@
 import { emailPattern, passwordPattern } from '~/utils/patterns'
-import redis from '../../utils/redisClient'
+import { redis } from '../../utils/redisClient'
 import { Schema, Repository, EntityId } from 'redis-om'
 
 const userSchema = new Schema('User', {

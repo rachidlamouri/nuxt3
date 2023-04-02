@@ -1,5 +1,5 @@
 import { H3Event } from 'h3'
-import redis from '~/utils/redisClient'
+import { redis } from '~/utils/redisClient'
 import { userRepository, EntityId } from '~~/server/redisSchemas/user'
 
 import { findByEmail, checkPassword, getSinedJwtToken, setAuthCookie } from '~/server/controllers/v1/auth'
@@ -18,7 +18,6 @@ export default defineEventHandler(async (event) => {
     if (!user) return false
     // console.log('>>>>>>>>>', true)
     return true
-    
   } catch (err) {
     return errorHandler(event, err)
   }

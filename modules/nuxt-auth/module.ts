@@ -190,7 +190,7 @@ export default defineNuxtModule({
         [
           "declare module  '#auth' {",
           `  const createUser: typeof import('${resolve('./runtime/server/services')}').createUser`,
-          // `  const fetchAuthUser: typeof import('${resolve('./runtime/server/services')}').fetchAuthUser`,
+          `  const findByEmail: typeof import('${resolve('./runtime/server/services')}').findByEmail`,
           `  const createUserSession: typeof import('${resolve('./runtime/server/services')}').createUserSession`,
           `  const updateUserSession: typeof import('${resolve('./runtime/server/services')}').updateUserSession`,
           `  const getUserSession: typeof import('${resolve('./runtime/server/services')}').getUserSession`,
@@ -215,6 +215,12 @@ export default defineNuxtModule({
         addServerHandler({ handler, route: `${options.api.basePath}/${apiMethod}` })
       }
       logger.info(`Auth API "${options.api.methods}" endpoints registered at "${options.api.basePath}"`)
+
+      addServerHandler({
+        handler: resolve(`./runtime/server/api/v1/auth/email.get`),
+        route: `${options.api.basePath}/email`,
+      })
+      logger.info(`Auth API "email.get" endpoint registered at "${options.api.basePath}/email"`)
     }
 
     // addServerHandler({

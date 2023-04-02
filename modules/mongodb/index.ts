@@ -1,4 +1,4 @@
-import { mongoClient } from '../../utils/mongoClient'
+// import { mongoClient } from '../../utils/mongoClient'
 // import  redis  from '../../utils/redisClient'
 // import { createClient } from 'redis'
 
@@ -8,7 +8,8 @@ import orderSchema from '../../server/modelSchemas/order'
 import productSchema from '../../server/modelSchemas/product'
 import provenceSchema from '../../server/modelSchemas/provence'
 import countrySchema from '../../server/modelSchemas/country'
-import redis from '../../utils/redisClient'
+import { redis } from '../../utils/redisClient'
+import { SchemaFieldTypes } from 'redis'
 
 import { productRepository } from '../../server/redisSchemas/product'
 import { userRepository } from '../../server/redisSchemas/user'
@@ -21,12 +22,71 @@ export default async (inlineOptions: any, nuxt: any) => {
       // redis.on('error', (err) => console.log('Redis Client Error', err))
 
       await redis.connect()
-      await redis.set('framework', 'ReactJS')
+
+      const dbIndexes = ['idx:Products', 'idx:User']
+      const currentIndexes = await redis.ft._list()
+
+      console.log('LIST', await redis.ft._list())
+
+      for (const dbIndex of await redis.ft._list()) {
+        // if (await redis.ft.dropIndex(`${dbIndex}`)) console.log(`Index ${dbIndex} dropped`)
+        // else console.log(`Failed to drop index ${dbIndex}`)
+      }
+
+      // for (const dbIndex of dbIndexes) {
+      //   if (currentIndexes.includes(dbIndex)) {
+      //     console.log(dbIndex, 'YES')
+      //   } else {
+      //     console.log(dbIndex, 'NO')
+      //   }
+      // }
+
+      if (!currentIndexes.includes('idx:User')) {
+        await redis.ft.create(
+          'idx:User',
+          {
+            '$.name': {
+              type: SchemaFieldTypes.TEXT,
+              AS: 'name',
+              SORTABLE: true,
+            },
+            '$.accountNumber': {
+              type: SchemaFieldTypes.NUMERIC,
+              AS: 'accountNumber',
+              SORTABLE: true,
+            },
+            '$.email': {
+              type: SchemaFieldTypes.TAG,
+              AS: 'email',
+            },
+            '$.role': {
+              type: SchemaFieldTypes.TEXT,
+              AS: 'role',
+            },
+            '$.active': {
+              type: SchemaFieldTypes.TAG,
+              AS: 'active',
+            },
+            '$.verified': {
+              type: SchemaFieldTypes.TAG,
+              AS: 'verified',
+            },
+          },
+          {
+            ON: 'JSON',
+            PREFIX: 'User:',
+          }
+        )
+        console.log('idx:User index created')
+      } else {
+        console.log('idx:User index alreday exists')
+      }
+      // await redis.set('framework', 'ReactJS')
       // console.log(await redis.get('framework'))
       // redis.set(['framework', 'ReactJS'])
       // await userRepository.createIndex()
       // await productRepository.createIndex()
-      // await redis.disconnect()
+      await redis.disconnect()
       // }
 
       // createUserIndex()
@@ -86,7 +146,7 @@ export default async (inlineOptions: any, nuxt: any) => {
       //   console.log(`Countries database creation succesfull`)
       // }
     } catch (err) {
-      console.log(`Mongo DB connection or databases creation Error ${err}`)
+      console.log(`Redis connection or index creation failed ${err}`)
     }
   })
 }

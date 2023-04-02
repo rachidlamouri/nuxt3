@@ -197,13 +197,13 @@ export default defineNuxtModule({
         addServerHandler({ handler, route: `${options.api.basePath}` })
       }
       logger.info(`Commerce API "${options.api.methods}" endpoints registered at "${options.api.basePath}"`)
-    }
 
-    addServerHandler({
-      handler: resolve(`./runtime/server/api/v1/products/migrate.post`),
-      route: `${options.api.basePath}/migrate`,
-    })
-    logger.info(`Commerce API "migrate.post" endpoint registered at "${options.api.basePath}/migrate"`)
+      addServerHandler({
+        handler: resolve(`./runtime/server/api/v1/products/migrate.post`),
+        route: `${options.api.basePath}/migrate`,
+      })
+      logger.info(`Commerce API "migrate.post" endpoint registered at "${options.api.basePath}/migrate"`)
+    }
 
     logger.success(`${PACKAGE_NAME} module setup complete`)
   },
