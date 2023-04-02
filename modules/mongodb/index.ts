@@ -22,25 +22,9 @@ export default async (inlineOptions: any, nuxt: any) => {
       // redis.on('error', (err) => console.log('Redis Client Error', err))
 
       await redis.connect()
-
       const dbIndexes = ['idx:Products', 'idx:User']
       const currentIndexes = await redis.ft._list()
-
       console.log('LIST', await redis.ft._list())
-
-      for (const dbIndex of await redis.ft._list()) {
-        // if (await redis.ft.dropIndex(`${dbIndex}`)) console.log(`Index ${dbIndex} dropped`)
-        // else console.log(`Failed to drop index ${dbIndex}`)
-      }
-
-      // for (const dbIndex of dbIndexes) {
-      //   if (currentIndexes.includes(dbIndex)) {
-      //     console.log(dbIndex, 'YES')
-      //   } else {
-      //     console.log(dbIndex, 'NO')
-      //   }
-      // }
-
       if (!currentIndexes.includes('idx:User')) {
         await redis.ft.create(
           'idx:User',
@@ -81,12 +65,8 @@ export default async (inlineOptions: any, nuxt: any) => {
       } else {
         console.log('idx:User index alreday exists')
       }
-      // await redis.set('framework', 'ReactJS')
-      // console.log(await redis.get('framework'))
-      // redis.set(['framework', 'ReactJS'])
-      // await userRepository.createIndex()
-      // await productRepository.createIndex()
       await redis.disconnect()
+      console.log('ALL GOOG')
       // }
 
       // createUserIndex()

@@ -8,7 +8,6 @@ const userSchema = new Schema('User', {
   email: { type: 'string' },
   media: { type: 'string[]' },
   password: { type: 'string' },
-  nonce: { type: 'string' },
   role: {
     type: 'string', // enum: ['super-admin', 'admin', 'shop-manager', 'customer']},
   },

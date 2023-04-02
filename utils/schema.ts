@@ -18,25 +18,56 @@ export const sessionSchema = z.object({
 })
 export type ISession = z.infer<typeof sessionSchema>
 
-///////////////***********************//////////////////
-
-// Email schema
-export const emailSchema = z.object({
+/************ User schema **************/
+export const userSchema = z.object({
+  id: z.string(),
+  name: z.string(),
   email: z
     .string({
       invalid_type_error: 'Name must be a string',
     })
     .email({ message: 'Please enter a valid email' }),
-})
-
-// password schema
-export const passwordSchema = z.object({
-  password: z
-    .string({
-      invalid_type_error: 'Name must be a string',
+  password: z.string(),
+  userAddresses: z.array(
+    z.object({
+      salutation: z.string(),
+      addressType: z.enum(['Residential', 'Commercial']),
+      name: z.string(),
+      compnay: z.string(),
+      country: z.string(),
+      street: z.string(),
+      street2: z.string(),
+      city: z.string(),
+      provence: z.string(),
+      postalCode: z.string(),
+      defaultBilling: z.boolean(),
+      defaultShipping: z.boolean(),
     })
-    .regex(new RegExp(passwordPattern, 'i'), { message: 'Please enter a valid password' }),
+  ),
+  phoneNumber: z.string(),
+  media: z.array(z.string()),
+  role: z.string(),
+  active: z.boolean(),
+  verified: z.boolean(),
+  signupDate: z.date(),
+  passwordChangeDate: z.date(),
 })
+export type IUser = z.infer<typeof userSchema>
+
+/************ User address schema **************/
+export const userAddressSchema = userSchema.shape.userAddresses.element
+export type IUserAddress = z.infer<typeof userAddressSchema>
+
+// Public User schema
+export const publicUserSchema = userSchema.pick({
+  _id: true,
+  name: true,
+  email: true,
+  userAddresses: true,
+  phoneNumber: true,
+  media: true,
+})
+export type IPublicUser = z.infer<typeof publicUserSchema>
 
 // Registration user schema
 export const signupUserSchema = z.object({
@@ -58,6 +89,26 @@ export const signupUserSchema = z.object({
     .regex(new RegExp(passwordPattern, 'i'), { message: 'Please enter a valid password' }),
 })
 export type ISignupUser = z.infer<typeof signupUserSchema>
+
+///////////////***********************//////////////////
+
+// Email schema
+export const emailSchema = z.object({
+  email: z
+    .string({
+      invalid_type_error: 'Name must be a string',
+    })
+    .email({ message: 'Please enter a valid email' }),
+})
+
+// password schema
+export const passwordSchema = z.object({
+  password: z
+    .string({
+      invalid_type_error: 'Name must be a string',
+    })
+    .regex(new RegExp(passwordPattern, 'i'), { message: 'Please enter a valid password' }),
+})
 
 // Login user schema
 export const signinUserSchema = z.object({
@@ -123,57 +174,6 @@ export type ICartItem = z.infer<typeof cartItemSchema>
 //   defaultShipping: z.boolean(),
 // })
 // export type IUserAddress = z.infer<typeof userAddressSchema>
-
-/************ User schema **************/
-export const userSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  email: z
-    .string({
-      invalid_type_error: 'Name must be a string',
-    })
-    .email({ message: 'Please enter a valid email' }),
-  password: z.string(),
-  userAddresses: z.array(
-    z.object({
-      salutation: z.string(),
-      addressType: z.enum(['Residential', 'Commercial']),
-      name: z.string(),
-      compnay: z.string(),
-      country: z.string(),
-      street: z.string(),
-      street2: z.string(),
-      city: z.string(),
-      provence: z.string(),
-      postalCode: z.string(),
-      defaultBilling: z.boolean(),
-      defaultShipping: z.boolean(),
-    })
-  ),
-  phoneNumber: z.string(),
-  media: z.array(z.string()),
-  role: z.string(),
-  active: z.boolean(),
-  verified: z.boolean(),
-  signupDate: z.date(),
-  passwordChangeDate: z.date(),
-})
-export type IUser = z.infer<typeof userSchema>
-
-/************ User address schema **************/
-export const userAddressSchema = userSchema.shape.userAddresses.element
-export type IUserAddress = z.infer<typeof userAddressSchema>
-
-// Public User schema
-export const publicUserSchema = userSchema.pick({
-  _id: true,
-  name: true,
-  email: true,
-  userAddresses: true,
-  phoneNumber: true,
-  media: true,
-})
-export type IPublicUser = z.infer<typeof publicUserSchema>
 
 /************ Cart schema **************/
 export const cartSchema = z.object({

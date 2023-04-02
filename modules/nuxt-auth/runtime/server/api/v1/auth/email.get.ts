@@ -4,9 +4,8 @@ import { findByEmail } from '#auth'
 export default defineEventHandler(async (event) => {
   try {
     const { email } = getQuery(event)
-    const user = await findByEmail(email as string)
-    return user
-    if (user && Object.keys(user) && Object.keys(user).length > 0) return true
+    const result = await findByEmail(event, email as string)
+    if (result && Object.keys(result) && Object.keys(result).length > 0) return true
     return false
   } catch (err) {
     return errorHandler(event, err)

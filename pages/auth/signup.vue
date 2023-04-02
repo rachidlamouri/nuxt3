@@ -40,7 +40,10 @@ const signup = async () => {
       console.log(data.value)
       loading.value = false
 
-      if (error.value) return (appErrorMsg.value = error.value.statusMessage || '')
+      if (error.value) {
+        console.log(error.value.data)
+        return (appErrorMsg.value = error.value.statusMessage || '')
+      }
       // throw createError(error.value.data)
       if (data.value)
         return navigateTo({

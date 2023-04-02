@@ -1,5 +1,5 @@
 import { redis } from '~/utils/redisClient'
-import { userRepository, EntityId } from '~/server/redisSchemas/user'
+// import { userRepository, EntityId } from '~/server/redisSchemas/user'
 
 import { createStorage } from 'unstorage'
 
@@ -30,7 +30,7 @@ import { nanoid } from 'nanoid'
 
 import { randomUUID, randomBytes, createCipheriv, createDecipheriv } from 'crypto'
 
-import { ISession, IUser } from '~/utils/schema'
+import { ISession, ISignupUser, IUser } from '~/utils/schema'
 import { findById } from '~/server/controllers/v1/factory'
 import { QueryValue } from 'ufo'
 import { ulid } from 'ulid'
@@ -163,55 +163,60 @@ export const checkPassword = async (password: string, hash: string) => {
   return await bcrypt.compare(password, hash)
 }
 
-export const createUser = async (payload) => {
+export const createUser = async (event: H3Event, body: IUser) => {
   // const createUser = async (payload: Partial<IUser>) => {
-  // await redis.connect()
-  return true
+
+  await redis.connect()
+  // const results = await redis.ft.search('idx:User', `*`)
+  // console.log(results)
+  // await redis.disconnect()
+  // return results
+
+  const userUlid = ulid()
 
   const userObj = {
-    name: payload.name,
-    email: payload.email,
-    userAddresses: payload.userAddresses || [],
-    phoneNumber: payload.phoneNumber || '',
+    id: userUlid,
+    name: body.name,
+    email: body.email,
+    userAddresses: body.userAddresses || [],
+    phoneNumber: body.phoneNumber || '',
     media: [],
     role: 'customer',
-    password: await hashPassword(payload.password),
+    password: await hashPassword(body.password),
     active: false,
     verified: false,
-    accountNumber: (await userRepository.search().return.count()) + 101013,
+    // accountNumber: (await userRepository.search().return.count()) + 101013,
     // accountNumber: 111,
     signupDate: Date.now(),
     passwordChangeDate: Date.now(),
   }
 
-  const user = await userRepository.save(userObj)
-  // await redis.disconnect()
-  return { userId: user[EntityId], token: await getSinedJwtToken(user[EntityId], Number(config.jwtSignupTokenMaxAge)) }
+  const user = await redis.json.set(`User:${userUlid}`, '$', userObj)
+  console.log(user)
+  await redis.disconnect()
+  return { userId: userUlid, token: await getSinedJwtToken(userUlid, Number(config.jwtSignupTokenMaxAge)) }
+  // return true
 }
 
-export const findByEmail = async (email: string) => {
-  console.log('here')
-  await redis.connect()
-  // FT.CREATE idx:User ON JSON PREFIX 1 User: SCHEMA $.name AS name TEXT $.email AS email text
-  // await redis.ft.create('userIdx', 'User:')
-  const result = await redis.ft.search('idx:User', 'xyz')
-  console.log(result)
-  // const user = await redis.json.set(`User:${ulid()}`, '$', { name: 'Mila Lamouri', email: 'mila@cincinnati.com' })
-  await redis.disconnect()
-  return result
-
-  return true
-  const found = await userRepository.search().where('email').eq(email).return.all()
-  if (found && Array.isArray(found) && found.length) return found[0]
-  return {}
+export const findByEmail = async (event: H3Event, email: string) => {
+  try {
+    await redis.connect()
+    const results = await redis.ft.search('idx:User', `@email:{${email.replace(/[.@\\]/g, '\\$&')}}`)
+    await redis.disconnect()
+    console.log(results.total)
+    if (results && results.total > 0) return { id: results.documents[0].id, ...results.documents[0].value }
+    return {}
+  } catch (err) {
+    return errorHandler(event, err)
+  }
 }
 
 export const fetcheSessionUser = async (event: H3Event) => {
   const session = await getUserSession(event)
   // console.log('SSSS', session)
   if (!session || !(session as ISession).userId) return {}
-  const user = await findById(userRepository, (session as ISession).userId)
-  if (user) return user
+  // const user = await findById(userRepository, (session as ISession).userId)
+  // if (user) return user
   return {}
 }
 
