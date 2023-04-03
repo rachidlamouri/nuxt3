@@ -64,7 +64,7 @@ export default defineEventHandler(async (event) => {
         nextHigherAssemblies,
       })
     }
-    const result = await createManyProducts(event, [products[0]])
+    const result = await createManyProducts(event, products)
     // const xx = await productRepository.save(products[0])
     // console.log(xx)
     return result

@@ -136,7 +136,7 @@ export type IAuthenticatedData = z.infer<typeof authenticatedDataSchema>
 
 // Product schema
 export const productSchema = z.object({
-  _id: z.string(),
+  id: z.string(),
   acsPartNumber: z.string(),
   sku: z.string(),
   tbq: z.string(),

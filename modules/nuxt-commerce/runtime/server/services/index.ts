@@ -44,16 +44,19 @@ const createProduct = async (event: H3Event, product: IProduct) => {
 
     // Generate Ulid
     const documentUlid = ulid()
-    const newProduct = { ...product, dateCreated: Date.now() }
+    const newProduct = { ...product, id: documentUlid, dateCreated: Date.now() }
 
     // Save new user
     const result = await redis.json.set(`Product:${documentUlid}`, '$', newProduct)
+    // console.log('RRRRRR', result)
+
+    if (!result || result !== 'OK')
+      throw new AppError(`Unable to create ptoduct ${product.acsPartNumber}`, 'email_not_verified', 401)
 
     // await redis.disconnect()
 
     // Return userId and Token
-    if (result && result === 'OK') return await { ...newProduct, id: documentUlid }
-    return {}
+    return { ...newProduct, id: documentUlid }
   } catch (err) {
     return errorHandler(event, err)
   }
@@ -62,18 +65,19 @@ const createProduct = async (event: H3Event, product: IProduct) => {
 export const createManyProducts = async (event: H3Event, products: Array<IProduct>) => {
   try {
     await redis.connect()
-    console.log(products)
+    // console.log(products)
 
-    let results = []
+    let results: Array<IProduct> = []
 
-    Promise.all(
+    await Promise.all(
       products.map(async (product) => {
         const result = await createProduct(event, product)
-        results.push(result)
+        if (result) results.push(result)
       })
     )
 
     await redis.disconnect()
+
     return results
 
     // Return userId and Token
