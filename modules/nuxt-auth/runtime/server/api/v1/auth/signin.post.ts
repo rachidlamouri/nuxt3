@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
   try {
     const { email, password } = await readBody(event)
     if (!email || !password) throw new AppError('Email and Password are required', 'email_and_or_password_missing', 404)
-    const user = await findByEmail(email as string)
+    const user = await findByEmail(event, email as string)
     if (!user || !Object.values(user).length)
       throw new AppError('Invalid login credentials', 'invalid-credentials', 401)
     if (!(await checkPassword(password, user.password as string)))

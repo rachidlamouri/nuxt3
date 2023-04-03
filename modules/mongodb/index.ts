@@ -8,11 +8,12 @@ import orderSchema from '../../server/modelSchemas/order'
 import productSchema from '../../server/modelSchemas/product'
 import provenceSchema from '../../server/modelSchemas/provence'
 import countrySchema from '../../server/modelSchemas/country'
-import { redis } from '../../utils/redisClient'
+// import { redis } from '../../utils/redisClient'
 import { SchemaFieldTypes } from 'redis'
 
 import { productRepository } from '../../server/redisSchemas/product'
 import { userRepository } from '../../server/redisSchemas/user'
+import RedisInstance from '../../utils/RedisClientNew'
 
 export default async (inlineOptions: any, nuxt: any) => {
   nuxt.hook('listen', async (nuxt: any) => {
@@ -21,12 +22,15 @@ export default async (inlineOptions: any, nuxt: any) => {
 
       // redis.on('error', (err) => console.log('Redis Client Error', err))
 
-      await redis.connect()
+      // const RedisInstance = new RedisInstance(process.env.NUXT_REDIS_URL as string)
+
+      await RedisInstance.connect()
       const dbIndexes = ['idx:Products', 'idx:User']
-      const currentIndexes = await redis.ft._list()
-      console.log('LIST', await redis.ft._list())
+      const currentIndexes = await RedisInstance.client.ft._list()
+      console.log('LIST', await RedisInstance.client.ft._list())
+
       if (!currentIndexes.includes('idx:User')) {
-        await redis.ft.create(
+        await RedisInstance.client.ft.create(
           'idx:User',
           {
             '$.id': {
@@ -70,8 +74,84 @@ export default async (inlineOptions: any, nuxt: any) => {
       } else {
         console.log('idx:User index alreday exists')
       }
-      await redis.disconnect()
-      console.log('ALL GOOG')
+
+      if (!currentIndexes.includes('idx:Product')) {
+        await RedisInstance.client.ft.create(
+          'idx:Product',
+          {
+            '$.id': {
+              type: SchemaFieldTypes.TEXT,
+              AS: 'id',
+              SORTABLE: true,
+            },
+            '$.acsPartNumber': {
+              type: SchemaFieldTypes.TEXT,
+              AS: 'acsPartNumber',
+              SORTABLE: true,
+            },
+            '$.description': {
+              type: SchemaFieldTypes.TEXT,
+              AS: 'description',
+              SORTABLE: true,
+            },
+            '$.oem': {
+              type: SchemaFieldTypes.TEXT,
+              AS: 'oem',
+              SORTABLE: true,
+            },
+            '$.oemPartNumber': {
+              type: SchemaFieldTypes.TEXT,
+              AS: 'oemPartNumber',
+              SORTABLE: true,
+            },
+            '$.price': {
+              type: SchemaFieldTypes.NUMERIC,
+              AS: 'price',
+              SORTABLE: true,
+            },
+            '$.salePrice': {
+              type: SchemaFieldTypes.NUMERIC,
+              AS: 'salePrice',
+              SORTABLE: true,
+            },
+            '$.qtySold': {
+              type: SchemaFieldTypes.NUMERIC,
+              AS: 'qtySold',
+              SORTABLE: true,
+            },
+            '$.tbq': {
+              type: SchemaFieldTypes.TAG,
+              AS: 'tbq',
+            },
+            '$.sku': {
+              type: SchemaFieldTypes.TEXT,
+              AS: 'sku',
+            },
+            '$.status': {
+              type: SchemaFieldTypes.TEXT,
+              AS: 'status',
+            },
+            '$.eligibilities.name': {
+              type: SchemaFieldTypes.TEXT,
+              AS: 'eligibilities',
+            },
+            '$.nextHigherAssemblies.name': {
+              type: SchemaFieldTypes.TEXT,
+              AS: 'nextHigherAssemblies',
+            },
+          },
+          {
+            ON: 'JSON',
+            PREFIX: 'User:',
+          }
+        )
+        console.log('idx:Product index created')
+      } else {
+        console.log('idx:Product index alreday exists')
+      }
+
+      // await RedisInstance.client.disconnect()
+      console.log('ALL GOOD')
       // }
 
       // createUserIndex()
@@ -79,15 +159,15 @@ export default async (inlineOptions: any, nuxt: any) => {
       //   url: process.env.NUXT_REDIS_URL as string,
       // })
       // await redis.connect()
-      // console.log(`redis connection succesfull`)
+      // console.log(`redis RedisInstance succesfull`)
       // const redis = createClient({
       //   url: process.env.NUXT_REDIS_URL as string,
       // })
       // await redis.connect()
-      // console.log(`redis connection succesfull`)
+      // console.log(`redis RedisInstance succesfull`)
       // Connect to database
       // await mongoClient.connect()
-      // console.log(`Database connection succesfull`)
+      // console.log(`Database RedisInstance succesfull`)
       // // Fetch all collections
       // const collections = await mongoClient.db().listCollections().toArray()
       // // create products collection
@@ -131,7 +211,7 @@ export default async (inlineOptions: any, nuxt: any) => {
       //   console.log(`Countries database creation succesfull`)
       // }
     } catch (err) {
-      console.log(`Redis connection or index creation failed ${err}`)
+      console.log(`Redis RedisInstance or index creation failed ${err}`)
     }
   })
 }

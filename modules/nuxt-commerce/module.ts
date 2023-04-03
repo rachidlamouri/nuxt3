@@ -159,36 +159,29 @@ export default defineNuxtModule({
     // addPlugin(resolve('runtime/plugin'))
 
     // 5. Create virtual imports for server-side
-    // nuxt.hook('nitro:config', (nitroConfig) => {
-    //   nitroConfig.alias = nitroConfig.alias || {}
-    //   // Inline module runtime in Nitro bundle
-    //   nitroConfig.externals = defu(typeof nitroConfig.externals === 'object' ? nitroConfig.externals : {}, {
-    //     inline: [resolve('./runtime')],
-    //   })
-    //   nitroConfig.alias['#auth'] = resolve('./runtime/server/services')
-    // })
-    // addTemplate({
-    //   filename: 'types/auth.d.ts',
-    //   getContents: () =>
-    //     [
-    //       "declare module  '#auth' {",
-    //       `  const createUser: typeof import('${resolve('./runtime/server/services')}').createUser`,
-    //       `  const createUserSession: typeof import('${resolve('./runtime/server/services')}').createUserSession`,
-    //       `  const updateUserSession: typeof import('${resolve('./runtime/server/services')}').updateUserSession`,
-    //       `  const getUserSession: typeof import('${resolve('./runtime/server/services')}').getUserSession`,
-    //       `  const removeUserSession: typeof import('${resolve('./runtime/server/services')}').removeUserSession`,
-    //       `  const createSessionKey: typeof import('${resolve('./runtime/server/services')}').createSessionKey`,
-    //       `  const verifySessionKey: typeof import('${resolve('./runtime/server/services')}').verifySessionKey`,
-    //       `  const checkPassword: typeof import('${resolve('./runtime/server/services')}').checkPassword`,
-    //       `  const fetcheSessionUser: typeof import('${resolve('./runtime/server/services')}').fetcheSessionUser`,
-    //       `  const protect: typeof import('${resolve('./runtime/server/services')}').protect`,
-    //       // `  const getUserSession: typeof import('${resolve('./runtime/server/services')}').getUserSession`,
-    //       '}',
-    //     ].join('\n'),
-    // })
-    // nuxt.hook('prepare:types', (options) => {
-    //   options.references.push({ path: resolve(nuxt.options.buildDir, 'types/auth.d.ts') })
-    // })
+    nuxt.hook('nitro:config', (nitroConfig) => {
+      nitroConfig.alias = nitroConfig.alias || {}
+      // Inline module runtime in Nitro bundle
+      nitroConfig.externals = defu(typeof nitroConfig.externals === 'object' ? nitroConfig.externals : {}, {
+        inline: [resolve('./runtime')],
+      })
+      nitroConfig.alias['#commerce'] = resolve('./runtime/server/services')
+    })
+    addTemplate({
+      filename: 'types/commerce.d.ts',
+      getContents: () =>
+        [
+          "declare module  '#commerce' {",
+          `  const createProduct: typeof import('${resolve('./runtime/server/services')}').createProduct`,
+          `  const createManyProducts: typeof import('${resolve('./runtime/server/services')}').createManyProducts`,
+
+          // `  const getUserSession: typeof import('${resolve('./runtime/server/services')}').getUserSession`,
+          '}',
+        ].join('\n'),
+    })
+    nuxt.hook('prepare:types', (options) => {
+      options.references.push({ path: resolve(nuxt.options.buildDir, 'types/commerce.d.ts') })
+    })
 
     // 5. Register desired auth API endpoints
     if (options.api.isEnabled) {

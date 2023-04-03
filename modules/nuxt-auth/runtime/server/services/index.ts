@@ -34,6 +34,7 @@ import { ISession, ISignupUser, IUser } from '~/utils/schema'
 import { findById } from '~/server/controllers/v1/factory'
 import { QueryValue } from 'ufo'
 import { ulid } from 'ulid'
+import RedisInstance from '~/utils/RedisClientNew'
 
 const config = useRuntimeConfig()
 const secrefBuffer = Buffer.from(config.nuxtAuth.encryptSecret)
@@ -206,9 +207,10 @@ export const createUser = async (event: H3Event, body: IUser) => {
 
 export const findByEmail = async (event: H3Event, email: string) => {
   try {
-    await redis.connect()
-    const results = await redis.ft.search('idx:User', `@email:{${email.replace(/[.@\\]/g, '\\$&')}}`)
-    await redis.disconnect()
+    console.log('XXXXXXXX', email)
+    await RedisInstance.connect()
+    const results = await RedisInstance.client.ft.search('idx:User', `@email:{${email.replace(/[.@\\]/g, '\\$&')}}`)
+    await RedisInstance.disconnect()
     console.log(results.total)
     if (results && results.total > 0) return { id: results.documents[0].id, ...results.documents[0].value }
     return {}

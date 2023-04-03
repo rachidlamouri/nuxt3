@@ -30,12 +30,58 @@ import { nanoid } from 'nanoid'
 
 import { randomUUID, randomBytes, createCipheriv, createDecipheriv } from 'crypto'
 
-import { ISession, IUser } from '~/utils/schema'
+import { ISession, IProduct } from '~/utils/schema'
 import { findById } from '~/server/controllers/v1/factory'
 import { QueryValue } from 'ufo'
+import { ulid } from 'ulid'
 
 const config = useRuntimeConfig()
 const secrefBuffer = Buffer.from(config.nuxtAuth.encryptSecret)
+
+const createProduct = async (event: H3Event, product: IProduct) => {
+  try {
+    // await redis.connect()
+
+    // Generate Ulid
+    const documentUlid = ulid()
+    const newProduct = { ...product, dateCreated: Date.now() }
+
+    // Save new user
+    const result = await redis.json.set(`Product:${documentUlid}`, '$', newProduct)
+
+    // await redis.disconnect()
+
+    // Return userId and Token
+    if (result && result === 'OK') return await { ...newProduct, id: documentUlid }
+    return {}
+  } catch (err) {
+    return errorHandler(event, err)
+  }
+}
+
+export const createManyProducts = async (event: H3Event, products: Array<IProduct>) => {
+  try {
+    await redis.connect()
+    console.log(products)
+
+    let results = []
+
+    Promise.all(
+      products.map(async (product) => {
+        const result = await createProduct(event, product)
+        results.push(result)
+      })
+    )
+
+    await redis.disconnect()
+    return results
+
+    // Return userId and Token
+    // if (result && result === 'OK') return await getSinedJwtToken(userUlid, Number(config.jwtSignupTokenMaxAge))
+  } catch (err) {
+    return errorHandler(event, err)
+  }
+}
 
 // const nuxtApp = useNuxtApp()
 // console.log(nuxtApp)
@@ -160,31 +206,6 @@ export const hashPassword = async (password: string = '4zE_h2n-mdWaZ9aq&3!G[Y{A,
 
 export const checkPassword = async (password: string, hash: string) => {
   return await bcrypt.compare(password, hash)
-}
-
-export const createUser = async (payload) => {
-  // const createUser = async (payload: Partial<IUser>) => {
-  await redis.connect()
-
-  const userObj = {
-    name: payload.name,
-    email: payload.email,
-    userAddresses: payload.userAddresses || [],
-    phoneNumber: payload.phoneNumber || '',
-    media: [],
-    role: 'customer',
-    password: await hashPassword(payload.password),
-    active: false,
-    verified: false,
-    accountNumber: (await userRepository.search().return.count()) + 101013,
-    // accountNumber: 111,
-    signupDate: Date.now(),
-    passwordChangeDate: Date.now(),
-  }
-
-  const user = await userRepository.save(userObj)
-  await redis.disconnect()
-  return { userId: user[EntityId], token: await getSinedJwtToken(user[EntityId], Number(config.jwtSignupTokenMaxAge)) }
 }
 
 export const fetcheSessionUser = async (event: H3Event) => {

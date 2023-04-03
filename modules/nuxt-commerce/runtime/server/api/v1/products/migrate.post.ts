@@ -7,6 +7,7 @@ import productSchema from '~~/server/modelSchemas/product'
 import oemSchema from '~~/server/modelSchemas/oem'
 import oemPartNumberSchema from '~~/server/modelSchemas/oemPartNumber'
 import { IProduct } from '~/utils/types'
+import { createManyProducts } from '#commerce'
 
 const config = useRuntimeConfig()
 const mongoClient = new MongoClient(config.dbUrl)
@@ -21,12 +22,10 @@ export default defineEventHandler(async (event) => {
         ? product.eligibility.split(',').map((e: string) => e.trim())
         : []
       for (const eligibility of productEligibilities) {
-        eligibilities.push(
-          JSON.stringify({
-            name: eligibility,
-            slug: slugify(eligibility, { lower: true }),
-          })
-        )
+        eligibilities.push({
+          name: eligibility,
+          slug: slugify(eligibility, { lower: true }),
+        })
       }
 
       const nextHigherAssemblies = []
@@ -34,7 +33,18 @@ export default defineEventHandler(async (event) => {
         ? product.nextHigherAssembly.split(',').map((e: string) => e.trim())
         : []
       for (const nextHigherAssembly of productNextHigherAssemblies) {
-        nextHigherAssemblies.push(JSON.stringify({ name: nextHigherAssembly.trim() }))
+        const parts = nextHigherAssembly.split(':')
+        // console.log('PPPP', parts)
+        const partNumber =
+          parts && Array.isArray(parts) && parts.length > 0 ? nextHigherAssembly.split(':')[0].trim() : ''
+        const description =
+          parts && Array.isArray(parts) && parts.length > 1 ? nextHigherAssembly.split(':')[1].trim() : ''
+        nextHigherAssemblies.push({
+          name: nextHigherAssembly,
+          partNumber,
+          description,
+          slug: slugify(nextHigherAssembly, { lower: true }),
+        })
       }
 
       products.push({
@@ -54,9 +64,10 @@ export default defineEventHandler(async (event) => {
         nextHigherAssemblies,
       })
     }
+    const result = await createManyProducts(event, [products[0]])
     // const xx = await productRepository.save(products[0])
     // console.log(xx)
-    return products
+    return result
   } catch (err) {
     return errorHandler(event, err)
   }
