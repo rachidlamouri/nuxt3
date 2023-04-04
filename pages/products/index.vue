@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-// import { IProduct } from '~/utils/types'
+import { IProduct } from '~/utils/schema'
 definePageMeta({
   title: 'Products',
   description: 'ACS Products',
@@ -40,13 +40,13 @@ const productParams = computed(() => {
     match: 'price[gt]=20000',
     page: page.value,
     limit: perPage,
-    project: 'acsPartNumber, slug, price, media, tbq, oem, oemPartNumber',
+    project: ['acsPartNumber', 'slug', 'price', 'media', 'tbq', 'oem', 'oemPartNumber'],
     sort: `price=asc, acsPartNUmber=dsc`,
   }
 })
 
 const fetchProducts = async () => {
-  const headers = useRequestHeaders(['cookie']) as HeadersInit
+  // const headers = useRequestHeaders(['cookie']) as HeadersInit
   const { data, error } = await useCsrfFetch(`products`, {
     method: 'GET',
     baseURL: config.apiUrl,
@@ -54,9 +54,11 @@ const fetchProducts = async () => {
     // headers: { ...headers, sessionAuthorization: 'jwtsession' },
   })
   if (error.value) throw createError(error.value)
-  console.log(data.value)
+  // console.log(data.value)
   fetchedProducts.value = data.value
-  products.value = products.value ? products.value.concat(fetchedProducts.value) : fetchedProducts.value
+  products.value = products.value
+    ? products.value.concat(fetchedProducts.value)
+    : fetchedProducts.value.documents.map((d) => d.value)
   // products.value = [products.value[0]]
 }
 

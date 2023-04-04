@@ -1,3 +1,4 @@
+import { Pagination } from './../../../../../.nuxt/components.d'
 import { redis } from '~/utils/redisClient'
 import { userRepository, EntityId } from '~/server/redisSchemas/user'
 
@@ -34,6 +35,7 @@ import { ISession, IProduct } from '~/utils/schema'
 import { findById } from '~/server/controllers/v1/factory'
 import { QueryValue } from 'ufo'
 import { ulid } from 'ulid'
+import appRedis from '~/utils/AppRedis'
 
 const config = useRuntimeConfig()
 const secrefBuffer = Buffer.from(config.nuxtAuth.encryptSecret)
@@ -82,6 +84,24 @@ export const createManyProducts = async (event: H3Event, products: Array<IProduc
 
     // Return userId and Token
     // if (result && result === 'OK') return await getSinedJwtToken(userUlid, Number(config.jwtSignupTokenMaxAge))
+  } catch (err) {
+    return errorHandler(event, err)
+  }
+}
+
+export const fetchAllProducts = async (event: H3Event) => {
+  try {
+    // console.log('XXXXXXXX')
+    await appRedis.connect()
+    const results = await appRedis.client.ft.search('idx:Product', `*`, {
+      SORTBY: { BY: 'acsPartNumber', DIRECTION: 'ASC' },
+      LIMIT: { from: 3, size: 5 },
+    })
+    await appRedis.disconnect()
+    // console.log('YYYYYY', results)
+    return results
+    // if (results && results.total > 0) return { id: results.documents[0].id, ...results.documents[0].value }
+    // return {}
   } catch (err) {
     return errorHandler(event, err)
   }

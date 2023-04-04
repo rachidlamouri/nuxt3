@@ -13,7 +13,7 @@ import { SchemaFieldTypes } from 'redis'
 
 import { productRepository } from '../../server/redisSchemas/product'
 import { userRepository } from '../../server/redisSchemas/user'
-import RedisInstance from '../../utils/RedisClientNew'
+import appRedis from '../../utils/AppRedis'
 
 export default async (inlineOptions: any, nuxt: any) => {
   nuxt.hook('listen', async (nuxt: any) => {
@@ -22,15 +22,15 @@ export default async (inlineOptions: any, nuxt: any) => {
 
       // redis.on('error', (err) => console.log('Redis Client Error', err))
 
-      // const RedisInstance = new RedisInstance(process.env.NUXT_REDIS_URL as string)
+      // const appRedis = new appRedis(process.env.NUXT_REDIS_URL as string)
 
-      await RedisInstance.connect()
+      await appRedis.connect()
       const dbIndexes = ['idx:Products', 'idx:User']
-      const currentIndexes = await RedisInstance.client.ft._list()
-      console.log('LIST', await RedisInstance.client.ft._list())
+      const currentIndexes = await appRedis.client.ft._list()
+      console.log('LIST', await appRedis.client.ft._list())
 
       if (!currentIndexes.includes('idx:User')) {
-        await RedisInstance.client.ft.create(
+        await appRedis.client.ft.create(
           'idx:User',
           {
             '$.id': {
@@ -76,7 +76,7 @@ export default async (inlineOptions: any, nuxt: any) => {
       }
 
       if (!currentIndexes.includes('idx:Product')) {
-        await RedisInstance.client.ft.create(
+        await appRedis.client.ft.create(
           'idx:Product',
           {
             '$.id': {
@@ -142,7 +142,7 @@ export default async (inlineOptions: any, nuxt: any) => {
           },
           {
             ON: 'JSON',
-            PREFIX: 'User:',
+            PREFIX: 'Product:',
           }
         )
         console.log('idx:Product index created')
@@ -150,7 +150,7 @@ export default async (inlineOptions: any, nuxt: any) => {
         console.log('idx:Product index alreday exists')
       }
 
-      // await RedisInstance.client.disconnect()
+      await appRedis.client.disconnect()
       console.log('ALL GOOD')
       // }
 
@@ -159,15 +159,15 @@ export default async (inlineOptions: any, nuxt: any) => {
       //   url: process.env.NUXT_REDIS_URL as string,
       // })
       // await redis.connect()
-      // console.log(`redis RedisInstance succesfull`)
+      // console.log(`redis appRedis succesfull`)
       // const redis = createClient({
       //   url: process.env.NUXT_REDIS_URL as string,
       // })
       // await redis.connect()
-      // console.log(`redis RedisInstance succesfull`)
+      // console.log(`redis appRedis succesfull`)
       // Connect to database
       // await mongoClient.connect()
-      // console.log(`Database RedisInstance succesfull`)
+      // console.log(`Database appRedis succesfull`)
       // // Fetch all collections
       // const collections = await mongoClient.db().listCollections().toArray()
       // // create products collection
@@ -211,7 +211,7 @@ export default async (inlineOptions: any, nuxt: any) => {
       //   console.log(`Countries database creation succesfull`)
       // }
     } catch (err) {
-      console.log(`Redis RedisInstance or index creation failed ${err}`)
+      console.log(`Redis appRedis or index creation failed ${err}`)
     }
   })
 }

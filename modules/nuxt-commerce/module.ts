@@ -174,6 +174,7 @@ export default defineNuxtModule({
           "declare module  '#commerce' {",
           `  const createProduct: typeof import('${resolve('./runtime/server/services')}').createProduct`,
           `  const createManyProducts: typeof import('${resolve('./runtime/server/services')}').createManyProducts`,
+          `  const fetchAllProducts: typeof import('${resolve('./runtime/server/services')}').fetchAllProducts`,
 
           // `  const getUserSession: typeof import('${resolve('./runtime/server/services')}').getUserSession`,
           '}',

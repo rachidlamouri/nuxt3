@@ -34,7 +34,7 @@ import { ISession, ISignupUser, IUser } from '~/utils/schema'
 import { findById } from '~/server/controllers/v1/factory'
 import { QueryValue } from 'ufo'
 import { ulid } from 'ulid'
-import RedisInstance from '~/utils/RedisClientNew'
+import appRedis from '~/utils/AppRedis'
 
 const config = useRuntimeConfig()
 const secrefBuffer = Buffer.from(config.nuxtAuth.encryptSecret)
@@ -166,7 +166,7 @@ export const checkPassword = async (password: string, hash: string) => {
 
 export const createUser = async (event: H3Event, body: IUser) => {
   try {
-    await redis.connect()
+    // await redis.connect()
 
     // Generate Ulid
     const userUlid = ulid()
@@ -195,7 +195,7 @@ export const createUser = async (event: H3Event, body: IUser) => {
     // Save new user
     const result = await redis.json.set(`User:${userUlid}`, '$', userObj)
 
-    await redis.disconnect()
+    // await redis.disconnect()
 
     // Return userId and Token
     if (result && result === 'OK') return await getSinedJwtToken(userUlid, Number(config.jwtSignupTokenMaxAge))
@@ -208,9 +208,9 @@ export const createUser = async (event: H3Event, body: IUser) => {
 export const findByEmail = async (event: H3Event, email: string) => {
   try {
     console.log('XXXXXXXX', email)
-    await RedisInstance.connect()
-    const results = await RedisInstance.client.ft.search('idx:User', `@email:{${email.replace(/[.@\\]/g, '\\$&')}}`)
-    await RedisInstance.disconnect()
+    // await appRedis.connect()
+    const results = await appRedis.client.ft.search('idx:User', `@email:{${email.replace(/[.@\\]/g, '\\$&')}}`)
+    // await appRedis.disconnect()
     console.log(results.total)
     if (results && results.total > 0) return { id: results.documents[0].id, ...results.documents[0].value }
     return {}
@@ -221,9 +221,9 @@ export const findByEmail = async (event: H3Event, email: string) => {
 
 export const findUserById = async (event: H3Event, id: string) => {
   try {
-    await redis.connect()
+    // await redis.connect()
     const results = await redis.ft.search('idx:User', `@id:${id}`)
-    await redis.disconnect()
+    // await redis.disconnect()
     // console.log(results)
     if (results && results.total > 0) return { id: results.documents[0].id, ...results.documents[0].value }
     return {}
@@ -239,10 +239,10 @@ export const findUserByIdAndUpdate = async (event: H3Event, id: string, payload:
     console.log(found)
     if (!found || Object.values(found).length == 0)
       throw new AppError('We cannot find any records associated with this ID', 'user_by_id_not_found', 404)
-    await redis.connect()
+    // await redis.connect()
     const result = await redis.json.set(`User:${id}`, '$', { ...found, ...payload })
     // if (found) newEntity = await repository.save({ ...found, ...payload })
-    await redis.disconnect()
+    // await redis.disconnect()
     // return // Return userId and Token
     if (result && result === 'OK') return found
     return {}

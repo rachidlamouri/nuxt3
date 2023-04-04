@@ -1,14 +1,14 @@
 import { aggregateFetch } from '~/server/controllers/v1/factory'
 import { productRepository, EntityId } from '~/server/redisSchemas/product'
-import { fetchAll } from '~/server/controllers/v1/factory'
+import { fetchAllProducts } from '#commerce'
 import AppError from '~/utils/AppError'
 import { protect } from '#auth'
 import errorHandler from '~/utils/errorHandler'
 
 export default defineEventHandler(async (event) => {
   try {
-    if (!(await protect(event))) throw new AppError('You are not authorized', 'not_authorized', 404)
-    return await fetchAll(productRepository)
+    console.log(getQuery(event))
+    return await fetchAllProducts(event)
   } catch (err) {
     return errorHandler(event, err)
   }

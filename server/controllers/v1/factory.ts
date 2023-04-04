@@ -102,9 +102,9 @@ const createDocument = async (collection: string, doc: {}) => {
 }
 
 const findById = async (repository: Repository, id: string) => {
-  await redis.connect()
+  // await redis.connect()
   const found = await repository.fetch(id)
-  await redis.disconnect()
+  // await redis.disconnect()
   if (found) return found
   return {}
 }
@@ -116,9 +116,9 @@ const getSinedJwtToken = async function (id: any, maxAge: number) {
 }
 
 export const fetchAll = async (repository: Repository) => {
-  await redis.connect()
+  // await redis.connect()
   const found = await repository.search().return.all()
-  await redis.disconnect()
+  // await redis.disconnect()
   return found
 }
 
@@ -131,11 +131,11 @@ export const fetchAll = async (repository: Repository) => {
 // }
 
 const findByIdAndUpdate = async (repository: Repository, id: string, payload: object): Promise<Partial<IUser>> => {
-  await redis.connect()
+  // await redis.connect()
   let newEntity
   const found = await repository.fetch(id)
   if (found) newEntity = await repository.save({ ...found, ...payload })
-  await redis.disconnect()
+  // await redis.disconnect()
   return newEntity as IUser
 }
 
