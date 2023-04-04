@@ -27,7 +27,7 @@ const addItemToCart = async () => {
     <div class="image">
       <img
         class=""
-        :src="`https://acs-space.nyc3.cdn.digitaloceanspaces.com/products/${product.media[0].name}.jpg`"
+        :src="`https://acs-images.s3.us-east-2.amazonaws.com/products/${product.media[0].name}.jpg`"
         :alt="`ACS ${product.media[0].name} Product Image`"
         v-if="product.media && product.media.length"
       />

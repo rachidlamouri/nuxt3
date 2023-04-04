@@ -39,7 +39,7 @@ const productParams = computed(() => {
   return {
     match: 'price[gt]=20000',
     page: page.value,
-    limit: perPage,
+    perPage,
     project: ['acsPartNumber', 'slug', 'price', 'media', 'tbq', 'oem', 'oemPartNumber'],
     sort: `price=asc, acsPartNUmber=dsc`,
   }
@@ -54,11 +54,9 @@ const fetchProducts = async () => {
     // headers: { ...headers, sessionAuthorization: 'jwtsession' },
   })
   if (error.value) throw createError(error.value)
-  // console.log(data.value)
-  fetchedProducts.value = data.value
-  products.value = products.value
-    ? products.value.concat(fetchedProducts.value)
-    : fetchedProducts.value.documents.map((d) => d.value)
+  console.log(data.value)
+  fetchedProducts.value = data.value.documents.map((d) => d.value)
+  products.value = products.value ? products.value.concat(fetchedProducts.value) : fetchedProducts.value
   // products.value = [products.value[0]]
 }
 
@@ -68,6 +66,7 @@ onMounted(() => {
     entries.forEach(async (entry) => {
       if (entry.isIntersecting) {
         page.value = page.value + 1
+        console.log(page.value)
         await fetchProducts()
       }
     })

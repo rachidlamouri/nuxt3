@@ -91,11 +91,17 @@ export const createManyProducts = async (event: H3Event, products: Array<IProduc
 
 export const fetchAllProducts = async (event: H3Event) => {
   try {
-    // console.log('XXXXXXXX')
+    console.log('XXXXXXXX', getQuery(event))
+    const query = getQuery(event)
+
     await appRedis.connect()
+    // SKIP & LIMIT
+    const page = query.page && Number(query.page) * 1 >= 1 ? Number(query.page) * 1 : 1
+    const limit = query.perPage && Number(query.perPage) * 1 > 0 ? Number(query.perPage) * 1 : 100
+    const skip = (page - 1) * limit
     const results = await appRedis.client.ft.search('idx:Product', `*`, {
       SORTBY: { BY: 'acsPartNumber', DIRECTION: 'ASC' },
-      LIMIT: { from: 3, size: 5 },
+      LIMIT: { from: skip, size: query.perPage },
     })
     await appRedis.disconnect()
     // console.log('YYYYYY', results)
@@ -155,10 +161,10 @@ export const verifySessionKey = (secret: string, token: QueryValue) => {
 }
 export const createUserSession = async (event: H3Event, secret: string) => {
   let ipAddress = ''
-  const abstractRes: { ip_address: string } = (await $fetch(
-    `${config.abstractApiUrl}/?api_key=${config.abstractApiKey}`
-  )) || { ip_address: '' }
-  ipAddress = abstractRes.ip_address
+  // const abstractRes: { ip_address: string } = (await $fetch(
+  //   `${config.abstractApiUrl}/?api_key=${config.abstractApiKey}`
+  // )) || { ip_address: '' }
+  // ipAddress = abstractRes.ip_address
   setCookie(event, config.nuxtAuth.sessionCookieName, secret, {
     ...(config.nuxtAuth.cookieOpts as CookieSerializeOptions),
     expires: new Date(Date.now() + config.nuxtAuth.cookieOpts.expiryInSeconds * 1000),

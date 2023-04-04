@@ -7,7 +7,6 @@ import errorHandler from '~/utils/errorHandler'
 
 export default defineEventHandler(async (event) => {
   try {
-    console.log(getQuery(event))
     return await fetchAllProducts(event)
   } catch (err) {
     return errorHandler(event, err)
