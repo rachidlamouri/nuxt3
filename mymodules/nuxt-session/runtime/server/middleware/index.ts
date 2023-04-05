@@ -49,7 +49,7 @@ const safeSetCookie = (event: H3Event, name: string, value: string, createdAt: D
 }
 
 const newSession = async (event: H3Event) => {
-  const abstractRes = (await $fetch(`${config.abstractApiUrl}/?api_key=${config.abstractApiKey}`)) || { ip_address: '' }
+  // const abstractRes = (await $fetch(`${config.abstractApiUrl}/?api_key=${config.abstractApiKey}`)) || { ip_address: '' }
   console.log('IPPPPPPPPPPP', 'abstractRes')
 
   const jwtToken = await getSinedJwtToken('', Number(config.jwtSignupTokenMaxAge))

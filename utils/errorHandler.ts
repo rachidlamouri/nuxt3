@@ -18,7 +18,8 @@ import { ZodError } from 'zod'
 // }
 
 export default (event: H3Event, err: any) => {
-  console.log(`ERR --${err.name}--`)
+  console.log(`ERR NAME --${err.name}--`)
+  console.log(`ERR CODE --${err.code}--`)
   console.log(err)
   // console.log(Array.isArray(err.response.body.errors))
   // console.log(err.name == 'Bad Request')
@@ -107,51 +108,68 @@ export default (event: H3Event, err: any) => {
       errorCode = 'notUnique'
     }
 
-    if (err.code === 121) {
-      console.log('GGGGGGGG', err.writeErrors)
+    if (err.code == 121) {
+      // console.log('GGGGGGGG', err)
       const writeErrors = err.writeErrors
       if (writeErrors && writeErrors.length) {
         for (const writeError of writeErrors) {
-          console.log('WWWWW', writeError.err.errInfo.details.schemaRulesNotSatisfied)
+          // console.log('HHHHHH', writeError.err.errInfo.details)
+          // console.log('WWWWW', writeError.err.errInfo.details.schemaRulesNotSatisfied)
           const schemaRulesNotSatisfied = writeError.err.errInfo.details.schemaRulesNotSatisfied
           for (const property of schemaRulesNotSatisfied) {
-            if (property.missingProperties) message += `${property.missingProperties.join(',')} are required`
-          }
-        }
-      }
-      const schemaRulesNotSatisfied = err.errInfo.details.schemaRulesNotSatisfied
-      if (schemaRulesNotSatisfied && schemaRulesNotSatisfied.length) {
-        for (const i in schemaRulesNotSatisfied) {
-          // if (schemaRulesNotSatisfied[i].operatorName === 'required') {
-          //   for (const j in schemaRulesNotSatisfied[i].missingProperties) {
-          //     message += `${schemaRulesNotSatisfied[i].missingProperties[j]} is required<br>`
-          //   }
-          // }
-          // if (schemaRulesNotSatisfied[i].operatorName === 'properties') {
-          // console.log('MMMMM', schemaRulesNotSatisfied[i].operatorName)
-          const propertiesNotSatisfied = schemaRulesNotSatisfied[i].propertiesNotSatisfied
-          if (propertiesNotSatisfied) {
-            for (const j in propertiesNotSatisfied) {
-              const details = propertiesNotSatisfied[j].details
-              for (const k in details) {
-                message += `${details[k].consideredValue} is not a valid ${propertiesNotSatisfied[j].propertyName}.`
-
-                // message += `${details[k].operatorName}: ${details[k].reason} ${propertiesNotSatisfied[j].propertyName}=${details[k].consideredValue} <br>`
-
-                // console.log('KKKKK', message)
+            if (property.missingProperties) {
+              message += `${property.missingProperties.join(',')} are required`
+            } else if (property.propertiesNotSatisfied) {
+              const propertiesNotSatisfied = property.propertiesNotSatisfied || []
+              // console.log('POPP', propertiesNotSatisfied)
+              for (const prop of propertiesNotSatisfied) {
+                // console.log('NNNNN', prop)
+                const details = prop.details || []
+                for (const detail of details) {
+                  message += `${prop.propertyName} ${detail.consideredValue} ${detail.reason} ${
+                    detail.operatorName
+                  } specified as ${JSON.stringify(detail.specifiedAs)}`
+                }
               }
             }
-            // }
           }
-          if (schemaRulesNotSatisfied[i].missingProperties) {
-            for (const j in schemaRulesNotSatisfied[i].missingProperties) {
-              message = `${schemaRulesNotSatisfied[i].missingProperties[j]} is required`
-              // for (const k in schemaRulesNotSatisfied[i].propertiesNotSatisfied[j].details) {
-              //   message += `${schemaRulesNotSatisfied[i].propertiesNotSatisfied[j].details[k].operatorName}: ${schemaRulesNotSatisfied[i].propertiesNotSatisfied[j].details[k].reason} ${schemaRulesNotSatisfied[i].propertiesNotSatisfied[j].propertyName}=${schemaRulesNotSatisfied[i].propertiesNotSatisfied[j].details[k].consideredValue} <br>`
-              //   console.log('KKKKK', message)
+        }
+      } else {
+        console.log('HEREEEEEEEEEE')
+        const schemaRulesNotSatisfied = err.errInfo.details.schemaRulesNotSatisfied
+        if (schemaRulesNotSatisfied && schemaRulesNotSatisfied.length) {
+          for (const i in schemaRulesNotSatisfied) {
+            // if (schemaRulesNotSatisfied[i].operatorName === 'required') {
+            //   for (const j in schemaRulesNotSatisfied[i].missingProperties) {
+            //     message += `${schemaRulesNotSatisfied[i].missingProperties[j]} is required<br>`
+            //   }
+            // }
+            // if (schemaRulesNotSatisfied[i].operatorName === 'properties') {
+            // console.log('MMMMM', schemaRulesNotSatisfied[i].operatorName)
+            const propertiesNotSatisfied = schemaRulesNotSatisfied[i].propertiesNotSatisfied
+            if (propertiesNotSatisfied) {
+              for (const j in propertiesNotSatisfied) {
+                const details = propertiesNotSatisfied[j].details
+                for (const k in details) {
+                  message += `${details[k].consideredValue} is not a valid ${propertiesNotSatisfied[j].propertyName}.`
+
+                  // message += `${details[k].operatorName}: ${details[k].reason} ${propertiesNotSatisfied[j].propertyName}=${details[k].consideredValue} <br>`
+
+                  // console.log('KKKKK', message)
+                }
+              }
               // }
             }
-            // }
+            if (schemaRulesNotSatisfied[i].missingProperties) {
+              for (const j in schemaRulesNotSatisfied[i].missingProperties) {
+                message = `${schemaRulesNotSatisfied[i].missingProperties[j]} is required`
+                // for (const k in schemaRulesNotSatisfied[i].propertiesNotSatisfied[j].details) {
+                //   message += `${schemaRulesNotSatisfied[i].propertiesNotSatisfied[j].details[k].operatorName}: ${schemaRulesNotSatisfied[i].propertiesNotSatisfied[j].details[k].reason} ${schemaRulesNotSatisfied[i].propertiesNotSatisfied[j].propertyName}=${schemaRulesNotSatisfied[i].propertiesNotSatisfied[j].details[k].consideredValue} <br>`
+                //   console.log('KKKKK', message)
+                // }
+              }
+              // }
+            }
           }
         }
       }

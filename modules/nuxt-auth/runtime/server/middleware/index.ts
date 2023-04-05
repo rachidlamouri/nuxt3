@@ -21,14 +21,19 @@ const secrefBuffer = Buffer.from(config.nuxtAuth.csrf.encryptSecret)
 export default defineEventHandler(async (event) => {
   // Get session cookie
   let secret = getCookie(event, config.nuxtAuth.sessionCookieName)
+  console.log('SECRET', secret)
 
   // If no session cookie, create session cookie and session
   // If there is a cookie and no sesssion then create session
   if (!secret) {
+    console.log('11111111')
     secret = randomUUID()
     await createUserSession(event, secret)
   } else {
+    console.log('2222222')
     const session = await getUserSession(event)
+    console.log('3333333', session)
+
     if (!session || !Object.values(session).length) await createUserSession(event, secret)
   }
 
@@ -37,6 +42,8 @@ export default defineEventHandler(async (event) => {
     value: createSessionKey(secret),
     enumerable: true,
   })
+
+  return
 
   // Retreive user info from session if it exists, fetch user and add it to event contexts (used to protect routes} down stream
   // Add user info (ID, ULID, name and authenticated) to event response (to be exposed to front end in plugin)

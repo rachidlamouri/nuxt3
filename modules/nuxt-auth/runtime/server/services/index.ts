@@ -19,7 +19,7 @@ import errorHandler from '~/utils/errorHandler'
 import sendEmail from '~/utils/Email'
 // import { IUser } from '~/utils/types'
 
-import { getSinedJwtToken } from '~/server/controllers/v1/factory'
+// import { getSinedJwtToken } from '~/server/controllers/v1/factory'
 // import { setUserSession } from '#session'
 import AppError from '~/utils/AppError'
 import { H3Event } from 'h3'
@@ -31,7 +31,7 @@ import { nanoid } from 'nanoid'
 import { randomUUID, randomBytes, createCipheriv, createDecipheriv } from 'crypto'
 
 import { ISession, ISignupUser, IUser } from '~/utils/schema'
-import { findById } from '~/server/controllers/v1/factory'
+// import { findById } from '~/server/controllers/v1/factory'
 import { QueryValue } from 'ufo'
 import { ulid } from 'ulid'
 import appRedis from '~/utils/AppRedis'
@@ -42,27 +42,27 @@ const secrefBuffer = Buffer.from(config.nuxtAuth.encryptSecret)
 // const nuxtApp = useNuxtApp()
 // console.log(nuxtApp)
 
-// const storage = createStorage({
-//   driver: mongodbDriver({
-//     connectionString: useRuntimeConfig().dbUrl,
-//     databaseName: 'acs',
-//     collectionName: 'sessions',
-//   }),
-// })
+const storage = createStorage({
+  driver: mongodbDriver({
+    connectionString: config.dbUrl,
+    databaseName: 'acs',
+    collectionName: 'sessions',
+  }),
+})
 
 // const storage = createStorage({
 //   driver: memoryDriver(),
 // })
 
-const storage = createStorage({
-  driver: redisDriver({
-    base: config.nuxtAuth.session.userSessionId,
-    host: config.redisHost,
-    port: Number(config.redisPort),
-    password: config.redisPassword,
-    // tls: true as any,
-  }),
-})
+// const storage = createStorage({
+//   driver: redisDriver({
+//     base: config.nuxtAuth.session.userSessionId,
+//     host: config.redisHost,
+//     port: Number(config.redisPort),
+//     password: config.redisPassword,
+//     // tls: true as any,
+//   }),
+// })
 
 export const createSessionKey = (secret: string): string => {
   const iv = randomBytes(16)
@@ -87,10 +87,11 @@ export const verifySessionKey = (secret: string, token: QueryValue) => {
 }
 export const createUserSession = async (event: H3Event, secret: string) => {
   let ipAddress = ''
-  const abstractRes: { ip_address: string } = (await $fetch(
-    `${config.abstractApiUrl}/?api_key=${config.abstractApiKey}`
-  )) || { ip_address: '' }
-  ipAddress = abstractRes.ip_address
+  console.log('HHHHHHere')
+  // const abstractRes: { ip_address: string } = (await $fetch(
+  //   `${config.abstractApiUrl}/?api_key=${config.abstractApiKey}`
+  // )) || { ip_address: '' }
+  // ipAddress = abstractRes.ip_address
   setCookie(event, config.nuxtAuth.sessionCookieName, secret, {
     ...(config.nuxtAuth.cookieOpts as CookieSerializeOptions),
     expires: new Date(Date.now() + config.nuxtAuth.cookieOpts.expiryInSeconds * 1000),

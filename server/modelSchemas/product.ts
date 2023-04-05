@@ -1,13 +1,13 @@
 export default {
   validator: {
     $jsonSchema: {
-      required: ['slug', 'acsPartNumber', 'media', 'oem', 'oemPartNumber'],
+      required: ['slug', 'name', 'acsPartNumber', 'media', 'oem', 'oemPartNumber'],
       properties: {
-        // name: {
-        //   bsonType: 'string',
-        //   description: 'Product name is required and 50 characters max',
-        //   maxLength: 50,
-        // },
+        name: {
+          bsonType: 'string',
+          description: 'Product name is required and 50 characters max',
+          maxLength: 50,
+        },
         slug: {
           bsonType: 'string',
           description: 'Product slug is required',
@@ -20,6 +20,7 @@ export default {
         media: {
           bsonType: 'array',
           description: 'Product images',
+          uniqueItems: true,
           items: {
             bsonType: 'object',
             properties: {
@@ -33,10 +34,6 @@ export default {
               },
             },
           },
-          // uniqueItems: true,
-          // items: {
-          //   bsonType: 'objectId',
-          // },
         },
         description: {
           bsonType: 'string',
@@ -77,62 +74,60 @@ export default {
         eligibilities: {
           bsonType: 'array',
           description: 'Product eligibilities',
-          // uniqueItems: true,
-          // items: {
-          //   bsonType: 'objectId',
-          // },
+          uniqueItems: true,
           items: {
-            bsonType: 'objectId',
-            // properties: {
-            //   name: {
-            //     bsonType: 'objectId',
-            //     description: 'Eligibility name',
-            //   },
-            //   // slug: {
-            //   //   bsonType: 'string',
-            //   //   description: 'Eligibility slug',
-            //   // },
-            // },
+            bsonType: 'object',
+            properties: {
+              name: {
+                bsonType: 'string',
+                description: 'Eligibility name',
+              },
+              slug: {
+                bsonType: 'string',
+                description: 'Eligibility slug',
+              },
+            },
           },
         },
         nextHigherAssemblies: {
           bsonType: 'array',
           description: 'Product nextHigherAssemblies',
-          // uniqueItems: true,
-          // items: {
-          //   bsonType: 'objectId',
-          // },
+          uniqueItems: true,
           items: {
-            bsonType: 'objectId',
-            // properties: {
-            //   partNumber: {
-            //     bsonType: 'objectId',
-            //     description: 'Assembly part Number',
-            //   },
-            //   // name: {
-            //   //   bsonType: 'string',
-            //   //   description: 'Next Higer Assembly slug',
-            //   // },
-            //   // slug: {
-            //   //   bsonType: 'string',
-            //   //   description: 'Next Higer Assembly name',
-            //   // },
-            // },
+            bsonType: 'object',
+            properties: {
+              partNumber: {
+                bsonType: 'string',
+                description: 'Assembly part Number',
+              },
+              description: {
+                bsonType: 'string',
+                description: 'Assembly part Number',
+              },
+              name: {
+                bsonType: 'string',
+                description: 'Next Higer Assembly slug',
+              },
+              slug: {
+                bsonType: 'string',
+                description: 'Next Higer Assembly name',
+              },
+            },
           },
         },
 
-        // sortOrder: {
-        //   bsonType: 'int',
-        //   description: 'Used to sort products',
-        // },
-        // dateCreated: {
-        //   bsonType: 'date',
-        //   description: 'Date created',
-        // },
-        // stockQty: {
-        //   bsonType: 'int',
-        //   description: 'Stock quantity',
-        // },
+        sortOrder: {
+          bsonType: 'int',
+          description: 'Used to sort products',
+        },
+        dateCreated: {
+          bsonType: 'date',
+          description: 'Date created',
+        },
+        stockQty: {
+          bsonType: 'int',
+          description: 'Stock quantity',
+        },
 
         status: {
           enum: ['Active', 'Hidden'],

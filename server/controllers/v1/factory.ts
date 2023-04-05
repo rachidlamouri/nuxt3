@@ -13,11 +13,12 @@ import { IUser } from '~/utils/schema'
 
 const config = useRuntimeConfig()
 
-const aggregateFetch = async (event: H3Event, collection: string, lookup: object[] = [], unwind: object[] = []) => {
+export const aggregateFetch = async (event: H3Event, collection: string) => {
   try {
     const query = { ...getQuery(event) }
 
-    // console.log('Q', query)
+    console.log('Q', query)
+    return []
 
     const pipeline = []
 
@@ -139,4 +140,4 @@ const findByIdAndUpdate = async (repository: Repository, id: string, payload: ob
   return newEntity as IUser
 }
 
-export { getSinedJwtToken, findById, findByIdAndUpdate, findBySlug, aggregateFetch, createDocument }
+export { getSinedJwtToken, findById, findByIdAndUpdate, findBySlug, createDocument }

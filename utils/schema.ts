@@ -1,6 +1,30 @@
 import { z } from 'zod'
 import { passwordPattern } from '~/utils/patterns'
 
+// Product schema
+export const productSchema = z.object({
+  _id: z.string(),
+  name: z.string(),
+  acsPartNumber: z.string(),
+  sku: z.string(),
+  tbq: z.string(),
+  slug: z.string(),
+  price: z.number(),
+  salePrice: z.number(),
+  stockQty: z.number(),
+  sortOrder: z.number(),
+  qtySold: z.number(),
+  description: z.string(),
+  status: z.string(),
+  media: z.array(z.object({ name: z.string(), slug: z.string() })),
+  oem: z.string(),
+  oemPartNumber: z.string(),
+  eligibilities: z.array(z.object({ name: z.string(), slug: z.string() })),
+  nextHigherAssemblies: z.array(z.object({ name: z.string(), slug: z.string(), partNumber: z.string() })),
+  dateCreated: z.date(),
+})
+export type IProduct = z.infer<typeof productSchema>
+
 // Registration user schema
 export const sessionSchema = z.object({
   ipAddress: z
@@ -133,26 +157,6 @@ export const authenticatedDataSchema = z.object({
   // isAuthenticated: z.boolean().default(false),
 })
 export type IAuthenticatedData = z.infer<typeof authenticatedDataSchema>
-
-// Product schema
-export const productSchema = z.object({
-  id: z.string(),
-  acsPartNumber: z.string(),
-  sku: z.string(),
-  tbq: z.string(),
-  slug: z.string(),
-  price: z.number(),
-  salePrice: z.number(),
-  qtySold: z.number(),
-  description: z.string(),
-  status: z.string(),
-  media: z.array(z.object({ name: z.string(), slug: z.string() })),
-  oem: z.string(),
-  oemPartNumber: z.string(),
-  eligibilities: z.array(z.object({ name: z.string(), slug: z.string() })),
-  nextHigherAssemblies: z.array(z.object({ name: z.string(), slug: z.string(), partNumber: z.string() })),
-})
-export type IProduct = z.infer<typeof productSchema>
 
 // Cart item schema
 export const cartItemSchema = productSchema.extend({ quantity: z.number().int().positive() })

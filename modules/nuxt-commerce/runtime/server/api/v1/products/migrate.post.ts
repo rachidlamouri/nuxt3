@@ -49,6 +49,7 @@ export default defineEventHandler(async (event) => {
 
       products.push({
         acsPartNumber: product.title,
+        name: product.title,
         slug: slugify(product.title, { lower: true }),
         media: [{ name: product.image, slug: slugify(product.image, { lower: true }) }],
         description: product.content,
@@ -59,15 +60,19 @@ export default defineEventHandler(async (event) => {
         price: +product.price * 100,
         salePrice: +product.price * 100,
         sku: product.sku,
+        stockQty: 0,
+        sortOrfder: 0,
         status: 'Active',
         eligibilities,
         nextHigherAssemblies,
+        dateCreated: new Date(Date.now()),
       })
     }
-    const result = await createManyProducts(event, products)
+    // const result = await createManyProducts(event, products)
+    return await mongoClient.db().collection('products').insertMany(products)
     // const xx = await productRepository.save(products[0])
     // console.log(xx)
-    return result
+    // return result
   } catch (err) {
     return errorHandler(event, err)
   }
