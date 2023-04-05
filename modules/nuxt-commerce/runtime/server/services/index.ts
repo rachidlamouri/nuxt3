@@ -1,5 +1,5 @@
 import { Pagination } from './../../../../../.nuxt/components.d'
-import { redis } from '~/utils/redisClient'
+// import { redis } from '~/utils/redisClient'
 import { userRepository, EntityId } from '~/server/redisSchemas/user'
 
 import { createStorage } from 'unstorage'
@@ -35,7 +35,7 @@ import { ISession, IProduct } from '~/utils/schema'
 import { findById } from '~/server/controllers/v1/factory'
 import { QueryValue } from 'ufo'
 // import { ulid } from 'ulid'
-import appRedis from '~/utils/AppRedis'
+// import appRedis from '~/utils/AppRedis'
 
 const config = useRuntimeConfig()
 const secrefBuffer = Buffer.from(config.nuxtAuth.encryptSecret)
@@ -123,22 +123,17 @@ export const fetchProducts = async (event: H3Event, collection: string) => {
 const createProduct = async (event: H3Event, product: IProduct) => {
   try {
     // await redis.connect()
-
     // Generate Ulid
     // const documentUlid = ulid()
-    const newProduct = { ...product, id: documentUlid, dateCreated: Date.now() }
-
+    // const newProduct = { ...product, id: documentUlid, dateCreated: Date.now() }
     // Save new user
-    const result = await redis.json.set(`Product:${documentUlid}`, '$', newProduct)
+    // const result = await redis.json.set(`Product:${documentUlid}`, '$', newProduct)
     // console.log('RRRRRR', result)
-
-    if (!result || result !== 'OK')
-      throw new AppError(`Unable to create ptoduct ${product.acsPartNumber}`, 'email_not_verified', 401)
-
+    // if (!result || result !== 'OK')
+    // throw new AppError(`Unable to create ptoduct ${product.acsPartNumber}`, 'email_not_verified', 401)
     // await redis.disconnect()
-
     // Return userId and Token
-    return { ...newProduct, id: documentUlid }
+    // return { ...newProduct, id: documentUlid }
   } catch (err) {
     return errorHandler(event, err)
   }
@@ -151,12 +146,12 @@ export const createManyProducts = async (event: H3Event, products: Array<IProduc
 
     let results: Array<IProduct> = []
 
-    await Promise.all(
-      products.map(async (product) => {
-        const result = await createProduct(event, product)
-        if (result) results.push(result)
-      })
-    )
+    // await Promise.all(
+    //   products.map(async (product) => {
+    //     const result = await createProduct(event, product)
+    //     if (result) results.push(result)
+    //   })
+    // )
 
     // await redis.disconnect()
 
@@ -179,13 +174,13 @@ export const fetchAllProductsxxxxx = async (event: H3Event) => {
     const page = query.page && Number(query.page) * 1 >= 1 ? Number(query.page) * 1 : 1
     const limit = query.perPage && Number(query.perPage) * 1 > 0 ? Number(query.perPage) * 1 : 100
     const skip = (page - 1) * limit
-    const results = await appRedis.client.ft.search('idx:Product', `*`, {
-      SORTBY: { BY: 'acsPartNumber', DIRECTION: 'ASC' },
-      LIMIT: { from: skip, size: query.perPage },
-    })
+    // const results = await appRedis.client.ft.search('idx:Product', `*`, {
+    //   SORTBY: { BY: 'acsPartNumber', DIRECTION: 'ASC' },
+    //   LIMIT: { from: skip, size: query.perPage },
+    // })
     // await appRedis.disconnect()
     // console.log('YYYYYY', results)
-    return results
+    // return results
     // if (results && results.total > 0) return { id: results.documents[0].id, ...results.documents[0].value }
     // return {}
   } catch (err) {

@@ -37,11 +37,13 @@ const sortOptions = [
 
 const productParams = computed(() => {
   return {
-    match: 'price[gt]=50000',
+    match: '',
+    // match: 'price[gt]=50000',
     page: page.value,
     limit: perPage,
     project: 'acsPartNumber, slug, price, media, tbq, oem, oemPartNumber',
-    sort: `price=asc, acsPartNUmber=dsc`,
+    // sort: `price=asc, acsPartNUmber=dsc`,
+    sort: ``,
   }
 })
 

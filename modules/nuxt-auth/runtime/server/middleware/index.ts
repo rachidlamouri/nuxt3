@@ -2,7 +2,7 @@ import { randomUUID, randomBytes, createCipheriv, createDecipheriv } from 'crypt
 import { FilterXSS } from 'xss'
 import { createUserSession, createSessionKey, verifySessionKey, getUserSession, fetcheSessionUser } from '#auth'
 import { findById } from '~/server/controllers/v1/factory'
-import { userRepository, EntityId } from '~/server/redisSchemas/user'
+// import { userRepository, EntityId } from '~/server/redisSchemas/user'
 import { ISession, IUser } from '~/utils/schema'
 import { H3Event } from 'h3'
 import { QueryObject } from 'ufo'
@@ -19,31 +19,45 @@ const secrefBuffer = Buffer.from(config.nuxtAuth.csrf.encryptSecret)
 // }
 
 export default defineEventHandler(async (event) => {
+  // if (!event.node.req.url?.includes('api')) return
+  // console.log('INCLUDES', event.node.req.url?.includes('api'))
+
   // Get session cookie
+  // let session
+
   let secret = getCookie(event, config.nuxtAuth.sessionCookieName)
-  console.log('SECRET', secret)
+  // console.log('SECRET', secret)
+  // console.log('SESSION', session)
+
+  // console.log('SESSION', await getUserSession(event))
+  console.log('URL', event.node.req.url)
+  console.log('Process', process.server)
 
   // If no session cookie, create session cookie and session
   // If there is a cookie and no sesssion then create session
   if (!secret) {
-    console.log('11111111')
+    // console.log('11111111')
     secret = randomUUID()
     await createUserSession(event, secret)
+    // console.log('CCCCCC', getCookie(event, config.nuxtAuth.sessionCookieName))
+    return
+    // console.log('SESSION', await getUserSession(event))
   } else {
-    console.log('2222222')
-    const session = await getUserSession(event)
-    console.log('3333333', session)
-
-    if (!session || !Object.values(session).length) await createUserSession(event, secret)
+    // console.log('2222222')
+    // const session = await getUserSession(event)
+    // console.log('3333333', session)
+    // if (!session || !Object.values(session).length) await createUserSession(event, secret)
   }
+
+  // let session = await getUserSession(event)
+
+  // console.log('SESSION', session)
 
   // Encrypt session cookie and add it to event response (To be exposed to front end in plugin)
   Object.defineProperty(event.node.res, '_sessionToken', {
     value: createSessionKey(secret),
     enumerable: true,
   })
-
-  return
 
   // Retreive user info from session if it exists, fetch user and add it to event contexts (used to protect routes} down stream
   // Add user info (ID, ULID, name and authenticated) to event response (to be exposed to front end in plugin)
@@ -105,5 +119,5 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  console.log('ZZZZZZZZZZZZ')
+  console.log('ZZZZZZZZZZZZXXXXXXX')
 })

@@ -1,4 +1,4 @@
-import { redis } from '~/utils/redisClient'
+// import { redis } from '~/utils/redisClient'
 // import { userRepository, EntityId } from '~/server/redisSchemas/user'
 
 import { createStorage } from 'unstorage'
@@ -25,7 +25,7 @@ import AppError from '~/utils/AppError'
 import { H3Event } from 'h3'
 import { Ref, ref } from 'vue'
 import memoryDriver from 'unstorage/drivers/memory'
-import redisDriver from 'unstorage/drivers/redis'
+// import redisDriver from 'unstorage/drivers/redis'
 import { nanoid } from 'nanoid'
 
 import { randomUUID, randomBytes, createCipheriv, createDecipheriv } from 'crypto'
@@ -33,8 +33,8 @@ import { randomUUID, randomBytes, createCipheriv, createDecipheriv } from 'crypt
 import { ISession, ISignupUser, IUser } from '~/utils/schema'
 // import { findById } from '~/server/controllers/v1/factory'
 import { QueryValue } from 'ufo'
-import { ulid } from 'ulid'
-import appRedis from '~/utils/AppRedis'
+// import { ulid } from 'ulid'
+// import appRedis from '~/utils/AppRedis'
 
 const config = useRuntimeConfig()
 const secrefBuffer = Buffer.from(config.nuxtAuth.encryptSecret)
@@ -99,12 +99,14 @@ export const createUserSession = async (event: H3Event, secret: string) => {
 
   const session = {
     ipAddress,
+    secret,
     // userId: user[EntityId],
     // userName: user.name,
     // isAuthenticated,
   }
 
-  await storage.setItem(secret, session, { ttl: config.nuxtAuth.cookieOpts.expiryInSeconds })
+  await storage.setItem(secret, session)
+  return session
 }
 
 export const updateUserSession = async (event: H3Event, payload: object) => {
@@ -143,6 +145,7 @@ export const getUserSession = async (event: H3Event) => {
   if (await storage.hasItem(userSessionKey)) return await storage.getItem(userSessionKey)
   return {}
 }
+
 export const removeUserSession = async (event: H3Event) => {
   const sessionKey = parseCookies(event)[config.nuxtAuth.sessionCookieName]
   if (!sessionKey) return false
@@ -170,15 +173,15 @@ export const createUser = async (event: H3Event, body: IUser) => {
     // await redis.connect()
 
     // Generate Ulid
-    const userUlid = ulid()
+    // const userUlid = ulid()
 
     // Get document count
-    const allDocuments = await redis.ft.search('idx:User', `*`)
-    const documentCount = allDocuments && allDocuments.total ? allDocuments.total : 0
+    // const allDocuments = await redis.ft.search('idx:User', `*`)
+    // const documentCount = allDocuments && allDocuments.total ? allDocuments.total : 0
 
     // Set new user object
     const userObj = {
-      id: userUlid,
+      // id: userUlid,
       name: body.name,
       email: body.email,
       userAddresses: body.userAddresses || [],
@@ -188,18 +191,18 @@ export const createUser = async (event: H3Event, body: IUser) => {
       password: await hashPassword(body.password),
       active: false,
       verified: false,
-      accountNumber: documentCount + 101013,
+      // accountNumber: documentCount + 101013,
       signupDate: Date.now(),
       passwordChangeDate: Date.now(),
     }
 
     // Save new user
-    const result = await redis.json.set(`User:${userUlid}`, '$', userObj)
+    // const result = await redis.json.set(`User:${userUlid}`, '$', userObj)
 
     // await redis.disconnect()
 
     // Return userId and Token
-    if (result && result === 'OK') return await getSinedJwtToken(userUlid, Number(config.jwtSignupTokenMaxAge))
+    // if (result && result === 'OK') return await getSinedJwtToken(userUlid, Number(config.jwtSignupTokenMaxAge))
     return null
   } catch (err) {
     return errorHandler(event, err)

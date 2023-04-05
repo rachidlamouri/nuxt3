@@ -1,5 +1,5 @@
 import { aggregateFetch } from '~/server/controllers/v1/factory'
-import { userRepository, EntityId } from '~/server/redisSchemas/user'
+// import { userRepository, EntityId } from '~/server/redisSchemas/user'
 import { fetchAll } from '~/server/controllers/v1/factory'
 import AppError from '~/utils/AppError'
 import { protect } from '#auth'
@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
     if (!(await protect(event))) throw new AppError('You are not authorized', 'not_authorized', 404)
     // const query = { ...getQuery(event) }
     console.log('LLLLLLLL')
-    return await fetchAll(userRepository)
+    // return await fetchAll(userRepository)
   } catch (err) {
     return errorHandler(event, err)
   }

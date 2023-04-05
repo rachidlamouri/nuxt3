@@ -1,5 +1,5 @@
-import { redis } from '~/utils/redisClient'
-import { userRepository, EntityId } from '~~/server/redisSchemas/user'
+// import { redis } from '~/utils/redisClient'
+// import { userRepository, EntityId } from '~~/server/redisSchemas/user'
 
 import { sendMail } from '#mailer'
 

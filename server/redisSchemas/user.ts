@@ -1,29 +1,29 @@
-import { emailPattern, passwordPattern } from '~/utils/patterns'
-import { redis } from '../../utils/redisClient'
-import { Schema, Repository, EntityId } from 'redis-om'
+// import { emailPattern, passwordPattern } from '~/utils/patterns'
+// import { redis } from '../../utils/redisClient'
+// import { Schema, Repository, EntityId } from 'redis-om'
 
-const userSchema = new Schema('User', {
-  accountNumber: { type: 'number' },
-  name: { type: 'string' },
-  email: { type: 'string' },
-  media: { type: 'string[]' },
-  password: { type: 'string' },
-  role: {
-    type: 'string', // enum: ['super-admin', 'admin', 'shop-manager', 'customer']},
-  },
-  active: { type: 'boolean' },
-  verified: { type: 'boolean' },
-  signupDate: { type: 'number' },
-  passwordChangeDate: { type: 'number' },
-  passwordResetToken: { type: 'string' },
-  passwordResetExpiryDate: { type: 'number' },
-  salutation: {
-    type: 'string',
-  },
-  userAddresses: { type: 'string[]' },
-})
+// const userSchema = new Schema('User', {
+//   accountNumber: { type: 'number' },
+//   name: { type: 'string' },
+//   email: { type: 'string' },
+//   media: { type: 'string[]' },
+//   password: { type: 'string' },
+//   role: {
+//     type: 'string', // enum: ['super-admin', 'admin', 'shop-manager', 'customer']},
+//   },
+//   active: { type: 'boolean' },
+//   verified: { type: 'boolean' },
+//   signupDate: { type: 'number' },
+//   passwordChangeDate: { type: 'number' },
+//   passwordResetToken: { type: 'string' },
+//   passwordResetExpiryDate: { type: 'number' },
+//   salutation: {
+//     type: 'string',
+//   },
+//   userAddresses: { type: 'string[]' },
+// })
 
-const userRepository = new Repository(userSchema, redis)
+// const userRepository = new Repository(userSchema, redis)
 
 // const createUserIndex = async () => {
 //   await redis.connect()
@@ -33,7 +33,7 @@ const userRepository = new Repository(userSchema, redis)
 
 // createUserIndex()
 
-export { userRepository, EntityId }
+// export { userRepository, EntityId }
 
 // export default {
 //   validator: {

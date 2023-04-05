@@ -1,7 +1,7 @@
 // import { updateUserSession } from './../../../services/index'
 import { H3Event } from 'h3'
-import { redis } from '~/utils/redisClient'
-import { userRepository, EntityId } from '~/server/redisSchemas/user'
+// import { redis } from '~/utils/redisClient'
+// import { userRepository, EntityId } from '~/server/redisSchemas/user'
 
 // import { findByEmail } from '~/server/controllers/v1/factory'
 import AppError from '~/utils/AppError'
@@ -24,7 +24,7 @@ export default defineEventHandler(async (event) => {
     if (!user.verified) throw new AppError('You have not verified your email', 'email_not_verified', 401)
     // const payload = { userId: user[EntityId], userName: user.name, authenticated: true }
 
-    await updateUserSession(event, { userId: user[EntityId], userName: user.name, authenticated: true })
+    // await updateUserSession(event, { userId: user[EntityId], userName: user.name, authenticated: true })
     return { userName: user.name, authenticated: true }
   } catch (err) {
     return errorHandler(event, err)
