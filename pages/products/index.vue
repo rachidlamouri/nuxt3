@@ -55,14 +55,16 @@ const fetchProducts = async () => {
     params: productParams.value,
     // headers: { ...headers, sessionAuthorization: 'jwtsession' },
   })
-  if (error.value) throw createError(error.value)
+  if (error.value) console.log(error.value.data)
   // console.log(data.value)
   fetchedProducts.value = data.value
   products.value = products.value ? products.value.concat(fetchedProducts.value) : fetchedProducts.value
   // products.value = [products.value[0]]
 }
 
-onMounted(() => {
+onMounted(async () => {
+  // await fetchProducts()
+
   const options = { root: null, threshold: 0, rootMargin: '0px 0px 0px 0px' }
   const observer = new IntersectionObserver((entries, observer) => {
     entries.forEach(async (entry) => {

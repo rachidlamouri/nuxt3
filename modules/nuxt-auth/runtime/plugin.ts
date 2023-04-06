@@ -17,7 +17,7 @@ export default defineNuxtPlugin(async () => {
   // console.log('PluginCSRFXXXXXXXXXXXXXXZZZZZZZ', nuxtApp.ssrContext?.event.node.res._csrftoken)
   const res = nuxtApp.ssrContext?.event.node.res ?? {}
   // if ('_csrftoken' in res) nuxtApp.payload.csrfToken = res._csrftoken // expose csrftoken to client
-  if ('_sessionToken' in res) nuxtApp.payload.sessionToken = res._sessionToken // expose csrftoken to client
+  if ('_csrfToken' in res) nuxtApp.payload.csrfToken = res._csrfToken // expose csrftoken to client
   if ('_sessionUser' in res) nuxtApp.payload.sessionUser = res._sessionUser // expose csrftoken to client
   if (process.server) {
     // console.log('NUXTAPP', nuxtApp.ssrContext.event.context)

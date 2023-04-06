@@ -1,6 +1,6 @@
 import { randomUUID, randomBytes, createCipheriv, createDecipheriv } from 'crypto'
 import { FilterXSS } from 'xss'
-import { createUserSession, createSessionKey, verifySessionKey, getUserSession, fetcheSessionUser } from '#auth'
+import { createCsrfCookie, createToken, verifyCsrfKey, getUserSession, fetcheSessionUser } from '#auth'
 import { findById } from '~/server/controllers/v1/factory'
 // import { userRepository, EntityId } from '~/server/redisSchemas/user'
 import { ISession, IUser } from '~/utils/schema'
@@ -19,88 +19,92 @@ const secrefBuffer = Buffer.from(config.nuxtAuth.csrf.encryptSecret)
 // }
 
 export default defineEventHandler(async (event) => {
-  // if (!event.node.req.url?.includes('api')) return
-  // console.log('INCLUDES', event.node.req.url?.includes('api'))
+  // console.log('HERE')
 
   // Get session cookie
-  // let session
-
-  let secret = getCookie(event, config.nuxtAuth.sessionCookieName)
-  // console.log('SECRET', secret)
-  // console.log('SESSION', session)
-
-  // console.log('SESSION', await getUserSession(event))
-  console.log('URL', event.node.req.url)
-  console.log('Process', process.server)
+  let secret = getCookie(event, config.nuxtAuth.csrfCookieName)
+  console.log('SECRET', secret)
 
   // If no session cookie, create session cookie and session
   // If there is a cookie and no sesssion then create session
   if (!secret) {
-    // console.log('11111111')
     secret = randomUUID()
-    await createUserSession(event, secret)
-    // console.log('CCCCCC', getCookie(event, config.nuxtAuth.sessionCookieName))
-    return
-    // console.log('SESSION', await getUserSession(event))
+    await createCsrfCookie(event, secret)
   } else {
-    // console.log('2222222')
     // const session = await getUserSession(event)
-    // console.log('3333333', session)
-    // if (!session || !Object.values(session).length) await createUserSession(event, secret)
+    // if (!session || !Object.values(session).length) await createCsrfCookie(event, secret)
   }
 
-  // let session = await getUserSession(event)
-
-  // console.log('SESSION', session)
+  // console.log('HERE1')
 
   // Encrypt session cookie and add it to event response (To be exposed to front end in plugin)
-  Object.defineProperty(event.node.res, '_sessionToken', {
-    value: createSessionKey(secret),
+  Object.defineProperty(event.node.res, '_csrfToken', {
+    value: createToken(secret),
     enumerable: true,
   })
-
+  // console.log('HERE2')
   // Retreive user info from session if it exists, fetch user and add it to event contexts (used to protect routes} down stream
   // Add user info (ID, ULID, name and authenticated) to event response (to be exposed to front end in plugin)
-  const user = await fetcheSessionUser(event)
-  if (user && Object.values(user).length) {
-    event.context.user = user
-    Object.defineProperty(event.node.res, '_sessionUser', {
-      value: { userName: user.name, authenticated: true },
-      enumerable: true,
-    })
-  }
+  // const user = await fetcheSessionUser(event)
+  // if (user && Object.values(user).length) {
+  //   event.context.user = user
+  //   Object.defineProperty(event.node.res, '_sessionUser', {
+  //     value: { userName: user.name, authenticated: true },
+  //     enumerable: true,
+  //   })
+  // }
+
+  // console.log('HERE3')
 
   // Bail if event req does not include qpi/v
-  if (!event.node.req.url?.includes('api/v')) return
+  // if (!event.node.req.url?.includes('api/v')) return
+
+  // console.log('HERE4', event.node.req.url)
 
   // Retreive sessioncookie from header
   // Decrypt header cookie and veiry that it matches the secret
-  const headerSessionToken = getHeader(event, 'sessionToken') ?? ''
-  if (!verifySessionKey(secret, headerSessionToken))
+  const headerCsrfToken = getHeader(event, 'csrfToken') ?? ''
+
+  console.log('SSSS', secret)
+  // console.log('HEADERS', getRequestHeader(event, 'cookie'))
+  console.log('HHHH', headerCsrfToken)
+  if (!headerCsrfToken || secret) return
+
+  if (headerCsrfToken && secret && !verifyCsrfKey(secret, headerCsrfToken))
     throw createError({
       statusCode: 403,
-      name: 'CSRFError',
-      statusMessage: 'Bad request',
+      name: 'CSRFErrorsssss',
+      statusMessage: 'Bad requestfffff',
       data: { code: 'hedaer_session_token_missing' },
     })
+  // return true
+
+  // console.log('HERE5')
 
   // Retreive body if request method is not GET
   // Decrypt body session token (same token = cookie is sent via header and body if it is not a get s request)  and veiry that it matches the secret
   const body = event.node.req.method !== 'GET' ? await readBody(event) : null
-  if (body && (!body.sessionToken || !verifySessionKey(secret, body.sessionToken)))
+  console.log('BODY', body)
+
+  if (body && (!body.csrfToken || !verifyCsrfKey(secret, body.csrfToken)))
     throw createError({
       statusCode: 403,
       name: 'CSRFError',
-      statusMessage: 'Bad request',
+      statusMessage: 'Bad requestxxxxx',
       data: { code: 'hedaer_body_ession_token_mismatch' },
     })
 
   // Retreive params i request method is  GET
   // Decrypt params session token (same token = cookie is sent via header and params if it is a get request)  and veiry that it matches the secret
   const params = event.node.req.method === 'GET' ? getQuery(event) : null
-  // console.log('PARAMS', params)
+  console.log('PARAMS', params)
 
-  if (params && (!params.sessionToken || !verifySessionKey(secret, (params as QueryObject).sessionToken)))
+  if (
+    params &&
+    Object.keys(params) &&
+    Object.keys(params).length &&
+    (!params.csrfToken || !verifyCsrfKey(secret, (params as QueryObject).csrfToken))
+  )
     throw createError({
       statusCode: 403,
       name: 'CSRFError',
@@ -114,10 +118,10 @@ export default defineEventHandler(async (event) => {
     throw createError({
       statusCode: 403,
       name: 'XXSError',
-      statusMessage: 'Bad request',
+      statusMessage: 'Bad requestddddd',
       data: { code: 'xxs_attempt' },
     })
   }
 
-  console.log('ZZZZZZZZZZZZXXXXXXX')
+  console.log('ZZZZZZZZZZZZ')
 })

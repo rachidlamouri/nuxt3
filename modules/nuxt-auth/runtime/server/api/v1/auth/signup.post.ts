@@ -24,8 +24,11 @@ export default defineEventHandler(async (event) => {
     // console.log(await userRepository.fetch(user[EntityId]))
     // return await createUser(await readBody(event))
     const body = await readBody(event)
+    let token
 
-    const token = await createUser(event, body)
+    const { insertedId } = await createUser(event, body)
+
+    if (insertedId) token = await getSinedJwtToken(insertedId, Number(config.jwtSignupTokenMaxAge))
     if (!token) throw new AppError('Registration failed.  Please try a different email', 'registration_failed', 400)
     const emailBody = emailTemplateRegistration(body.name, event.node.req.headers.origin!, token)
     const info = await sendMail(body.email, config.nuxtMailer.registrationEmailSubject, emailTemplateBase(emailBody))

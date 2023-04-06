@@ -56,7 +56,7 @@ const signin = async () => {
   // })
 
   await navigateTo({ path: '/', query: { login: 'success' } })
-  window.location.reload()
+  // window.location.reload()
   useToast().success('You are logged in')
 }
 

@@ -64,14 +64,38 @@ const storage = createStorage({
 //   }),
 // })
 
-export const createSessionKey = (secret: string): string => {
+export const createToken = (secret: string): string => {
   const iv = randomBytes(16)
   const cipher = createCipheriv(config.nuxtAuth.csrf.encryptAlgorithm, secrefBuffer, iv)
   const encrypted = cipher.update(secret, 'utf8', 'base64') + cipher.final('base64')
   return `${iv.toString('base64')}:${encrypted}`
 }
 
-export const verifySessionKey = (secret: string, token: QueryValue) => {
+export const createCsrfCookie = async (event: H3Event, secret: string) => {
+  let ipAddress = ''
+  // const abstractRes: { ip_address: string } = (await $fetch(
+  //   `${config.abstractApiUrl}/?api_key=${config.abstractApiKey}`
+  // )) || { ip_address: '' }
+  // ipAddress = abstractRes.ip_address
+  setCookie(event, config.nuxtAuth.csrfCookieName, secret, {
+    ...(config.nuxtAuth.cookieOpts as CookieSerializeOptions),
+    expires: new Date(Date.now() + config.nuxtAuth.cookieOpts.expiryInSeconds * 1000),
+  })
+
+  // const session = {
+  //   ipAddress,
+  //   secret,
+  //   // userId: user[EntityId],
+  //   // userName: user.name,
+  //   // isAuthenticated,
+  // }
+
+  // await storage.setItem(secret, session)
+  // return session
+}
+
+export const verifyCsrfKey = (secret: string, token: QueryValue) => {
+  // console.log('?????', secret, token)
   const [iv, encrypted] = (token as string).split(':')
   if (!iv || !encrypted) {
     return false
@@ -80,33 +104,12 @@ export const verifySessionKey = (secret: string, token: QueryValue) => {
   try {
     const decipher = createDecipheriv(config.nuxtAuth.csrf.encryptAlgorithm, secrefBuffer, Buffer.from(iv, 'base64'))
     decrypted = decipher.update(encrypted, 'base64', 'utf-8') + decipher.final('utf-8')
+    // console.log('!!!!!!!!!', secret, token)
+
     return decrypted === secret
   } catch (error) {
     return false
   }
-}
-export const createUserSession = async (event: H3Event, secret: string) => {
-  let ipAddress = ''
-  console.log('HHHHHHere')
-  // const abstractRes: { ip_address: string } = (await $fetch(
-  //   `${config.abstractApiUrl}/?api_key=${config.abstractApiKey}`
-  // )) || { ip_address: '' }
-  // ipAddress = abstractRes.ip_address
-  setCookie(event, config.nuxtAuth.sessionCookieName, secret, {
-    ...(config.nuxtAuth.cookieOpts as CookieSerializeOptions),
-    expires: new Date(Date.now() + config.nuxtAuth.cookieOpts.expiryInSeconds * 1000),
-  })
-
-  const session = {
-    ipAddress,
-    secret,
-    // userId: user[EntityId],
-    // userName: user.name,
-    // isAuthenticated,
-  }
-
-  await storage.setItem(secret, session)
-  return session
 }
 
 export const updateUserSession = async (event: H3Event, payload: object) => {
@@ -169,19 +172,10 @@ export const checkPassword = async (password: string, hash: string) => {
 }
 
 export const createUser = async (event: H3Event, body: IUser) => {
-  try {
-    // await redis.connect()
-
-    // Generate Ulid
-    // const userUlid = ulid()
-
-    // Get document count
-    // const allDocuments = await redis.ft.search('idx:User', `*`)
-    // const documentCount = allDocuments && allDocuments.total ? allDocuments.total : 0
-
-    // Set new user object
-    const userObj = {
-      // id: userUlid,
+  return await mongoClient
+    .db()
+    .collection('users')
+    .insertOne({
       name: body.name,
       email: body.email,
       userAddresses: body.userAddresses || [],
@@ -191,70 +185,112 @@ export const createUser = async (event: H3Event, body: IUser) => {
       password: await hashPassword(body.password),
       active: false,
       verified: false,
-      // accountNumber: documentCount + 101013,
-      signupDate: Date.now(),
-      passwordChangeDate: Date.now(),
-    }
+      accountNumber: (await mongoClient.db().collection('users').countDocuments()) + 101013,
+      signupDate: new Date(Date.now()),
+      passwordChangeDate: new Date(Date.now()),
+    })
+  // try {
+  //   // await redis.connect()
 
-    // Save new user
-    // const result = await redis.json.set(`User:${userUlid}`, '$', userObj)
+  //   // Generate Ulid
+  //   // const userUlid = ulid()
 
-    // await redis.disconnect()
+  //   // Get document count
+  //   // const allDocuments = await redis.ft.search('idx:User', `*`)
+  //   // const documentCount = allDocuments && allDocuments.total ? allDocuments.total : 0
 
-    // Return userId and Token
-    // if (result && result === 'OK') return await getSinedJwtToken(userUlid, Number(config.jwtSignupTokenMaxAge))
-    return null
-  } catch (err) {
-    return errorHandler(event, err)
-  }
+  //   // Set new user object
+  //   const userObj = {
+  //     // id: userUlid,
+  //     name: body.name,
+  //     email: body.email,
+  //     userAddresses: body.userAddresses || [],
+  //     phoneNumber: body.phoneNumber || '',
+  //     media: [],
+  //     role: 'customer',
+  //     password: await hashPassword(body.password),
+  //     active: false,
+  //     verified: false,
+  //     // accountNumber: documentCount + 101013,
+  //     signupDate: Date.now(),
+  //     passwordChangeDate: Date.now(),
+  //   }
+
+  //   // Save new user
+  //   // const result = await redis.json.set(`User:${userUlid}`, '$', userObj)
+
+  //   // await redis.disconnect()
+
+  //   // Return userId and Token
+  //   // if (result && result === 'OK') return await getSinedJwtToken(userUlid, Number(config.jwtSignupTokenMaxAge))
+  //   return null
+  // } catch (err) {
+  //   return errorHandler(event, err)
+  // }
 }
 
-export const findByEmail = async (event: H3Event, email: string) => {
-  try {
-    console.log('XXXXXXXX', email)
-    // await appRedis.connect()
-    const results = await appRedis.client.ft.search('idx:User', `@email:{${email.replace(/[.@\\]/g, '\\$&')}}`)
-    // await appRedis.disconnect()
-    console.log(results.total)
-    if (results && results.total > 0) return { id: results.documents[0].id, ...results.documents[0].value }
-    return {}
-  } catch (err) {
-    return errorHandler(event, err)
-  }
+export const findUserByEmail = async (event: H3Event, email: string) => {
+  // throw new AppError('We cannot find a user with this email in our database', 'user_not_found', 404)
+  // try {
+  // console.log('XXXXXXXX', email)
+  return await mongoClient.db().collection('users').findOne({ email })
+  // // await appRedis.connect()
+  // const results = await appRedis.client.ft.search('idx:User', `@email:{${email.replace(/[.@\\]/g, '\\$&')}}`)
+  // // await appRedis.disconnect()
+  // console.log(results.total)
+  // if (results && results.total > 0) return { id: results.documents[0].id, ...results.documents[0].value }
+  // return {}
+  // } catch (err) {
+  //   return errorHandler(event, err)
+  // }
 }
 
 export const findUserById = async (event: H3Event, id: string) => {
-  try {
-    // await redis.connect()
-    const results = await redis.ft.search('idx:User', `@id:${id}`)
-    // await redis.disconnect()
-    // console.log(results)
-    if (results && results.total > 0) return { id: results.documents[0].id, ...results.documents[0].value }
-    return {}
-  } catch (err) {
-    return errorHandler(event, err)
-  }
+  return await mongoClient
+    .db()
+    .collection('users')
+    .findOne({ _id: new ObjectId(id) })
+  // try {
+  //   // await redis.connect()
+  //   const results = await redis.ft.search('idx:User', `@id:${id}`)
+  //   // await redis.disconnect()
+  //   // console.log(results)
+  //   if (results && results.total > 0) return { id: results.documents[0].id, ...results.documents[0].value }
+  //   return {}
+  // } catch (err) {
+  //   return errorHandler(event, err)
+  // }
 }
 
 export const findUserByIdAndUpdate = async (event: H3Event, id: string, payload: object) => {
-  try {
-    // let newEntity
-    const found = await findUserById(event, id)
-    console.log(found)
-    if (!found || Object.values(found).length == 0)
-      throw new AppError('We cannot find any records associated with this ID', 'user_by_id_not_found', 404)
-    // await redis.connect()
-    const result = await redis.json.set(`User:${id}`, '$', { ...found, ...payload })
-    // if (found) newEntity = await repository.save({ ...found, ...payload })
-    // await redis.disconnect()
-    // return // Return userId and Token
-    if (result && result === 'OK') return found
-    return {}
+  if (!id) throw new AppError('id is required', 'user_id_missing', 404)
+  // try {
+  // let newEntity
+  // const found = await findUserById(event, id)
+  // console.log('F', found)
+  // if (!found || Object.values(found).length == 0)
+  //   throw new AppError('We cannot find any records associated with this ID', 'user_by_id_not_found', 404)
+  return await mongoClient
+    .db()
+    .collection('users')
+    .replaceOne({ _id: new ObjectId(id) }, { ...(await findUserById(event, id)), ...payload })
+  // await redis.connect()
+  // const result = await redis.json.set(`User:${id}`, '$', { ...found, ...payload })
+  // if (found) newEntity = await repository.save({ ...found, ...payload })
+  // await redis.disconnect()
+  // return // Return userId and Token
+  // if (!verified)
+  //   throw new AppError(
+  //     'We are not able to update your records,  Please call customer service',
+  //     'user_by_id_not_found',
+  //     404
+  //   )
+  // return verified
 
-    // return newEntity as IUser
-  } catch (err) {
-    return errorHandler(event, err)
-  }
+  // return newEntity as IUser
+  // } catch (err) {
+  //   return errorHandler(event, err)
+  // }
 }
 
 export const fetcheSessionUser = async (event: H3Event) => {

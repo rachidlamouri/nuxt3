@@ -17,6 +17,7 @@ const PACKAGE_NAME = 'nuxt-auth'
 const defaults = {
   isEnabled: true,
   sessionCookieName: 'userSID',
+  csrfCookieName: 'csrfTokenID',
   cookieOpts: {
     path: '/',
     httpOnly: true,
@@ -190,11 +191,14 @@ export default defineNuxtModule({
         [
           "declare module  '#auth' {",
           `  const createUser: typeof import('${resolve('./runtime/server/services')}').createUser`,
-          `  const findByEmail: typeof import('${resolve('./runtime/server/services')}').findByEmail`,
+          `  const findUserByEmail: typeof import('${resolve('./runtime/server/services')}').findUserByEmail`,
           `  const findUserByIdAndUpdate: typeof import('${resolve(
             './runtime/server/services'
           )}').findUserByIdAndUpdate`,
           `  const findUserById: typeof import('${resolve('./runtime/server/services')}').findUserById`,
+          `  const createToken: typeof import('${resolve('./runtime/server/services')}').createToken`,
+          `  const createCsrfCookie: typeof import('${resolve('./runtime/server/services')}').createCsrfCookie`,
+          `  const verifyCsrfKey: typeof import('${resolve('./runtime/server/services')}').verifyCsrfKey`,
           `  const createUserSession: typeof import('${resolve('./runtime/server/services')}').createUserSession`,
           `  const updateUserSession: typeof import('${resolve('./runtime/server/services')}').updateUserSession`,
           `  const getUserSession: typeof import('${resolve('./runtime/server/services')}').getUserSession`,

@@ -12,13 +12,16 @@ import { useNuxtApp, useFetch } from '#app'
 // }
 export const useCsrfFetch = (request: string, opts) => {
   const nuxtApp = useNuxtApp()
-  const sessionToken = nuxtApp.payload.sessionToken
-  const headers = { ...useRequestHeaders(['cookie']), sessionToken }
+  // console.log('VVVVVVV', nuxtApp.payload.csrfToken)
+  const csrfToken = nuxtApp.payload.csrfToken
+  const headers = { ...useRequestHeaders(['cookie']), csrfToken }
+  // console.log('KKKKK', headers)
+
   const options = { ...opts }
   if (opts.body) {
-    options.body.sessionToken = sessionToken
+    options.body.csrfToken = csrfToken
   }
-  options.params = { ...options.params, sessionToken: sessionToken }
+  options.params = { ...options.params, csrfToken: csrfToken }
   return useFetch(request, { ...options, headers })
 }
 
