@@ -27,11 +27,27 @@ const productParams = computed(() => {
   }
 })
 
-const { data, error } = await useFetch(`products/list`, {
+// const fetchProducts = async () => {
+// const headers = useRequestHeaders(['cookie']) as HeadersInit
+const { data, error } = await useCsrfFetch(`products`, {
   method: 'GET',
   baseURL: config.apiUrl,
   params: productParams.value,
+  // headers: { ...headers, sessionAuthorization: 'jwtsession' },
 })
+console.log(data.value)
+if (error.value) console.log(error.value.data)
+// console.log(data.value)
+// fetchedProducts.value = data.value
+// products.value = products.value ? products.value.concat(fetchedProducts.value) : fetchedProducts.value
+// products.value = [products.value[0]]
+// }
+
+// const { data, error } = await useFetch(`products/list`, {
+//   method: 'GET',
+//   baseURL: config.apiUrl,
+//   params: productParams.value,
+// })
 
 if (error.value) throw createError(error.value)
 if (!data.value) throw createError("can't find data")
@@ -142,7 +158,7 @@ const addItemToCart = async () => {
         </div>
         <div v-else>... loading</div>
         <div v-if="relatedProducts && (relatedProducts as Array<IProduct>).length">
-          <ProductsList :products="(relatedProducts  as Array<IProduct>)" />
+          <CommerceProducts :products="(relatedProducts  as Array<IProduct>)" />
         </div>
         <div v-else>... loading</div>
       </div>

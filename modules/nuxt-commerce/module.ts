@@ -199,6 +199,27 @@ export default defineNuxtModule({
       logger.info(`Commerce API "migrate.post" endpoint registered at "${options.api.basePath}/migrate"`)
     }
 
+    // From the runtime directory
+    addComponent({
+      name: 'CommerceProducts', // name of the component to be used in vue templates
+      // export: 'MySuperComponent', // (optional) if the component is a named (rather than default) export
+      filePath: resolve('runtime/components/CommerceProducts.vue'),
+    })
+
+    addComponent({
+      name: 'CommerceProductList', // name of the component to be used in vue templates
+      // export: 'MySuperComponent', // (optional) if the component is a named (rather than default) export
+      filePath: resolve('runtime/components/CommerceProductList.vue'),
+    })
+
+    addComponent({
+      name: 'CommerceProductCard', // name of the component to be used in vue templates
+      // export: 'MySuperComponent', // (optional) if the component is a named (rather than default) export
+      filePath: resolve('runtime/components/CommerceProductCard.vue'),
+    })
+
+    nuxt.options.css.push(resolve('./runtime/assets/style.scss'))
+
     logger.success(`${PACKAGE_NAME} module setup complete`)
   },
 })
