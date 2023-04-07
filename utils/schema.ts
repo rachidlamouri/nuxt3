@@ -44,7 +44,7 @@ export type ISession = z.infer<typeof sessionSchema>
 
 /************ User schema **************/
 export const userSchema = z.object({
-  id: z.string(),
+  _id: z.string(),
   name: z.string(),
   email: z
     .string({

@@ -1,6 +1,6 @@
 import { randomUUID, randomBytes, createCipheriv, createDecipheriv } from 'crypto'
 import { FilterXSS } from 'xss'
-import { createCsrfCookie, createToken, verifyCsrfKey, getUserSession, fetcheSessionUser } from '#auth'
+import { createCsrfCookie, createToken, verifyCsrfKey, getUserSession, fetcheUserSession } from '#auth'
 import { findById } from '~/server/controllers/v1/factory'
 // import { userRepository, EntityId } from '~/server/redisSchemas/user'
 import { ISession, IUser } from '~/utils/schema'
@@ -45,14 +45,16 @@ export default defineEventHandler(async (event) => {
   // console.log('HERE2')
   // Retreive user info from session if it exists, fetch user and add it to event contexts (used to protect routes} down stream
   // Add user info (ID, ULID, name and authenticated) to event response (to be exposed to front end in plugin)
-  // const user = await fetcheSessionUser(event)
-  // if (user && Object.values(user).length) {
-  //   event.context.user = user
-  //   Object.defineProperty(event.node.res, '_sessionUser', {
-  //     value: { userName: user.name, authenticated: true },
-  //     enumerable: true,
-  //   })
-  // }
+  const session = await fetcheUserSession(event)
+  console.log('XXXXXXX', session)
+  if (session && Object.values(session).length) {
+    console.log('UUUUU', session)
+    event.context.session = session
+    Object.defineProperty(event.node.res, '_userSession', {
+      value: { userName: (session as Storage).userName, authenticated: true },
+      enumerable: true,
+    })
+  }
 
   // console.log('HERE3')
 

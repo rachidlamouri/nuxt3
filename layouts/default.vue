@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { storage } from '#auth'
 useHead({
   title: useRoute().meta.title ? `ACS | ${useRoute().meta.title}` : '',
   meta: [
@@ -27,7 +28,7 @@ const nuxtApp = useNuxtApp(0)
 const config = useRuntimeConfig()
 const { authUser } = useAuthStore()
 // console.log(nuxtApp.payload.sessionUser)
-authUser.value = { ...nuxtApp.payload.sessionUser }
+authUser.value = { ...nuxtApp.payload.userSession }
 
 // const { data, pending, error, refresh } = await useCsrfFetch('session', {
 //   baseURL: config.apiUrl,

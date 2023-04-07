@@ -16,7 +16,7 @@ import { randomBytes } from 'crypto'
 const PACKAGE_NAME = 'nuxt-auth'
 const defaults = {
   isEnabled: true,
-  sessionCookieName: 'userSID',
+  sessionCookieName: 'userSessionSID',
   csrfCookieName: 'csrfTokenID',
   cookieOpts: {
     path: '/',
@@ -206,7 +206,7 @@ export default defineNuxtModule({
           `  const createSessionKey: typeof import('${resolve('./runtime/server/services')}').createSessionKey`,
           `  const verifySessionKey: typeof import('${resolve('./runtime/server/services')}').verifySessionKey`,
           `  const checkPassword: typeof import('${resolve('./runtime/server/services')}').checkPassword`,
-          `  const fetcheSessionUser: typeof import('${resolve('./runtime/server/services')}').fetcheSessionUser`,
+          `  const fetcheUserSession: typeof import('${resolve('./runtime/server/services')}').fetcheUserSession`,
           `  const protect: typeof import('${resolve('./runtime/server/services')}').protect`,
           // `  const getUserSession: typeof import('${resolve('./runtime/server/services')}').getUserSession`,
           '}',
@@ -229,6 +229,12 @@ export default defineNuxtModule({
         route: `${options.api.basePath}/email`,
       })
       logger.info(`Auth API "email.get" endpoint registered at "${options.api.basePath}/email"`)
+
+      addServerHandler({
+        handler: resolve(`./runtime/server/api/v1/auth/session.get`),
+        route: `${options.api.basePath}/session`,
+      })
+      logger.info(`Auth API "session.get" endpoint registered at "${options.api.basePath}/session"`)
     }
 
     // addServerHandler({

@@ -1,5 +1,6 @@
 // import { updateUserSession } from './../../../services/index'
 import { H3Event } from 'h3'
+import { createUserSession } from '#auth'
 // import { redis } from '~/utils/redisClient'
 // import { userRepository, EntityId } from '~/server/redisSchemas/user'
 
@@ -9,6 +10,7 @@ import errorHandler from '~/utils/errorHandler'
 import { authenticatedDataSchema } from '~/utils/schema'
 // import { setUserSession } from '#session'
 import { updateUserSession, checkPassword, findUserByEmail } from '#auth'
+import { ISession, ISignupUser, IUser } from '~/utils/schema'
 
 const config = useRuntimeConfig()
 
@@ -22,6 +24,7 @@ export default defineEventHandler(async (event) => {
     if (!(await checkPassword(password, user.password as string)))
       throw new AppError('Invalid email or password', 'invalid_password', 401)
     if (!user.verified) throw new AppError('You have not verified your email', 'email_not_verified', 401)
+    await createUserSession(event, user)
     // const payload = { userId: user[EntityId], userName: user.name, authenticated: true }
 
     // await updateUserSession(event, { userId: user[EntityId], userName: user.name, authenticated: true })

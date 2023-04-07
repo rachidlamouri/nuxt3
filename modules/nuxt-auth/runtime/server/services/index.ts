@@ -42,7 +42,7 @@ const secrefBuffer = Buffer.from(config.nuxtAuth.encryptSecret)
 // const nuxtApp = useNuxtApp()
 // console.log(nuxtApp)
 
-const storage = createStorage({
+export const storage = createStorage({
   driver: mongodbDriver({
     connectionString: config.dbUrl,
     databaseName: 'acs',
@@ -94,6 +94,30 @@ export const createCsrfCookie = async (event: H3Event, secret: string) => {
   // return session
 }
 
+export const createUserSession = async (event: H3Event, user: IUser) => {
+  const secret = randomUUID()
+  let ipAddress = ''
+  // const abstractRes: { ip_address: string } = (await $fetch(
+  //   `${config.abstractApiUrl}/?api_key=${config.abstractApiKey}`
+  // )) || { ip_address: '' }
+  // ipAddress = abstractRes.ip_address
+  setCookie(event, config.nuxtAuth.sessionCookieName, secret, {
+    ...(config.nuxtAuth.cookieOpts as CookieSerializeOptions),
+    expires: new Date(Date.now() + config.nuxtAuth.cookieOpts.expiryInSeconds * 1000),
+  })
+
+  const session = {
+    ipAddress,
+    secret,
+    userId: user._id,
+    userName: user.name,
+    isAuthenticated: true,
+  }
+
+  await storage.setItem(secret, session)
+  return session
+}
+
 export const verifyCsrfKey = (secret: string, token: QueryValue) => {
   // console.log('?????', secret, token)
   const [iv, encrypted] = (token as string).split(':')
@@ -141,23 +165,30 @@ export const updateUserSession = async (event: H3Event, payload: object) => {
   // await storage.setItem(secret, session, { ttl: config.nuxtAuth.cookieOpts.expiryInSeconds })
 }
 
-export const getUserSession = async (event: H3Event) => {
-  // let session
+export const fetcheUserSession = async (event: H3Event) => {
+  let session
   const userSessionKey = parseCookies(event)[config.nuxtAuth.sessionCookieName]
-  if (!userSessionKey) return {}
-  if (await storage.hasItem(userSessionKey)) return await storage.getItem(userSessionKey)
-  return {}
-}
-
-export const removeUserSession = async (event: H3Event) => {
+  if (!userSessionKey) return null
+  if (await storage.hasItem(userSessionKey)) session = await storage.getItem(userSessionKey)
+  if (session) return session
   const sessionKey = parseCookies(event)[config.nuxtAuth.sessionCookieName]
-  if (!sessionKey) return false
   setCookie(event, config.nuxtAuth.sessionCookieName, sessionKey, {
     expires: new Date(Date.now()),
     secure: config.nuxtAuth.session.cookieSecure,
     httpOnly: config.nuxtAuth.session.cookieHttpOnly,
   })
-  if (!(await storage.hasItem(sessionKey))) return false
+  return null
+}
+
+export const removeUserSession = async (event: H3Event) => {
+  const sessionKey = parseCookies(event)[config.nuxtAuth.sessionCookieName]
+  if (!sessionKey) return null
+  setCookie(event, config.nuxtAuth.sessionCookieName, sessionKey, {
+    expires: new Date(Date.now()),
+    secure: config.nuxtAuth.session.cookieSecure,
+    httpOnly: config.nuxtAuth.session.cookieHttpOnly,
+  })
+  if (!(await storage.hasItem(sessionKey))) return null
   await storage.removeItem(sessionKey)
   return true
 }
