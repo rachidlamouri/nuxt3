@@ -1,5 +1,23 @@
+// import { IUserAddress } from './schema'
 import { z } from 'zod'
 import { passwordPattern } from '~/utils/patterns'
+
+// User Address schema
+export const userAddressSchema = z.object({
+  salutation: z.string(),
+  addressType: z.enum(['Residential', 'Commercial']),
+  name: z.string(),
+  compnay: z.string(),
+  country: z.string(),
+  street: z.string(),
+  street2: z.string(),
+  city: z.string(),
+  provence: z.string(),
+  postalCode: z.string(),
+  defaultBilling: z.boolean(),
+  defaultShipping: z.boolean(),
+})
+export type IUserAddress = z.infer<typeof userAddressSchema>
 
 // Product schema
 export const productSchema = z.object({
@@ -42,6 +60,23 @@ export const sessionSchema = z.object({
 })
 export type ISession = z.infer<typeof sessionSchema>
 
+// /************ User IAddress **************/
+// export const userAddressSchema = z.object({
+//   salutation: z.string(),
+//   addressType: z.enum(['Residential', 'Commercial']),
+//   name: z.string(),
+//   compnay: z.string(),
+//   country: z.string(),
+//   street: z.string(),
+//   street2: z.string(),
+//   city: z.string(),
+//   provence: z.string(),
+//   postalCode: z.string(),
+//   defaultBilling: z.boolean(),
+//   defaultShipping: z.boolean(),
+// })
+// export type IUserAddress = z.infer<typeof userAddressSchema>
+
 /************ User schema **************/
 export const userSchema = z.object({
   _id: z.string(),
@@ -52,22 +87,7 @@ export const userSchema = z.object({
     })
     .email({ message: 'Please enter a valid email' }),
   password: z.string(),
-  userAddresses: z.array(
-    z.object({
-      salutation: z.string(),
-      addressType: z.enum(['Residential', 'Commercial']),
-      name: z.string(),
-      compnay: z.string(),
-      country: z.string(),
-      street: z.string(),
-      street2: z.string(),
-      city: z.string(),
-      provence: z.string(),
-      postalCode: z.string(),
-      defaultBilling: z.boolean(),
-      defaultShipping: z.boolean(),
-    })
-  ),
+  userAddresses: z.array(userAddressSchema),
   phoneNumber: z.string(),
   media: z.array(z.string()),
   role: z.string(),
@@ -78,9 +98,9 @@ export const userSchema = z.object({
 })
 export type IUser = z.infer<typeof userSchema>
 
-/************ User address schema **************/
-export const userAddressSchema = userSchema.shape.userAddresses.element
-export type IUserAddress = z.infer<typeof userAddressSchema>
+// /************ User address schema **************/
+// export const userAddressSchema = userSchema.shape.userAddresses.element
+// export type IUserAddress = z.infer<typeof userAddressSchema>
 
 // Public User schema
 export const publicUserSchema = userSchema.pick({
@@ -160,7 +180,7 @@ export type IAuthenticatedData = z.infer<typeof authenticatedDataSchema>
 
 // Cart item schema
 export const cartItemSchema = productSchema
-  .partial({
+  .pick({
     _id: true,
     acsPartNumber: true,
     price: true,
@@ -170,26 +190,9 @@ export const cartItemSchema = productSchema
   .extend({ quantity: z.number().int().positive() })
 export type ICartItem = z.infer<typeof cartItemSchema>
 
-// // Address schema
-// export const userAddressSchema = z.object({
-//   salutation: z.string(),
-//   addressType: z.enum(['Residential', 'Commercial']),
-//   name: z.string(),
-//   compnay: z.string(),
-//   country: z.string(),
-//   street: z.string(),
-//   street2: z.string(),
-//   city: z.string(),
-//   provence: z.string(),
-//   postalCode: z.string(),
-//   defaultBilling: z.boolean(),
-//   defaultShipping: z.boolean(),
-// })
-// export type IUserAddress = z.infer<typeof userAddressSchema>
-
 /************ Cart schema **************/
 export const cartSchema = z.object({
-  _id: z.string(),
+  _id: z.string().optional(),
   items: z
     .array(
       z.object({
@@ -207,32 +210,13 @@ export const cartSchema = z.object({
       invalid_type_error: 'Name must be a string',
     })
     .email({ message: 'Please enter a valid email' }),
-  password: z.string(),
-  userAddresses: z.array(
-    z.object({
-      salutation: z.string(),
-      addressType: z.enum(['Residential', 'Commercial']),
-      name: z.string(),
-      compnay: z.string(),
-      country: z.string(),
-      street: z.string(),
-      street2: z.string(),
-      city: z.string(),
-      provence: z.string(),
-      postalCode: z.string(),
-      defaultBilling: z.boolean(),
-      defaultShipping: z.boolean(),
-    })
-  ),
+  billingAddress: userAddressSchema,
+  shippingAddress: userAddressSchema,
   phoneNumber: z.string(),
-  media: z.array(z.string()),
-  role: z.string(),
-  active: z.boolean(),
-  verified: z.boolean(),
-  signupDate: z.date(),
-  passwordChangeDate: z.date(),
+  total: z.number(),
+  status: z.string(),
 })
-export type ICart = z.infer<typeof userSchema>
+export type ICart = z.infer<typeof cartSchema>
 
 // Registration user schema
 export const contactFormSchema = z.object({

@@ -1,18 +1,18 @@
 // import {string } from 'mongodb'
 
-import { IProduct, ICart, ICartItem } from '~/utils/schema'
+import { IProduct, ICartItem } from '~/utils/schema'
 
 export const useCartStore = () => {
   // const { errorMsg, message } = useAppState()
   const config = useRuntimeConfig()
 
-  const cart = useState('cart', (): ICart | unknown => ({
-    // items: [],
-    // customer: {},
-    // billingAddress: {},
-    // shippingAddress: {},
-    // total: 0,
-    // status: 'cart',
+  const cart = useState('cart', () => ({
+    items: [] as Array<ICartItem>,
+    customer: {},
+    billingAddress: {},
+    shippingAddress: {},
+    total: 0,
+    status: 'cart',
   }))
 
   // const updateLocalStorage = () => {
@@ -35,8 +35,8 @@ export const useCartStore = () => {
     }
     // if (!data.value) throw createError('No data from saveCart')
 
-    const cartId = useCookie('cartId', { maxAge: 1 * 60 * 60 })
-    cartId.value = data.value as string
+    // const cartId = useCookie('cartId', { maxAge: 1 * 60 * 60 })
+    // cartId.value = data.value as string
     return true
   }
 
@@ -49,7 +49,6 @@ export const useCartStore = () => {
     return {
       _id: item._id,
       acsPartNumber: item.acsPartNumber,
-      // name: item.acsPartNumber,
       price: item.price,
       media: item.media,
       tbq: item.tbq,
@@ -62,17 +61,8 @@ export const useCartStore = () => {
       ...populateItem(item),
     }
 
-    if (!cart.value || (cart.value &&  ||!('items' in cart.value))) {
-      cart.value = {
-        items: [{ ...cartItem, quantity: 1 }],
-        // if(!cart.value.hasOwnProperty('items')) {
-        // cart.value.items =
-      }
-      // Object.defineProperty(cart.value, 'items', {
-      //   value: [{ ...cartItem, quantity: 1 }],
-      //   // enumerable: true,
-      // })
-      // cart.value.items=[{ ...cartItem, quantity: 1 }]
+    if (!cart.value.items.length) {
+      cart.value.items.push({ ...cartItem, quantity: 1 })
     } else {
       const index = cart.value.items.findIndex((it: ICartItem) => it._id == item._id)
       if (index !== -1) {
@@ -120,7 +110,7 @@ export const useCartStore = () => {
     cart.value.total = cartTotal()
   }
 
-  const updateCart = (item: ICartItem, action: string) => {
+  const updateCart = (item: IProduct, action: string) => {
     // console.log('Item', item)
     const cartItem = {
       ...populateItem(item),

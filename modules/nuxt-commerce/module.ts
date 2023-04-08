@@ -29,7 +29,8 @@ const defaults = {
   api: {
     isEnabled: true,
     methods: 'get',
-    basePath: '/api/v1/products',
+    productsPath: '/api/v1/products',
+    ordersPath: '/api/v1/orders',
   },
   csrf: {
     isEnabled: true,
@@ -188,15 +189,21 @@ export default defineNuxtModule({
     if (options.api.isEnabled) {
       for (const apiMethod of options.api.methods.split(',').map((m) => m.trim())) {
         const handler = resolve(`./runtime/server/api/v1/products/index.${apiMethod}`)
-        addServerHandler({ handler, route: `${options.api.basePath}` })
+        addServerHandler({ handler, route: `${options.api.productsPath}` })
       }
-      logger.info(`Commerce API "${options.api.methods}" endpoints registered at "${options.api.basePath}"`)
+      logger.info(`Commerce API "${options.api.methods}" endpoints registered at "${options.api.productsPath}"`)
 
       addServerHandler({
         handler: resolve(`./runtime/server/api/v1/products/migrate.post`),
-        route: `${options.api.basePath}/migrate`,
+        route: `${options.api.productsPath}/migrate`,
       })
-      logger.info(`Commerce API "migrate.post" endpoint registered at "${options.api.basePath}/migrate"`)
+      logger.info(`Commerce API "migrate.post" endpoint registered at "${options.api.productsPath}/migrate"`)
+
+      addServerHandler({
+        handler: resolve(`./runtime/server/api/v1/orders/index.post`),
+        route: `${options.api.ordersPath}/`,
+      })
+      logger.info(`Commerce API "migrate.post" endpoint registered at "${options.api.ordersPath}"`)
     }
 
     // From the runtime directory
