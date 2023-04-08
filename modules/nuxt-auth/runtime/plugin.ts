@@ -20,7 +20,7 @@ export default defineNuxtPlugin(async () => {
   if ('_csrfToken' in res) nuxtApp.payload.csrfToken = res._csrfToken // expose csrftoken to client
   if ('_userSession' in res) nuxtApp.payload.userSession = res._userSession // expose csrftoken to client
   if (process.server) {
-    console.log('NUXTAPP', nuxtApp.payload.userSession)
+    // console.log('NUXTAPP', nuxtApp.payload.userSession)
     // nuxtApp.payload.sessionMeta = nuxtApp.ssrContext.event.context.sessionMeta
   }
 

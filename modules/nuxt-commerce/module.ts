@@ -153,7 +153,7 @@ export default defineNuxtModule({
     // addServerHandler({ handler: resolve('runtime/server/middleware/session') })
 
     // 4. Add composables
-    // addImportsDir(resolve('runtime/composables'))
+    addImportsDir(resolve('runtime/composables'))
 
     // 5. Add plugin
     // addPlugin(resolve('runtime/plugin'))
@@ -216,6 +216,36 @@ export default defineNuxtModule({
       name: 'CommerceProductCard', // name of the component to be used in vue templates
       // export: 'MySuperComponent', // (optional) if the component is a named (rather than default) export
       filePath: resolve('runtime/components/CommerceProductCard.vue'),
+    })
+
+    addComponent({
+      name: 'CommerceProductDetails', // name of the component to be used in vue templates
+      // export: 'MySuperComponent', // (optional) if the component is a named (rather than default) export
+      filePath: resolve('runtime/components/CommerceProductDetails.vue'),
+    })
+
+    addComponent({
+      name: 'CommerceCart', // name of the component to be used in vue templates
+      // export: 'MySuperComponent', // (optional) if the component is a named (rather than default) export
+      filePath: resolve('runtime/components/CommerceCart.vue'),
+    })
+
+    addComponent({
+      name: 'CommerceCartEmpty', // name of the component to be used in vue templates
+      // export: 'MySuperComponent', // (optional) if the component is a named (rather than default) export
+      filePath: resolve('runtime/components/CommerceCartEmpty.vue'),
+    })
+
+    addComponent({
+      name: 'CommerceCartItems', // name of the component to be used in vue templates
+      // export: 'MySuperComponent', // (optional) if the component is a named (rather than default) export
+      filePath: resolve('runtime/components/CommerceCartItems.vue'),
+    })
+
+    addComponent({
+      name: 'CommerceCartTotal', // name of the component to be used in vue templates
+      // export: 'MySuperComponent', // (optional) if the component is a named (rather than default) export
+      filePath: resolve('runtime/components/CommerceCartTotal.vue'),
     })
 
     nuxt.options.css.push(resolve('./runtime/assets/style.scss'))

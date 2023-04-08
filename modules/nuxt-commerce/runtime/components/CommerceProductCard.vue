@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { type PropType } from 'vue'
 import { useToast } from 'vue-toastification'
+import { IProduct, ICartItem } from '~/utils/schema'
 
 // import { useCartStore } from '~~/stores/useCartStorexxexx'
-import { IProduct } from '~/utils/schema'
 const props = defineProps({
   product: {
     type: Object as PropType<IProduct>,
@@ -11,13 +11,14 @@ const props = defineProps({
   },
 })
 
-const { addToCart, saveCart } = useCartStore()
+const { addRemoveItem } = useCartStore()
 const addingToCart = ref()
 
 const addItemToCart = async () => {
   addingToCart.value = true
-  addToCart(props.product)
-  if (await saveCart()) useToast().success(`1 ${props.product.acsPartNumber} added to your cart`)
+  // addRemoveItem(props.product, 1)
+  if (await addRemoveItem(props.product, 'inc'))
+    useToast().success(`1 ${props.product.acsPartNumber} added to your cart`)
   addingToCart.value = false
 }
 </script>

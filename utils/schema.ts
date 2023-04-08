@@ -159,7 +159,15 @@ export const authenticatedDataSchema = z.object({
 export type IAuthenticatedData = z.infer<typeof authenticatedDataSchema>
 
 // Cart item schema
-export const cartItemSchema = productSchema.extend({ quantity: z.number().int().positive() })
+export const cartItemSchema = productSchema
+  .partial({
+    _id: true,
+    acsPartNumber: true,
+    price: true,
+    media: true,
+    tbq: true,
+  })
+  .extend({ quantity: z.number().int().positive() })
 export type ICartItem = z.infer<typeof cartItemSchema>
 
 // // Address schema
@@ -182,15 +190,17 @@ export type ICartItem = z.infer<typeof cartItemSchema>
 /************ Cart schema **************/
 export const cartSchema = z.object({
   _id: z.string(),
-  items: z.array(
-    z.object({
-      _id: z.string(),
-      acsPartNumber: z.enum(['Residential', 'Commercial']),
-      price: z.number(),
-      salePrice: z.number(),
-      tbq: z.boolean(),
-    })
-  ),
+  items: z
+    .array(
+      z.object({
+        _id: z.string(),
+        acsPartNumber: z.enum(['Residential', 'Commercial']),
+        price: z.number(),
+        salePrice: z.number(),
+        tbq: z.boolean(),
+      })
+    )
+    .optional(),
   name: z.string(),
   email: z
     .string({

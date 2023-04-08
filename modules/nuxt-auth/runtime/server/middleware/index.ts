@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
 
   // Get session cookie
   let secret = getCookie(event, config.nuxtAuth.csrfCookieName)
-  console.log('SECRET', secret)
+  // console.log('SECRET', secret)
 
   // If no session cookie, create session cookie and session
   // If there is a cookie and no sesssion then create session
@@ -46,9 +46,9 @@ export default defineEventHandler(async (event) => {
   // Retreive user info from session if it exists, fetch user and add it to event contexts (used to protect routes} down stream
   // Add user info (ID, ULID, name and authenticated) to event response (to be exposed to front end in plugin)
   const session = await fetcheUserSession(event)
-  console.log('XXXXXXX', session)
+  // console.log('XXXXXXX', session)
   if (session && Object.values(session).length) {
-    console.log('UUUUU', session)
+    // console.log('UUUUU', session)
     event.context.session = session
     Object.defineProperty(event.node.res, '_userSession', {
       value: { userName: (session as Storage).userName, authenticated: true },
@@ -67,9 +67,9 @@ export default defineEventHandler(async (event) => {
   // Decrypt header cookie and veiry that it matches the secret
   const headerCsrfToken = getHeader(event, 'csrfToken') ?? ''
 
-  console.log('SSSS', secret)
+  // console.log('SSSS', secret)
   // console.log('HEADERS', getRequestHeader(event, 'cookie'))
-  console.log('HHHH', headerCsrfToken)
+  // console.log('HHHH', headerCsrfToken)
   if (!headerCsrfToken || secret) return
 
   if (headerCsrfToken && secret && !verifyCsrfKey(secret, headerCsrfToken))
@@ -86,7 +86,7 @@ export default defineEventHandler(async (event) => {
   // Retreive body if request method is not GET
   // Decrypt body session token (same token = cookie is sent via header and body if it is not a get s request)  and veiry that it matches the secret
   const body = event.node.req.method !== 'GET' ? await readBody(event) : null
-  console.log('BODY', body)
+  // console.log('BODY', body)
 
   if (body && (!body.csrfToken || !verifyCsrfKey(secret, body.csrfToken)))
     throw createError({
@@ -99,7 +99,7 @@ export default defineEventHandler(async (event) => {
   // Retreive params i request method is  GET
   // Decrypt params session token (same token = cookie is sent via header and params if it is a get request)  and veiry that it matches the secret
   const params = event.node.req.method === 'GET' ? getQuery(event) : null
-  console.log('PARAMS', params)
+  // console.log('PARAMS', params)
 
   if (
     params &&
@@ -125,5 +125,5 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  console.log('ZZZZZZZZZZZZ')
+  // console.log('ZZZZZZZZZZZZ')
 })

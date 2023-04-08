@@ -330,7 +330,7 @@ watch(
         <transition name="cart-modal">
           <dialog ref="cartModalRef" @close="cartModalClosed" @cancel="cartModalCancelled">
             <!-- <ClientOnly> -->
-            <Cart @closeCartModal="closeCartModal" />
+            <CommerceCart @closeCartModal="closeCartModal" />
             <!-- </ClientOnly> -->
           </dialog>
         </transition>
