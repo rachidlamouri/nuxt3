@@ -1,4 +1,4 @@
-import { mongoClient } from '../../utils/mongoClient'
+import { buildMongoClient } from '../../utils/mongoClient'
 // import  redis  from '../../utils/redisClient'
 // import { createClient } from 'redis'
 
@@ -18,6 +18,8 @@ import { userRepository } from '../../server/redisSchemas/user'
 export default async (inlineOptions: any, nuxt: any) => {
   nuxt.hook('listen', async (nuxt: any) => {
     try {
+      const mongoClient = buildMongoClient();
+
       // Connect to database
       await mongoClient.connect()
       console.log(`Database connection succesfull`)
